@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Glitchy 3 bit dither</title>
+        <style>
+            body {
+                font-family: san-serif;
+                font-size: 12px;
+            }
+            img, canvas { display:inline-block;margin:0.5em; border: solid 0.5em #AAA}
+            h2 {display:none}
+        </style>
+    </head>
+     <body>
+        <h1>Glitchy 3 Bit Dither:Glitches</h1>
+        <div style="width:600px;">
+            <p>Original Implemented by Nolan Caudill, code on github <a href="https://github.com/mncaudill/3bitdither">here</a></p>
+            <p>"Enhanced" by JKirchartz, code also on github <a href="https://github.com/jkirchartz/Glitchy3bitdither">here</a></p>
+            <p>This runs completely client-side, using the FileReader and canvas APIs, your image isn't being uploaded to any server. If you have a decent browser, this could work. Also, you can right-click and save the result of the processing.</p>
+            <p>Check out some curated images at <a href="http://glitches.jkirchartz.com/">glitches.jkirchartz.com</a></p>
+            <p>This is the glitch only version, you might want to see the <a href="index.html">demo version</a></p>
+        </div>
+
+        <input type="file" id="uploader">
+        <div id="output"></div>
+        <br>
+        <script src="GlitchyDither.js" type="text/javascript"></script>
+        <script>
+            function handleFileSelect(e) {
+                var file = e.target.files[0];
+                // Only process image files.
+                if (!file.type.match('image.*')) {
+                    return;
+                }
+                var reader = new FileReader();
+                // Closure to capture the file information.
+                reader.onload = function(e) {
+                    var img = new Image();
+                    img.onload = function() {
+                        var width = img.width;
+                        var height = img.height;
+                        var canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        var ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+                        drawDitherResult(canvas, function(i) {
+                            return i;
+                        }, 'original');
+                        for(var i=0;i<20;i++){
+                            //this one seems to be causing problems...
+                            ctx.drawImage(img, 0, 0);
+                            drawDitherResult(canvas, theWorks, 'The Works');
+                            ctx.drawImage(img, 0, 0);
+                            drawDitherResult(canvas, randomGlitch, 'randomGlitch');
+                            ctx.drawImage(img, 0, 0);
+                            drawDitherResult(canvas, glitch, 'Glitch');
+                        }
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+                document.getElementById("output").innerHTML = "";
+            }
+            document.getElementById('uploader').addEventListener('change', handleFileSelect, false);
+        </script>
+    </body>
+</html>

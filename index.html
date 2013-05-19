@@ -1,379 +1,107 @@
 <!doctype html>
 <html>
     <head>
-        <title>3 bit dither</title>
+        <title>Glitchy 3 bit dither</title>
         <style>
             body {
                 font-family: san-serif;
                 font-size: 12px;
             }
+            img, canvas { display:inline;}
         </style>
     </head>
      <body>
-        <h1>3 Bit Dither</h1>
+        <h1>Glitchy 3 Bit Dither</h1>
         <div style="width:600px;">
-            <p>Implemented by Nolan Caudill, code on github <a href="https://github.com/mncaudill/3bitdither">here</a></p>
-            <p>This demo currently uses two different error-diffusion dithering algorithms: <a href="http://verlagmartinkoch.at/software/dither/index.html">Atkinson's</a> and the <a href="http://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering">Floyd-Steinberg</a> algorithm.
-
-            <p>Error-diffusion means that the algorithm goes pixel by pixel, rounds the individual R, G, and B channels to either 0x00 or 0xff, and then distributes those differences (which the algorithm calls the "quantization error") in differing amounts to pixels further down the line. It being a 3-bit dithering means that your red, blue, and green channels are represented by a single bit (off or on), giving you a total of 8 colors.</p>
-
-            <p>The demo also does halftone dithering and Bayer dithering (just 1 bit) which don't use error-diffusion, which for these two makes the patterns evident that error-diffusion usually lessens.</p>
-
-<p>This runs completely client-side, using the FileReader and canvas APIs. If you have a somewhat modern browser, this should work. Also, you can right-click and save the result of the dithering.</p>
+            <p>Original Implemented by Nolan Caudill, code on github <a href="https://github.com/mncaudill/3bitdither">here</a></p>
+            <p>"Enhanced" by JKirchartz, code also on github <a href="https://github.com/jkirchartz/Glitchy3bitdither">here</a></p>
+            <p>This runs completely client-side, using the FileReader and canvas APIs, your image isn't being uploaded to any server. If you have a decent browser, this could work. Also, you can right-click and save the result of the processing.</p>
+            <p>Check out some curated images at <a href="http://glitches.jkirchartz.com/">glitches.jkirchartz.com</a></p>
+            <p>You can also try the <a href="glitch.html">glitch-only script</a></p>
         </div>
 
         <input type="file" id="uploader">
-
+        <div id="output"></div>
         <br>
-        
-        <script type="text/javascript">
-            // The filereader code was ripped unceremoniously from http://www.html5rocks.com/en/tutorials/file/dndfiles/
-            document.getElementById('uploader').addEventListener('change', handleFileSelect, false);
-
-            function drawDitherResult(canvas, ditherer, text) {
-                var ctx = canvas.getContext('2d');
-                var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                ditherer(imageData);
-                ctx.putImageData(imageData, 0, 0);
-
-                var img = new Image();
-                img.src = canvas.toDataURL("image/png");
-
-                h2 = document.createElement('h2');
-                h2.innerText = text;
-
-                document.body.appendChild(h2);
-                document.body.appendChild(img);
-            }
-
+        <script src="GlitchyDither.js" type="text/javascript"></script>
+        <script>
             function handleFileSelect(e) {
                 var file = e.target.files[0];
-
                 // Only process image files.
                 if (!file.type.match('image.*')) {
                     return;
                 }
-
                 var reader = new FileReader();
-
                 // Closure to capture the file information.
                 reader.onload = function(e) {
                     var img = new Image();
-                    img.onload = function(){
+                    img.onload = function() {
                         var width = img.width;
                         var height = img.height;
-
                         var canvas = document.createElement('canvas');
                         canvas.width = width;
                         canvas.height = height;
-
                         var ctx = canvas.getContext('2d');
-
-                        //ctx.drawImage(img, 0, 0); // Reset
-                        //drawDitherResult(canvas, ditherMosaic, 'Mosaic');
-
-
+                        ctx.drawImage(img, 0, 0);
+                        drawDitherResult(canvas, function(i) {
+                            return i;
+                        }, 'original');
+                        ctx.drawImage(img, 0, 0);
+                        drawDitherResult(canvas, slice, 'Slice');
+                        ctx.drawImage(img, 0, 0);
+                        drawDitherResult(canvas, slice2, 'Slice 2');
+                        ctx.drawImage(img, 0, 0);
+                        drawDitherResult(canvas, slice3, 'Slice 3');
+                        ctx.drawImage(img, 0, 0);
+                        drawDitherResult(canvas, superSlice, 'Super Slice');
+                        ctx.drawImage(img, 0, 0);
+                        drawDitherResult(canvas, superSlice2, 'Super Slice 2');
                         ctx.drawImage(img, 0, 0); // Reset
                         drawDitherResult(canvas, ditherAtkinsons, 'Atkinson\'s');
-
                         ctx.drawImage(img, 0, 0); // Reset
                         drawDitherResult(canvas, ditherFloydSteinberg, 'Floyd-Steinberg');
-
                         ctx.drawImage(img, 0, 0); // Reset
                         drawDitherResult(canvas, ditherHalftone, 'Halftone');
-
                         ctx.drawImage(img, 0, 0);
                         drawDitherResult(canvas, ditherBayer, 'Bayer (ordered) - 1 bit');
-
                         ctx.drawImage(img, 0, 0);
                         drawDitherResult(canvas, dither8Bit, 'Google Maps 8-Bit');
-                    }
+                        ctx.drawImage(img, 0, 0);
+                        drawDitherResult(canvas, ditherBayer, 'Bayer (ordered) - 1 bit');
+                        ctx.drawImage(img, 0, 0);
+                        drawDitherResult(canvas, ditherBayer3, 'Bayer (ordered) - 3 bit');
+                        ctx.drawImage(img, 0, 0);
+                        drawDitherResult(canvas, ditherRandom, 'Random');
+                        ctx.drawImage(img, 0, 0);
+                        drawDitherResult(canvas, ditherRandom2, 'Random2');
+                        ctx.drawImage(img, 0, 0);
+                        drawDitherResult(canvas, ditherBitshift, 'Bitshift');
+                        ctx.drawImage(img, 0, 0);
+                        drawDitherResult(canvas, colorShift, 'Color Shift');
+                        ctx.drawImage(img, 0, 0);
+                        drawDitherResult(canvas, redShift, 'Red Shift');
+                        ctx.drawImage(img, 0, 0);
+                        drawDitherResult(canvas, greenShift, 'Green Shift');
+                        ctx.drawImage(img, 0, 0);
+                        drawDitherResult(canvas, blueShift, 'Blue Shift');
+                        ctx.drawImage(img, 0, 0);
+                        drawDitherResult(canvas, focusImage, 'Pixelate');
+                        ctx.drawImage(img, 0, 0);
+                        drawDitherResult(canvas, superShift, 'Super Shift');
+                        //this one seems to be causing problems...
+                        //ctx.drawImage(img, 0, 0);
+                        //drawDitherResult(canvas, theWorks, 'The Works');
+                        ctx.drawImage(img, 0, 0);
+                        drawDitherResult(canvas, randomGlitch, 'randomGlitch');
+                        ctx.drawImage(img, 0, 0);
+                        drawDitherResult(canvas, glitch, 'Glitch');
+                    };
                     img.src = e.target.result;
-                }
+                };
                 reader.readAsDataURL(file);
-
-                this.style.display = 'none';
+                document.getElementById("output").innerHTML = "";
             }
-
-            function adjustPixelError(data, i, error, multiplier) {
-                data[i] = data[i] + multiplier * error[0]; 
-                data[i + 1] = data[i + 1] + multiplier * error[1]; 
-                data[i + 2] = data[i + 2] + multiplier * error[2]; 
-            }
-
-            function dither8Bit(imageData) {
-                var width = imageData.width,
-                    height = imageData.height,
-                    data = imageData.data;
-
-                size = 4;
-                for (y = 0; y < height; y += size) {
-                    for (x = 0; x < width; x += size) {
-
-                        sum_r = 0;
-                        sum_g = 0;
-                        sum_b = 0;
-
-                        for (s_y = 0; s_y < size; s_y++) {
-                            for (s_x = 0; s_x < size; s_x++) {
-                                i = 4 * (width * (y + s_y) + (x + s_x));
-
-                                sum_r += data[i];
-                                sum_g += data[i + 1];
-                                sum_b += data[i + 2];
-                            }
-                        }
-
-                        avg_r = (sum_r / (size * size)) > 127 ? 0xff : 00;
-                        avg_g = (sum_g / (size * size)) > 127 ? 0xff : 00;
-                        avg_b = (sum_b / (size * size)) > 127 ? 0xff : 00;
-
-                        for (s_y = 0; s_y < size; s_y++) {
-                            for (s_x = 0; s_x < size; s_x++) {
-                                i = 4 * (width * (y + s_y) + (x + s_x));
-
-                                data[i] = avg_r;
-                                data[i + 1] = avg_g;
-                                data[i + 2] = avg_b;
-                            }
-                        }
-                    }
-                }
-            }
-
-            function ditherBayer(imageData) {
-                var width = imageData.width,
-                    height = imageData.height,
-                    data = imageData.data;
-
-                threshold_map = [
-                    [1, 9, 3, 11],
-                    [13, 5, 15, 7],
-                    [4, 12, 2, 10],
-                    [16, 8, 14, 6]
-                ];
-
-                for (var y = 0; y < height; y++) {
-                    for (var x = 0; x < width; x++) {
-                        i = 4 * (y * width + x);
-
-                        gray = .3 * data[i] + .59 * data[i + 1] + .11 * data[i + 2];
-                        scaled = (gray * 17) / 255;
-                        val = scaled > threshold_map[x % 4][y % 4] ? 0xff : 0;
-                        data[i] = data[i + 1] = data[i + 2] = val;
-                    }
-                }
-            }
-
-            function ditherHalftone(imageData) {
-                var width = imageData.width,
-                    height = imageData.height,
-                    data = imageData.data;
-
-                for (var y = 0; y <= height - 2; y += 3) {
-                    for (var x = 0; x <= width - 2; x += 3) {
-
-                        sum_r = sum_g = sum_b = 0;
-                        indexed = [];
-                        count = 0;
-                        for (s_y = 0; s_y < 3; s_y++) {
-                            for (s_x = 0; s_x < 3; s_x++) {
-                                i = 4 * (width * (y + s_y) + (x + s_x));
-                                sum_r += data[i];
-                                sum_g += data[i + 1];
-                                sum_b += data[i + 2];
-
-                                data[i] = data[i + 1] = data[i + 2] = 0xff;
-
-                                indexed.push(i);
-                                count++;
-                            }
-                        }
-
-                        avg_r = (sum_r / 9) > 127 ? 0xff : 00;
-                        avg_g = (sum_g / 9) > 127 ? 0xff : 00;
-                        avg_b = (sum_b / 9) > 127 ? 0xff : 00;
-
-                        avg_lum = (avg_r + avg_g + avg_b) / 3;
-                        scaled = Math.round((avg_lum * 9) / 255);
-
-                        if (scaled < 9) {
-                            data[indexed[4]] = avg_r;
-                            data[indexed[4] + 1] = avg_g;
-                            data[indexed[4] + 2] = avg_b;
-                        }
-
-                        if (scaled < 8) {
-                            data[indexed[5]] = avg_r;
-                            data[indexed[5] + 1] = avg_g;
-                            data[indexed[5] + 2] = avg_b;
-                        }
-
-                        if (scaled < 7) {
-                            data[indexed[1]] = avg_r;
-                            data[indexed[1] + 1] = avg_g;
-                            data[indexed[1] + 2] = avg_b;
-                        }
-
-                        if (scaled < 6) {
-                            data[indexed[6]] = avg_r;
-                            data[indexed[6] + 1] = avg_g;
-                            data[indexed[6] + 2] = avg_b;
-                        }
-
-                        if (scaled < 5) {
-                            data[indexed[3]] = avg_r;
-                            data[indexed[3] + 1] = avg_g;
-                            data[indexed[3] + 2] = avg_b;
-                        }
-
-                        if (scaled < 4) {
-                            data[indexed[8]] = avg_r;
-                            data[indexed[8] + 1] = avg_g;
-                            data[indexed[8] + 2] = avg_b;
-                        }
-
-                        if (scaled < 3) {
-                            data[indexed[2]] = avg_r;
-                            data[indexed[2] + 1] = avg_g;
-                            data[indexed[2] + 2] = avg_b;
-                        }
-
-                        if (scaled < 2) {
-                            data[indexed[0]] = avg_r;
-                            data[indexed[0] + 1] = avg_g;
-                            data[indexed[0] + 2] = avg_b;
-                        }
-                        
-                        if (scaled < 1) {
-                            data[indexed[7]] = avg_r;
-                            data[indexed[7] + 1] = avg_g;
-                            data[indexed[7] + 2] = avg_b;
-                        }
-                    }
-                }
-            }
-
-            function ditherAtkinsons(imageData) {
-                var width = imageData.width,
-                    height = imageData.height,
-                    data = imageData.data;
-                for (var y = 0; y < height; y++) {
-                    for (var x = 0; x < width; x++) {
-                        i = 4 * (y * width + x);
-                        old_r = data[i]
-                        old_g = data[i + 1]
-                        old_b = data[i + 2];
-
-                        new_r = (old_r > 127) ? 0xff : 0;
-                        new_g = (old_g > 127) ? 0xff : 0;
-                        new_b = (old_b > 127) ? 0xff : 0;
-
-                        data[i] = new_r;
-                        data[i + 1] = new_g;
-                        data[i + 2] = new_b;
-
-                        err_r = old_r - new_r;
-                        err_g = old_g - new_g;
-                        err_b = old_b - new_b;
-
-                        // Redistribute the pixel's error like this:
-                        //       *  1/8 1/8
-                        //  1/8 1/8 1/8
-                        //      1/8 
-
-                        // The ones to the right...
-                        if (x < width - 1) {
-                            adj_i = i + 4;
-                            adjustPixelError(data, adj_i, [err_r, err_g, err_b], 1/8);
-
-                            // The pixel that's down and to the right
-                            if (y < height - 1) {
-                                adj_i = adj_i + (width * 4) + 4;
-                                adjustPixelError(data, adj_i, [err_r, err_g, err_b], 1/8);
-                            }
-
-                            // The pixel two over
-                            if (x < width - 2) {
-                                adj_i = i + 8;
-                                adjustPixelError(data, adj_i, [err_r, err_g, err_b], 1/8);
-                            }
-                        }
-
-                        if (y < height - 1) {
-                            // The one right below
-                            adj_i = i + (width * 4);
-                            adjustPixelError(data, adj_i, [err_r, err_g, err_b], 1/8);
-
-                            if (x > 0) {
-                                // The one to the left
-                                adj_i = adj_i - 4;
-                                adjustPixelError(data, adj_i, [err_r, err_g, err_b], 1/8);
-                            }
-
-                            if (y < height - 2) {
-                                // The one two down
-                                adj_i = i + (2 * width * 4);
-                                adjustPixelError(data, adj_i, [err_r, err_g, err_b], 1/8);
-                            }
-                        }
-                    }
-                }
-            }
-
-            function ditherFloydSteinberg(imageData) {
-                var width = imageData.width,
-                    height = imageData.height,
-                    data = imageData.data;
-                for (var y = 0; y < height; y++) {
-                    for (var x = 0; x < width; x++) {
-                        i = 4 * (y * width + x);
-                        old_r = data[i]
-                        old_g = data[i + 1]
-                        old_b = data[i + 2];
-
-                        new_r = (old_r > 127) ? 0xff : 0;
-                        new_g = (old_g > 127) ? 0xff : 0;
-                        new_b = (old_b > 127) ? 0xff : 0;
-
-                        data[i] = new_r;
-                        data[i + 1] = new_g;
-                        data[i + 2] = new_b;
-
-                        err_r = old_r - new_r;
-                        err_g = old_g - new_g;
-                        err_b = old_b - new_b;
-
-                        // Redistribute the pixel's error like this:
-                        //   * 7
-                        // 3 5 1 
-
-                        // The ones to the right...
-                        if (x < width - 1) {
-                            right_i = i + 4;
-                            adjustPixelError(data, right_i, [err_r, err_g, err_b], 7/16);
-
-                            // The pixel that's down and to the right
-                            if (y < height - 1) {
-                                next_right_i = right_i + (width * 4)
-                                adjustPixelError(data, next_right_i, [err_r, err_g, err_b], 1/16);
-                            }
-                        }
-                        
-                        if (y < height - 1) {
-                            // The one right below
-                            down_i = i + (width * 4);
-                            adjustPixelError(data, down_i, [err_r, err_g, err_b], 5/16);
-
-                            if (x > 0) {
-                                // The one down and to the left...
-                                left_i = down_i - 4;
-                                adjustPixelError(data, left_i, [err_r, err_g, err_b], 3/16);
-                            }
-                        }
-                    }
-                }
-            }
+            document.getElementById('uploader').addEventListener('change', handleFileSelect, false);
         </script>
     </body>
 </html>
