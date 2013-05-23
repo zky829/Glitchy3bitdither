@@ -589,3 +589,11 @@
                 console.log("glitch",hist);
                 return imageData;
             }
+var seqCounter = 0;
+            function seqGlitch(imageData) {
+                var functions = [focusImage, slice, slice2, slice3, ditherBitshift, colorShift, ditherRandom, ditherRandom2, ditherBayer, ditherBayer3, redShift, greenShift, blueShift, superShift, superSlice, superSlice2, ditherAtkinsons, ditherFloydSteinberg, ditherHalftone, dither8Bit],
+                    imageData = functions[seqCounter%functions.length](imageData);
+                seqCounter++;
+                return imageData;
+            }
+
