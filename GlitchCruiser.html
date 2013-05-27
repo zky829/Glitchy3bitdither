@@ -45,7 +45,7 @@
                 var reader = new FileReader();
                 // Closure to capture the file information.
                 reader.onload = function(e) {
-                    var img = new Image();
+                    var img = document.createElement("img");
                     img.onload = function() {
                         generate(img);
                     };
@@ -64,12 +64,15 @@ function generate(img){
     canvas.width = width;
     canvas.height = height;
     var ctx = canvas.getContext('2d');
+    console.log("typeof", img, typeof img);
+    ctx.drawImage(img, 0, 0);
     for (var i = 1; i < 10;i++){
         if(i==5 && typeof img == "object"){
             ctx.drawImage(orig,0,0);
             drawDitherResult(canvas,original,"original");
             /* Original Image? */
         }else{
+            ctx.drawImage(img, 0, 0);
             drawDitherResult(canvas,seqGlitch,"seqGlitch");
             /* generated from Original */
         }

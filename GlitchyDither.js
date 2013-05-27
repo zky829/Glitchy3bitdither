@@ -7,7 +7,7 @@
                 var ctx = canvas.getContext('2d');
                 var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
                 ctx.putImageData(ditherer(imageData), 0, 0);
-                var img = new Image();
+                var img = document.createElement('img');
                 img.src = canvas.toDataURL("image/png");
                 h2 = document.createElement('h2');
                 h2.innerText = text;
