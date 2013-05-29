@@ -34,7 +34,7 @@
                 var reader = new FileReader();
                 // Closure to capture the file information.
                 reader.onload = function(e) {
-                    var img = new Image();
+                    var img = document.createElement("img");
                     img.onload = function() {
                         var width = img.width;
                         var height = img.height;
