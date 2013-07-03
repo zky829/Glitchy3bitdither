@@ -262,7 +262,7 @@ function slice_range(width,height){
         x = Math.floor((Math.random() * (width * height * 4)));
         y = Math.floor(x / ratio);
     }else if(opt==2){
-        x = Math.random() < 0.75 ? Math.floor(Math.random() * (width * height * 4)) : (width * height * 4);
+        x = Math.random() < 0.5 ? Math.floor(Math.random() * (width * height * 4)) : (width * height * 4);
         y = Math.floor(x / ratio);
     }else{
         x = Math.floor(Math.random() * (width * height * 4));
@@ -442,8 +442,7 @@ function avg(o){
                 var width = imageData.width,
                     height = imageData.height,
                     data = imageData.data,
-                    start = Math.floor((data.length*Math.random())/2),
-                    mm = randminmax(start,data.length),
+                    mm = randminmax(0,data.length),
                     cutend = mm[0],
                     cutstart = mm[1];
                     cut = data.subarray(cutstart, cutend);
@@ -456,8 +455,7 @@ function avg(o){
                     height = imageData.height,
                     data = imageData.data;
                 for (var i = 0, l = (Math.random() * 11); i < l; i++) {
-                    var start = Math.floor((data.length*Math.random())/2),
-                        mm = randminmax(start,data.length),
+                    var mm = randminmax(0,data.length),
                         cutend = mm[0],
                         cutstart = mm[1];
                         cut = data.subarray(cutstart, cutend);
@@ -471,8 +469,7 @@ function avg(o){
                     height = imageData.height,
                     data = imageData.data;
                 for (var i = 0, l = (Math.random() * 20); i < l; i++) {
-                    var start = Math.floor((data.length*Math.random())/2),
-                         mm = randminmax(start,data.length),
+                    var mm = randminmax(0,data.length),
                         cutend = mm[0],
                         cutstart = mm[1],
                         cut = data.subarray(cutstart, cutend);
@@ -610,6 +607,7 @@ function avg(o){
                     mm = slice_range(imageData.width,imageData.height),
                     sub = data.subarray(mm[0],mm[1]),
                     da = [];
+                    console.log("shortsort", mm);
                 for (var i=0;i<sub.length;++i){
                     da[i] = sub[i] | 0;
                 }
@@ -628,6 +626,7 @@ function avg(o){
                     mm = slice_range(imageData.width,imageData.height),
                     sub = data.subarray(mm[0],mm[1]),
                     da = [];
+                    console.log("shortbettersort", mm);
                 for (var i=0;i<sub.length;++i){
                     da[i] = sub[i] | 0;
                 }
@@ -643,6 +642,7 @@ function avg(o){
                     mm = slice_range(imageData.width,imageData.height),
                     sub = data.subarray(mm[0],mm[1]),
                     da = [];
+                    console.log("shortdumbsort", mm);
                 for (var i=0;i<sub.length;i++){
                     da[i] = sub[i] | 0;
                 }
@@ -666,8 +666,7 @@ function avg(o){
 
             function sort(imageData) {
                 var data = new Uint32Array(imageData.data.buffer),
-                    start = Math.floor((data.length*Math.random())/2),
-                    mm = randminmax(start,data.length),
+                    mm = randminmax(0,data.length),
                     sub = data.subarray(mm[0],mm[1]),
                     da = [];
                 for (var i=0;i<sub.length;++i){
@@ -685,8 +684,7 @@ function avg(o){
             }
             function bettersort(imageData) {
                 var data = new Uint32Array(imageData.data.buffer),
-                    start = Math.floor((data.length*Math.random())/2),
-                    mm = randminmax(start,data.length),
+                    mm = randminmax(0,data.length),
                     sub = data.subarray(mm[0],mm[1]),
                     da = [];
                 for (var i=0;i<sub.length;++i){
@@ -701,8 +699,7 @@ function avg(o){
             }
             function dumbsort(imageData) {
                 var data = new Uint32Array(imageData.data.buffer),
-                    start = Math.floor((data.length*Math.random())/2),
-                    mm = randminmax(start,data.length),
+                    mm = randminmax(0,data.length),
                     sub = data.subarray(mm[0],mm[1]),
                     da = [];
                 for (var i=0;i<sub.length;i++){
