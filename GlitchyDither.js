@@ -442,6 +442,7 @@ function avg(o){
                 var width = imageData.width,
                     height = imageData.height,
                     data = imageData.data,
+                    start = Math.floor((data.length*Math.random())/2),
                     mm = randminmax(start,data.length),
                     cutend = mm[0],
                     cutstart = mm[1];
@@ -455,7 +456,8 @@ function avg(o){
                     height = imageData.height,
                     data = imageData.data;
                 for (var i = 0, l = (Math.random() * 11); i < l; i++) {
-                    var mm = randminmax(start,data.length),
+                    var start = Math.floor((data.length*Math.random())/2),
+                        mm = randminmax(start,data.length),
                         cutend = mm[0],
                         cutstart = mm[1];
                         cut = data.subarray(cutstart, cutend);
@@ -469,7 +471,8 @@ function avg(o){
                     height = imageData.height,
                     data = imageData.data;
                 for (var i = 0, l = (Math.random() * 20); i < l; i++) {
-                    var mm = randminmax(start,data.length),
+                    var start = Math.floor((data.length*Math.random())/2),
+                         mm = randminmax(start,data.length),
                         cutend = mm[0],
                         cutstart = mm[1];
                     data.set(cut, Math.floor(Math.random() * ((width * height * 4)-cut.length)));
