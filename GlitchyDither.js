@@ -9,6 +9,7 @@
                 ctx.putImageData(ditherer(imageData), 0, 0);
                 var img = document.createElement('img');
                 img.src = canvas.toDataURL("image/png");
+            //    img.onclick = testImage(this);
                 h2 = document.createElement('h2');
                 h2.innerText = text;
                 var output = document.getElementById("output");
@@ -244,7 +245,43 @@
             /************************************
             *  here's where my fun begins
             *************************************/
-
+// some helper functions
+function randminmax(min,max){
+    // generate min & max values by picking
+    // one "fairly", then picking another from the remainder
+    var randA = Math.floor(min + (max-min) * Math.random());
+    var randB = Math.floor(randA + (max-randA) * Math.random());
+    return [randA,randB];
+}
+function slice_range(width,height){
+    var opt = (Math.random() * 1001) % 3,
+        x=0,y=0,
+        ratio=(Math.random()>0.5) ? 1.7 : 1.61803;
+        // cheap approximation of phi, or actual phi
+    if(opt==1){
+        x = Math.floor((Math.random() * (width * height * 4)));
+        y = Math.floor(x / ratio);
+    }else if(opt==2){
+        x = Math.random() < 0.75 ? Math.floor(Math.random() * (width * height * 4)) : (width * height * 4);
+        y = Math.floor(x / ratio);
+    }else{
+        x = Math.floor(Math.random() * (width * height * 4));
+        y = x - Math.floor((Math.random() * 5101) + 1000);
+    }
+    return [x,y];
+}
+function sum(o){
+        for(var s = 0, i = o.length; i; s += o[--i]);
+            return s;
+}
+/*
+function avg(o){
+        var l = o.length;
+        for(var s = 0, i = l; i; s += o[--i]);
+            return s/l;
+}
+*/
+// some modifications
             function ditherBayer(imageData) {
                 var width = imageData.width,
                     height = imageData.height,
@@ -326,6 +363,8 @@
                 return imageData;
             }
 
+// some crazy other stuff
+
             function ditherRandom(imageData) {
                 var width = imageData.width,
                     height = imageData.height,
@@ -399,6 +438,46 @@
                 return imageData;
             }
 
+            function sslice(imageData) {
+                var width = imageData.width,
+                    height = imageData.height,
+                    data = imageData.data,
+                    mm = randminmax(start,data.length),
+                    cutend = mm[0],
+                    cutstart = mm[1];
+                    cut = data.subarray(cutstart, cutend);
+                data.set(cut, Math.floor(Math.random() * ((width * height * 4)-cut.length)));
+                return imageData;
+            }
+
+            function sslice2(imageData) {
+                var width = imageData.width,
+                    height = imageData.height,
+                    data = imageData.data;
+                for (var i = 0, l = (Math.random() * 11); i < l; i++) {
+                    var mm = randminmax(start,data.length),
+                        cutend = mm[0],
+                        cutstart = mm[1];
+                        cut = data.subarray(cutstart, cutend);
+                    data.set(cut, Math.floor(Math.random() * ((width * height * 4)-cut.length)));
+                }
+                return imageData;
+            }
+
+            function sslice3(imageData) {
+                var width = imageData.width,
+                    height = imageData.height,
+                    data = imageData.data;
+                for (var i = 0, l = (Math.random() * 20); i < l; i++) {
+                    var mm = randminmax(start,data.length),
+                        cutend = mm[0],
+                        cutstart = mm[1];
+                    data.set(cut, Math.floor(Math.random() * ((width * height * 4)-cut.length)));
+                    //data.set(cut, Math.floor(Math.random() * (width * height * 2)));
+                }
+                return imageData;
+            }
+
             function slice(imageData) {
                 var width = imageData.width,
                     height = imageData.height,
@@ -406,7 +485,7 @@
                     cutend = Math.floor((Math.random() * (width * height * 4))),
                     cutstart = Math.floor(cutend / 1.7),
                     cut = data.subarray(cutstart, cutend);
-                data.set(cut, Math.floor(Math.random() * (width * height * 2)));
+                data.set(cut, Math.floor(Math.random() * ((width * height * 4)-cut.length)));
                 return imageData;
             }
 
@@ -418,7 +497,8 @@
                     var cutend = Math.random() < 0.75 ? Math.floor(Math.random() * (width * height * 4)) : (width * height * 4),
                         cutstart = Math.floor(cutend / 1.7),
                         cut = data.subarray(cutstart, cutend);
-                    data.set(cut, Math.floor(Math.random() * (width * height * 2)));
+                    //data.set(cut, Math.floor(Math.random() * (width * height * 2)));
+                    data.set(cut, Math.floor(Math.random() * ((width * height * 4)-cut.length)));
                 }
                 return imageData;
             }
@@ -431,7 +511,8 @@
                     var cutend = Math.floor(Math.random() * (width * height * 4)),
                         cutstart = cutend - Math.floor((Math.random() * 5101) + 1000),
                         cut = data.subarray(cutstart, cutend);
-                    data.set(cut, Math.floor(Math.random() * (width * height * 2)));
+                    data.set(cut, Math.floor(Math.random() * ((width * height * 4)-cut.length)));
+                    //data.set(cut, Math.floor(Math.random() * (width * height * 2)));
                 }
                 return imageData;
             }
@@ -497,27 +578,270 @@
                 return imageData;
             }
 
+            function fractalGhosts(imageData) {
+                var data = imageData.data;
+                for (var i=0; i < data.length; i++){
+                    if (parseInt(data[i*2%data.length],10) < parseInt(data [i],10)){
+                         data[i] = data[i*2%data.length];
+                    }
+                }
+                imageData.data = data;
+                return imageData;
+            }
+            function fractalGhosts2(imageData) {
+                var data = imageData.data,
+                    rand = 1 + Math.floor(Math.random() * 10);
+                for (var i=0; i < data.length; i++){
+                    var tmp = (i * rand) % data.length;
+                    if (parseInt(data[tmp],10) < parseInt(data [i],10)){
+                         data[i] = data[tmp];
+                    }
+                }
+                imageData.data = data;
+                return imageData;
+            }
+
+            function shortsort(imageData) {
+                var data = new Uint32Array(imageData.data.buffer),
+                    mm = slice_range(imageData.width,imageData.height),
+                    sub = data.subarray(mm[0],mm[1]),
+                    da = [];
+                for (var i=0;i<sub.length;++i){
+                    da[i] = sub[i] | 0;
+                }
+                da.sort(function(a,b){return (a-b)/4 - (a-b)/2;});
+                //bitwise produces some cool stuff, but generally crashes my browser :(
+                //da.sort(function(a,b){return a^b;});
+                //da.sort(function(a,b){return a|b;});
+                for (var i=0;i<sub.length;++i){
+                        sub[i] = da[i] | 0;
+                }
+                imageData.data.set(da,mm[0]);
+                return imageData;
+            }
+            function shortbettersort(imageData) {
+                var data = new Uint32Array(imageData.data.buffer),
+                    mm = slice_range(imageData.width,imageData.height),
+                    sub = data.subarray(mm[0],mm[1]),
+                    da = [];
+                for (var i=0;i<sub.length;++i){
+                    da[i] = sub[i] | 0;
+                }
+                da.sort(function(a,b){return a-b;});
+                for (var i=0;i<sub.length;++i){
+                        sub[i] = da[i] | 0;
+                }
+                imageData.data.set(da,mm[0]);
+                return imageData;
+            }
+            function shortdumbsort(imageData) {
+                var data = new Uint32Array(imageData.data.buffer),
+                    mm = slice_range(imageData.width,imageData.height),
+                    sub = data.subarray(mm[0],mm[1]),
+                    da = [];
+                for (var i=0;i<sub.length;i++){
+                    da[i] = sub[i] | 0;
+                }
+                da.sort();
+                for (var i=0;i<sub.length;i++){
+                    sub[i] = da[i] | 0;
+                }
+                imageData.data.set(da,mm[0]);
+                return imageData;
+            }
+            function AnyShortSort(imageData){
+               var opt = Math.floor(Math.random() * 1001) % 3;
+               if(opt==1){
+                   return shortdumbsort(imageData);
+               } else if(opt==2){
+                   return shortbettersort(imageData);
+               } else {
+                   return shortsort(imageData);
+               }
+            }
+
+            function sort(imageData) {
+                var data = new Uint32Array(imageData.data.buffer),
+                    start = Math.floor((data.length*Math.random())/2),
+                    mm = randminmax(start,data.length),
+                    sub = data.subarray(mm[0],mm[1]),
+                    da = [];
+                for (var i=0;i<sub.length;++i){
+                    da[i] = sub[i] | 0;
+                }
+                da.sort(function(a,b){return (a-b)/4 - (a-b)/2;});
+                //bitwise produces some cool stuff, but generally crashes my browser :(
+                //da.sort(function(a,b){return a^b;});
+                //da.sort(function(a,b){return a|b;});
+                for (var i=0;i<sub.length;++i){
+                        sub[i] = da[i] | 0;
+                }
+                imageData.data.set(da,mm[0]);
+                return imageData;
+            }
+            function bettersort(imageData) {
+                var data = new Uint32Array(imageData.data.buffer),
+                    start = Math.floor((data.length*Math.random())/2),
+                    mm = randminmax(start,data.length),
+                    sub = data.subarray(mm[0],mm[1]),
+                    da = [];
+                for (var i=0;i<sub.length;++i){
+                    da[i] = sub[i] | 0;
+                }
+                da.sort(function(a,b){return a-b;});
+                for (var i=0;i<sub.length;++i){
+                        sub[i] = da[i] | 0;
+                }
+                imageData.data.set(da,mm[0]);
+                return imageData;
+            }
+            function dumbsort(imageData) {
+                var data = new Uint32Array(imageData.data.buffer),
+                    start = Math.floor((data.length*Math.random())/2),
+                    mm = randminmax(start,data.length),
+                    sub = data.subarray(mm[0],mm[1]),
+                    da = [];
+                for (var i=0;i<sub.length;i++){
+                    da[i] = sub[i] | 0;
+                }
+                da.sort();
+                for (var i=0;i<sub.length;i++){
+                    sub[i] = da[i] | 0;
+                }
+                imageData.data.set(da,mm[0]);
+                return imageData;
+            }
+            function AnySort(imageData){
+               var opt = Math.floor(Math.random() * 1001) % 3;
+               if(opt==1){
+                   return dumbsort(imageData);
+               } else if(opt==2){
+                   return bettersort(imageData);
+               } else {
+                   return sort(imageData);
+               }
+            }
+            function invert(imageData) {
+                var data = imageData.data;
+                for(var i=0;i<data.length;i++){
+                    if (i%4) {
+                        continue;
+                    } else {
+                        data[i] = 255-data[i];
+                    }
+                }
+                imageData.data = data;
+                return imageData;
+            }
+            function rgb_glitch(imageData) {
+                var data = imageData.data,
+                    width = imageData.width,
+                    height = imageData.height,
+                    mm = randminmax(10,width-10),
+                    opt = mm[1] % 3;
+                for (y=0; y<height; y++) {
+                    for (x=0; x<width; x++) {
+                        var index = ((width * y) + x) * 4,
+                            red = data[index],
+                            green = data[index + 1],
+                            blue = data[index + 2];
+                        if (opt==0){
+                            data[index + mm[0]] = red;
+                            data[index + mm[0]] = green;
+                            data[index] = blue;
+                        }else if(opt==1){
+                            data[index] = red;
+                            data[index + mm[0]] = green;
+                            data[index + mm[0]] = blue;
+                        } else {
+                            data[index + mm[0]] = red;
+                            data[index] = green;
+                            data[index + mm[0]] = blue;
+                        }
+                    }
+                }
+                imageData.data = data;
+                return imageData;
+            }
+            function DrumrollVertical(imageData) {
+                /* borrowed from https://github.com/ninoseki/glitched-canvas */
+                var data = imageData.data,
+                    width = imageData.width, 
+                    height = imageData.height, 
+                    roll = 0;
+                for (var x = 0; x < width; x++) {
+                    if (Math.random() > 0.95) roll = Math.floor(Math.random() * height);
+                    if (Math.random() > 0.95) roll = 0;
+
+                    for (var y = 0; y < height; y++) {
+                        var idx = (x + y * width) * 4;
+
+                        var y2 = y + roll;
+                        if (y2 > height - 1) y2 -= height;
+                        var idx2 = (x + y2 * width) * 4;
+
+                        for (var c = 0; c < 4; c++) {
+                            data[idx2 + c] = data[idx + c];
+                        }
+                    }
+                }
+
+                imageData.data = data;
+                return imageData;
+            }
+            function DrumrollHorizontal(imageData) {
+                /* borrowed from https://github.com/ninoseki/glitched-canvas */
+                var data = imageData.data,
+                    width = imageData.width, 
+                    height = imageData.height, 
+                    roll = 0;
+                for (var x = 0; x < width; x++) {
+                    if (Math.random() > 0.95) roll = Math.floor(Math.random() * height);
+                    if (Math.random() > 0.95) roll = 0;
+
+                    for (var y = 0; y < height; y++) {
+                        var idx = (x + y * width) * 4;
+
+                        var x2 = x + roll;
+                        if (x2 > width - 1) x2 -= width;
+                        var idx2 = (x2 + y * width) * 4;
+
+                        for (var c = 0; c < 4; c++) {
+                            data[idx2 + c] = data[idx + c];
+                        }
+                    }
+                }
+
+                imageData.data = data;
+                return imageData;
+            }
             function theWorks(imageData) {
-                var functions = [focusImage, slice, slice2, slice3, ditherBitshift, colorShift, ditherRandom, ditherRandom2, ditherBayer, ditherBayer3, redShift, greenShift, blueShift, superShift, superSlice, superSlice2, ditherAtkinsons, ditherFloydSteinberg, ditherHalftone, dither8Bit];
+                var exp = [sslice, sslice2, sslice3,AnySort,AnyShortSort,rgb_glitch,invert,shortsort,shortbettersort,shortdumbsort,sort,bettersort,dumbsort,fractalGhosts,fractalGhosts2,DrumrollHorizontal,DrumrollVertical],
+                    orig = [focusImage, slice, slice2, slice3, ditherBitshift, colorShift, ditherRandom, ditherRandom2, ditherBayer, ditherBayer3, redShift, greenShift, blueShift, superShift, superSlice, superSlice2, ditherAtkinsons, ditherFloydSteinberg, ditherHalftone, dither8Bit],
+                    functions = document.getElementById("experimental").checked ? orig.concat(exp) : orig.slice(0);
                 functions.sort(function() {
                     return 0.5 - Math.random()
                 });
                 for (var i = 0, l = functions.length; i < l; i++) {
                     imageData = functions[i](imageData);
                 }
-                console.log("theWorks");
                 return imageData;
             }
 
             function randomGlitch(imageData) {
-                var functions = [focusImage, slice, slice2, slice3, ditherBitshift, colorShift, ditherRandom, ditherRandom2, ditherBayer, ditherBayer3, redShift, greenShift, blueShift, superShift, superSlice, superSlice2, ditherAtkinsons, ditherFloydSteinberg, ditherHalftone, dither8Bit],
+                var exp = [sslice, sslice2, sslice3,AnySort,AnyShortSort,rgb_glitch,invert,shortsort,shortbettersort,shortdumbsort,sort,bettersort,dumbsort,fractalGhosts,fractalGhosts2,DrumrollHorizontal,DrumrollVertical],
+                    orig = [focusImage, slice, slice2, slice3, ditherBitshift, colorShift, ditherRandom, ditherRandom2, ditherBayer, ditherBayer3, redShift, greenShift, blueShift, superShift, superSlice, superSlice2, ditherAtkinsons, ditherFloydSteinberg, ditherHalftone, dither8Bit],
+                    functions = document.getElementById("experimental").checked ? orig.concat(exp) : orig.slice(0),
                     history = [];
-                for (var i = 0, l = (Math.random() * functions.length - 5) + 5; i < l; i++) {
+                for (var i = 0, l = Math.floor(Math.random() * functions.length - 10)+1; i < l; i++) {
                     var fun = Math.floor(Math.random() * functions.length);
                     imageData = functions[fun](imageData);
                     history.push(functions[fun].name);
                 }
-                console.log("randomGlitch", history);
+                if(history.length===0){
+                    return randomGlitch(imageData);
+                }
+                console.log("randomGlitch history:",history);
                 return imageData;
             }
 
@@ -580,20 +904,33 @@
                             }
                         }
                         break;
-                    default:
-                        imageData = (Math.random() > 0.5) ? slice2(imageData) : slice3(imageData);
-                        hist.push("slice2/3");
+                        /*
+                    case 11:
+                        imageData = (Math.random()>0.5) ? fractalGhosts(imageData) : fractalGhosts2(imageData);
+                        hist.push("fractalGhosts/2");
                         break;
-                    }
+                       */
+                    default:
+                        imageData = invert(imageData);
+                        hist.push("invert");
+                        break;
                 }
-                console.log("glitch",hist);
-                return imageData;
             }
+            console.log("glitch",hist);
+            return imageData;
+        }
 var seqCounter = 0;
-            function seqGlitch(imageData) {
-                var functions = [focusImage, slice, slice2, slice3, ditherBitshift, colorShift, ditherRandom, ditherRandom2, ditherBayer, ditherBayer3, redShift, greenShift, blueShift, superShift, superSlice, superSlice2, ditherAtkinsons, ditherFloydSteinberg, ditherHalftone, dither8Bit],
-                    imageData = functions[seqCounter%functions.length](imageData);
-                seqCounter++;
-                return imageData;
-            }
-
+        function seqGlitch(imageData) {
+            var exp = [sslice, sslice2, sslice3,AnySort,AnyShortSort,rgb_glitch,invert,shortsort,shortbettersort,shortdumbsort,sort,bettersort,dumbsort,fractalGhosts,fractalGhosts2,DrumrollHorizontal,DrumrollVertical],
+                orig = [focusImage, slice, slice2, slice3, ditherBitshift, colorShift, ditherRandom, ditherRandom2, ditherBayer, ditherBayer3, redShift, greenShift, blueShift, superShift, superSlice, superSlice2, ditherAtkinsons, ditherFloydSteinberg, ditherHalftone, dither8Bit],
+                functions = document.getElementById("experimental").checked ? orig.concat(exp) : orig.slice(0),
+                i = seqCounter%functions.length;
+            seqCounter++;
+            console.log(functions[i].name,seqCounter);
+            return functions[i](imageData);
+        }
+/*
+        function testImage(imageData){
+             var data = imageData.data;
+             alert(avg(data));
+        }*/
