@@ -474,7 +474,8 @@ function avg(o){
                     var start = Math.floor((data.length*Math.random())/2),
                          mm = randminmax(start,data.length),
                         cutend = mm[0],
-                        cutstart = mm[1];
+                        cutstart = mm[1],
+                        cut = data.subarray(cutstart, cutend);
                     data.set(cut, Math.floor(Math.random() * ((width * height * 4)-cut.length)));
                     //data.set(cut, Math.floor(Math.random() * (width * height * 2)));
                 }
