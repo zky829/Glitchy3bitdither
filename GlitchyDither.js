@@ -584,7 +584,7 @@ function avg(o){
             function fractalGhosts(imageData) {
                 var data = imageData.data;
                 for (var i=0; i < data.length; i++){
-                    if (parseInt(data[i*2%data.length],10) < parseInt(data [i],10)){
+                    if (parseInt(data[i*2%data.length],10) < parseInt(data[i],10)){
                          data[i] = data[i*2%data.length];
                     }
                 }
@@ -596,7 +596,7 @@ function avg(o){
                     rand = 1 + Math.floor(Math.random() * 10);
                 for (var i=0; i < data.length; i++){
                     var tmp = (i * rand) % data.length;
-                    if (parseInt(data[tmp],10) < parseInt(data [i],10)){
+                    if (parseInt(data[tmp],10) < parseInt(data[i],10)){
                          data[i] = data[tmp];
                     }
                 }
