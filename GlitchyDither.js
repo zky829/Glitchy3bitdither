@@ -46,9 +46,9 @@ function dither8Bit(imageData) {
                     sum_b += data[i + 2];
                 }
             }
-            avg_r = (sum_r / (size * size)) > 127 ? 0xff : 00;
-            avg_g = (sum_g / (size * size)) > 127 ? 0xff : 00;
-            avg_b = (sum_b / (size * size)) > 127 ? 0xff : 00;
+            avg_r = (sum_r / (size * size)) > 127 ? 0xff : 0;
+            avg_g = (sum_g / (size * size)) > 127 ? 0xff : 0;
+            avg_b = (sum_b / (size * size)) > 127 ? 0xff : 0;
             for (s_y = 0; s_y < size; s_y++) {
                 for (s_x = 0; s_x < size; s_x++) {
                     i = 4 * (width * (y + s_y) + (x + s_x));
@@ -82,9 +82,9 @@ function ditherHalftone(imageData) {
                     count++;
                 }
             }
-            avg_r = (sum_r / 9) > 127 ? 0xff : 00;
-            avg_g = (sum_g / 9) > 127 ? 0xff : 00;
-            avg_b = (sum_b / 9) > 127 ? 0xff : 00;
+            avg_r = (sum_r / 9) > 127 ? 0xff : 0;
+            avg_g = (sum_g / 9) > 127 ? 0xff : 0;
+            avg_b = (sum_b / 9) > 127 ? 0xff : 0;
             avg_lum = (avg_r + avg_g + avg_b) / 3;
             scaled = Math.round((avg_lum * 9) / 255);
             if (scaled < 9) {
@@ -144,8 +144,8 @@ function ditherAtkinsons(imageData) {
     for (var y = 0; y < height; y++) {
         for (var x = 0; x < width; x++) {
             i = 4 * (y * width + x);
-            old_r = data[i]
-            old_g = data[i + 1]
+            old_r = data[i];
+            old_g = data[i + 1];
             old_b = data[i + 2];
             new_r = (old_r > 127) ? 0xff : 0;
             new_g = (old_g > 127) ? 0xff : 0;
@@ -202,8 +202,8 @@ function ditherFloydSteinberg(imageData) {
     for (var y = 0; y < height; y++) {
         for (var x = 0; x < width; x++) {
             i = 4 * (y * width + x);
-            old_r = data[i]
-            old_g = data[i + 1]
+            old_r = data[i];
+            old_g = data[i + 1];
             old_b = data[i + 2];
             new_r = (old_r > 127) ? 0xff : 0;
             new_g = (old_g > 127) ? 0xff : 0;
@@ -223,7 +223,7 @@ function ditherFloydSteinberg(imageData) {
                 adjustPixelError(data, right_i, [err_r, err_g, err_b], 7 / 16);
                 // The pixel that's down and to the right
                 if (y < height - 1) {
-                    next_right_i = right_i + (width * 4)
+                    next_right_i = right_i + (width * 4);
                     adjustPixelError(data, next_right_i, [err_r, err_g, err_b], 1 / 16);
                 }
             }
@@ -271,7 +271,7 @@ function slice_range(width,height){
     return [x,y];
 }
 function sum(o){
-    for(var s = 0, i = o.length; i; s += o[--i]);
+    for(var s = 0, i = o.length; i; s += o[--i]){};
     return s;
 }
 /*
@@ -309,12 +309,12 @@ function ditherBayer(imageData) {
         [43, 27, 39, 23, 42, 26, 38, 22]
     ]
     ],
-    threshold_map = threshold_maps[Math.floor(Math.random() * threshold_maps.length)]
+    threshold_map = threshold_maps[Math.floor(Math.random() * threshold_maps.length)];
     size = threshold_map.length;
     for (var y = 0; y < height; y++) {
         for (var x = 0; x < width; x++) {
             i = 4 * (y * width + x);
-            gray = .3 * data[i] + .59 * data[i + 1] + .11 * data[i + 2];
+            gray = 0.3 * data[i] + 0.59 * data[i + 1] + 0.11 * data[i + 2];
             scaled = (gray * 17) / 255;
             val = scaled < threshold_map[x % size][y % size] ? 0 : 0xff;
             data[i] = data[i + 1] = data[i + 2] = val;
@@ -528,7 +528,9 @@ function ditherBitshift(imageData) {
     // 0xe0  3 bits
     // 0xf0  4 bits
     for (var i = 0, size = width * height * 4; i < size; i += 4) {
-        data[i] &= M, data[i + 1] &= M, data[i + 2] &= M;
+        data[i] &= M;
+        data[i + 1] &= M;
+        data[i + 2] &= M;
     }
     return imageData;
 }
@@ -615,8 +617,8 @@ function shortsort(imageData) {
     //bitwise produces some cool stuff, but generally crashes my browser :(
     //da.sort(function(a,b){return a^b;});
     //da.sort(function(a,b){return a|b;});
-    for (var i=0;i<sub.length;++i){
-        sub[i] = da[i] | 0;
+    for (var j=0;j<sub.length;++j){
+        sub[j] = da[j] | 0;
     }
     imageData.data.set(da,mm[0]);
     return imageData;
@@ -631,8 +633,8 @@ function shortbettersort(imageData) {
         da[i] = sub[i] | 0;
     }
     da.sort(function(a,b){return a-b;});
-    for (var i=0;i<sub.length;++i){
-        sub[i] = da[i] | 0;
+    for (var j=0;j<sub.length;++j){
+        sub[j] = da[j] | 0;
     }
     imageData.data.set(da,mm[0]);
     return imageData;
@@ -647,8 +649,8 @@ function shortdumbsort(imageData) {
         da[i] = sub[i] | 0;
     }
     da.sort();
-    for (var i=0;i<sub.length;i++){
-        sub[i] = da[i] | 0;
+    for (var j=0;j<sub.length;j++){
+        sub[j] = da[j] | 0;
     }
     imageData.data.set(da,mm[0]);
     return imageData;
@@ -676,8 +678,8 @@ function sort(imageData) {
     //bitwise produces some cool stuff, but generally crashes my browser :(
     //da.sort(function(a,b){return a^b;});
     //da.sort(function(a,b){return a|b;});
-    for (var i=0;i<sub.length;++i){
-        sub[i] = da[i] | 0;
+    for (var j=0;j<sub.length;++j){
+        sub[j] = da[j] | 0;
     }
     imageData.data.set(da,mm[0]);
     return imageData;
@@ -691,8 +693,8 @@ function bettersort(imageData) {
         da[i] = sub[i] | 0;
     }
     da.sort(function(a,b){return a-b;});
-    for (var i=0;i<sub.length;++i){
-        sub[i] = da[i] | 0;
+    for (var j=0;j<sub.length;++j){
+        sub[j] = da[j] | 0;
     }
     imageData.data.set(da,mm[0]);
     return imageData;
@@ -706,8 +708,8 @@ function dumbsort(imageData) {
         da[i] = sub[i] | 0;
     }
     da.sort();
-    for (var i=0;i<sub.length;i++){
-        sub[i] = da[i] | 0;
+    for (var j=0;j<sub.length;j++){
+        sub[j] = da[j] | 0;
     }
     imageData.data.set(da,mm[0]);
     return imageData;
@@ -746,11 +748,11 @@ function rgb_glitch(imageData) {
             red = data[index],
             green = data[index + 1],
             blue = data[index + 2];
-            if (opt==0){
+            if (opt===0){
                 data[index + mm[0]] = red;
                 data[index + mm[0]] = green;
                 data[index] = blue;
-            }else if(opt==1){
+            }else if(opt===1){
                 data[index] = red;
                 data[index + mm[0]] = green;
                 data[index + mm[0]] = blue;
@@ -822,7 +824,7 @@ function theWorks(imageData) {
     functions = document.getElementById("experimental").checked ? orig.concat(exp) : orig.slice(0),
     sortCounter = 0;
     functions.sort(function() {
-        return 0.5 - Math.random()
+        return 0.5 - Math.random();
     });
     for (var i = 0, l = functions.length, s = 0; i < l; i++) {
         s = !!functions[i].name.indexOf("ort");
