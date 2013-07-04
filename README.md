@@ -13,13 +13,19 @@ To see some curated images check out <http://glitches.jkirchartz.com/>
 
 ## Basic Usage:
 
+    // get a picture somehow
+    var img = document.getElementById("image");
     // setup canvas
+    var canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
     var ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
     // get data
     var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     // apply a corruption to an image
     ctx.putImageData(Glitch(imageData), 0, 0);
-    var img = document.createElement('img');
+    var out = document.createElement('img');
     // send output to img element on the page
-    img.src = canvas.toDataURL("image/png");
-    document.body.appendChild(img);
+    out.src = canvas.toDataURL("image/png");
+    document.body.appendChild(out);
