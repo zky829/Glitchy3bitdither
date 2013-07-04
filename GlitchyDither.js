@@ -277,7 +277,7 @@ function sum(o){
 /*
    function avg(o){
    var l = o.length;
-   for(var s = 0, i = l; i; s += o[--i]);
+   for(var s = 0, i = l; i; s += o[--i]){};
    return s/l;
    }
    */
