@@ -271,7 +271,7 @@ function slice_range(width,height){
     return [x,y];
 }
 function sum(o){
-    for(var s = 0, i = o.length; i; s += o[--i]){};
+    for(var s = 0, i = o.length; i; s += o[--i]){}
     return s;
 }
 /*
