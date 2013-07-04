@@ -9,3 +9,17 @@ Implemented by Nolan Caudill, "Enhanced" by JKircharz
 The demo lives <a href="http://jkirchartz.com/Glitchy3bitdither/">here</a>.
 
 To see some curated images check out <http://glitches.jkirchartz.com/>
+
+
+## Basic Usage:
+
+    // setup canvas
+    var ctx = canvas.getContext('2d');
+    // get data
+    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    // apply a corruption to an image
+    ctx.putImageData(Glitch(imageData), 0, 0);
+    var img = document.createElement('img');
+    // send output to img element on the page
+    img.src = canvas.toDataURL("image/png");
+    document.body.appendChild(img);
