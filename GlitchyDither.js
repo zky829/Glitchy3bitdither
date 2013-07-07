@@ -609,7 +609,6 @@ function shortsort(imageData) {
     mm = slice_range(imageData.width,imageData.height),
     sub = data.subarray(mm[0],mm[1]),
     da = [];
-    console.log("shortsort", mm);
     for (var i=0;i<sub.length;++i){
         da[i] = sub[i] | 0;
     }
@@ -628,7 +627,6 @@ function shortbettersort(imageData) {
     mm = slice_range(imageData.width,imageData.height),
     sub = data.subarray(mm[0],mm[1]),
     da = [];
-    console.log("shortbettersort", mm);
     for (var i=0;i<sub.length;++i){
         da[i] = sub[i] | 0;
     }
@@ -644,7 +642,6 @@ function shortdumbsort(imageData) {
     mm = slice_range(imageData.width,imageData.height),
     sub = data.subarray(mm[0],mm[1]),
     da = [];
-    console.log("shortdumbsort", mm);
     for (var i=0;i<sub.length;i++){
         da[i] = sub[i] | 0;
     }
@@ -852,7 +849,6 @@ function randomGlitch(imageData) {
             continue;
         }
         if(s){sortCounter++;}
-        console.log(i,sortCounter);
     }
     if(history.length===0){
         return randomGlitch(imageData);
