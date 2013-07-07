@@ -818,6 +818,9 @@ function DrumrollHorizontal(imageData) {
     imageData.data = data;
     return imageData;
 }
+
+/* these run random set of functions */
+
 function theWorks(imageData) {
     var exp = [sslice, sslice2, sslice3,AnySort,AnyShortSort,rgb_glitch,invert,shortsort,shortbettersort,shortdumbsort,sort,bettersort,dumbsort,fractalGhosts,fractalGhosts2,DrumrollHorizontal,DrumrollVertical],
     orig = [focusImage, slice, slice2, slice3, ditherBitshift, colorShift, ditherRandom, ditherRandom2, ditherBayer, ditherBayer3, redShift, greenShift, blueShift, superShift, superSlice, superSlice2, ditherAtkinsons, ditherFloydSteinberg, ditherHalftone, dither8Bit],
@@ -827,10 +830,9 @@ function theWorks(imageData) {
         return 0.5 - Math.random();
     });
     for (var i = 0, l = functions.length, s = 0; i < l; i++) {
-        s = !!functions[i].name.indexOf("ort");
-        if(s && sortCounter){i--;continue;}
+        s = functions[i].name.indexOf("ort");
+        if(!(s >= 0) && sortCounter >= 1){imageData = functions[i](imageData);continue;}
         if(s){sortCounter++;}
-        imageData = functions[i](imageData);
     }
     return imageData;
 }
@@ -842,12 +844,15 @@ function randomGlitch(imageData) {
     history = [],
     sortCounter = 0;
     for (var i = 0, s = 0, fun = 0, l = Math.floor(Math.random() * functions.length - 10)+1; i < l; i++) {
-        s = !!functions[i].name.indexOf("ort");
-        if(s && sortCounter){i--;continue;}
+        s = functions[i].name.indexOf("ort");
+        if(!(s >= 0) && sortCounter >= 1){
+            fun = Math.floor(Math.random() * functions.length);
+            imageData = functions[fun](imageData);
+            history.push(functions[fun].name);
+            continue;
+        }
         if(s){sortCounter++;}
-        fun = Math.floor(Math.random() * functions.length);
-        imageData = functions[fun](imageData);
-        history.push(functions[fun].name);
+        console.log(i,sortCounter);
     }
     if(history.length===0){
         return randomGlitch(imageData);
