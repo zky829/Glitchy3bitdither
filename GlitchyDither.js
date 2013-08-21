@@ -3,6 +3,20 @@
  *  Then I did a bunch of my own insanity to it...
  ******************/
 
+function drawDitherResult2(canvas, ditherer, text) {
+    var ctx = canvas.getContext('2d');
+    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    ctx.putImageData(ditherer(imageData), 0, 0);
+    var img = document.createElement('img');
+    img.src = canvas.toDataURL("image/png");
+    //    img.onclick = testImage(this);
+    //h2 = document.createElement('h2');
+    //h2.innerText = text;
+    var output = document.getElementById("output");
+    //output.appendChild(h2);
+    output.insertBefore(img,output.childNodes[0]);
+}
+
 function drawDitherResult(canvas, ditherer, text) {
     var ctx = canvas.getContext('2d');
     var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
