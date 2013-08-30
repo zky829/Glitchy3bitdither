@@ -5,6 +5,7 @@
     margin:0;
     padding:0;
 }
+img, canvas { display:inline;}
 html, body {
     font-family:Futura, “Century Gothic”, AppleGothic, sans-serif;
     font-size:100%;
@@ -15,6 +16,7 @@ header {
    background:#444;
    padding:0.5em 1em;
    box-shadow:0.1em 0.1em 0.1em 0.1em rgba(0,0,0,0.8);
+   overflow:hidden;
 }
 h1, nav {display:inline-block;padding-top:0;}
 h1 {
@@ -99,8 +101,8 @@ header a[href="#"]:hover {
 }
 #info a[href="#"] {
     position:absolute;
-    top:-0.7em;
-    right:-0.7em;
+    bottom:-0.2em;
+    right:-0.2em;
     background:#f66;
     color:#fdd;
     border-color:#0ac;

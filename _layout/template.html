@@ -19,31 +19,33 @@
     </header>
     <div id="info">
         <div>
-            <a href="#" id="close_btn">×</a>
             <p>Original Implemented by Nolan Caudill, code on github <a href="https://github.com/mncaudill/3bitdither">here</a></p>
             <p>"Enhanced" by JKirchartz, code also on github <a href="https://github.com/jkirchartz/Glitchy3bitdither">here</a></p>
             <p>This runs completely client-side, using the FileReader and canvas APIs, your image isn't being uploaded to any server. If you have a decent browser, this should work. Also, you can right-click and save the result of the processing.</p>
             <p>Check out some curated images at <a href="http://glitches.jkirchartz.com/">glitches.jkirchartz.com</a></p>
+            <a href="#" id="close_btn">×</a>
         </div>
     </div>
     <main>
-    {{body}}
+    {{ content }}
     </main>
     <script>
         window.onload = function(){
             var info = document.getElementById('info'),
                 info_btn = document.getElementById('info_btn'),
                 close_btn = document.getElementById('close_btn');
-            info_btn.onclick = function(e){
+            function modal(e) {
                 e.preventDefault;
-                info.style.display = "block";
+                if(info.style.display === "block"){
+                    info.style.display = "none";
+                }else{
+                    info.style.display = "block";
+                }
                 return false;
             }
-            close_btn.onclick = function(e){
-                e.preventDefault;
-                info.style.display = "none";
-                return false;
-            }
+            info_btn.onclick = modal;
+            close_btn.onclick = modal;
+            document.body.id = location.pathname.slice(1,-5);
         }
     </script>
 </body>
