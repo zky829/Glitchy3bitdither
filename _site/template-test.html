@@ -1,0 +1,42 @@
+<input type="file" id="uploader"/>
+<label>Enable experimental functions? <input type="checkbox" id="experimental" /></label>
+<div id="output"></div>
+<br>
+<script>
+    function handleFileSelect(e) {
+        var file = e.target.files[0];
+        // Only process image files.
+        if (!file.type.match('image.*')) {
+            return;
+        }
+        var reader = new FileReader();
+        // Closure to capture the file information.
+        reader.onload = function(e) {
+            var img = document.createElement("img");
+            img.onload = function() {
+                var width = img.width;
+                var height = img.height;
+                var canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                var ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                drawDitherResult(canvas, function(i) {
+                    return i;
+                }, 'original');
+                var exp = [sslice, sslice2, sslice3,AnySort,AnyShortSort,rgb_glitch,invert,shortsort,shortbettersort,shortdumbsort,sort,bettersort,dumbsort,fractalGhosts,fractalGhosts2,DrumrollHorizontal,DrumrollVertical],
+                    orig = [focusImage, slice, slice2, slice3, ditherBitshift, colorShift, ditherRandom, ditherRandom2, ditherBayer, ditherBayer3, redShift, greenShift, blueShift, superShift, superSlice, superSlice2, ditherAtkinsons, ditherFloydSteinberg, ditherHalftone, dither8Bit],
+                    functions = document.getElementById("experimental").checked ? orig.concat(exp) : orig.slice(0);
+                for(var i = 0;i<functions.length;i++){
+                    console.log(i,functions[i]);
+                    ctx.drawImage(img, 0, 0);
+                    drawDitherResult(canvas,functions[i],functions[i].name);
+                }
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+        document.getElementById("output").innerHTML = "";
+    }
+    document.getElementById('uploader').addEventListener('change', handleFileSelect, false);
+</script>

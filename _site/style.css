@@ -1,0 +1,125 @@
+*, *:before, *:after {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    margin:0;
+    padding:0;
+}
+img, canvas { display:inline;}
+html, body {
+    font-family:Futura, “Century Gothic”, AppleGothic, sans-serif;
+    font-size:100%;
+}
+header {
+   width:100%;
+   color:#eee;
+   background:#444;
+   padding:0.5em 1em;
+   box-shadow:0.1em 0.1em 0.1em 0.1em rgba(0,0,0,0.8);
+   overflow:hidden;
+}
+h1, nav {display:inline-block;padding-top:0;}
+h1 {
+   margin-right:1em;
+   text-shadow:0.1em 0.1em 0.1em rgba(0,0,0,0.5);
+}
+header a {
+   display:inline-block;
+   border:1px solid #666;
+   background:#444;
+   color:#aaa;
+   padding:0.5em;
+   text-decoration:none;
+   border-radius:0.2em;
+}
+header a:hover {
+   color:#eee;
+   border:1px solid #999;
+   box-shadow:0.1em 0.1em 0.1em 0.1em rgba(0,0,0,0.8);
+   text-shadow:0.1em 0.1em 0.1em rgba(0,0,0,0.7);
+}
+header a[href="#"] {
+    border-color:#0ac;
+    color:#0ac;
+    font-size:14px;
+    font-family:serif;
+    font-weight:bold;
+    display:block;
+    border-width:2px;
+    border-radius:1em;
+    width:2em;
+    height:2em;
+    text-align:center;
+    line-height:1;
+    font-style:italic;
+    text-decoration:none;
+    float:right;
+    margin-top:0.7em;
+}
+header a[href="#"]:hover {
+    color:#7de;
+}
+#index a[href="index.html"]{
+    border-color:#944;
+    color:#f66;
+}
+#glitch a[href="glitch.html"]{
+    border-color:#944;
+    color:#f66;
+}
+#GlitchCruiser a[href="GlitchCruiser.html"]{
+    border-color:#944;
+    color:#f66;
+}
+#GlitchChooser a[href="GlitchChooser.html"]{
+    border-color:#944;
+    color:#f66;
+}
+#info {
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    height:100%;
+    width:100%;
+    background:rgba(0,0,0,0.7);
+    z-index:3;
+}
+#info div {
+   position:absolute;
+   z-index:5;
+   display:table;
+   background:#eee;
+   border-radius:0.2em;
+   max-width:30em;
+   height:auto;
+   top:0; left:0; right:0; bottom:0;
+   margin:auto;
+}
+#info div p {
+    margin:1em 0.5em;
+}
+#info a[href="#"] {
+    position:absolute;
+    bottom:-0.2em;
+    right:-0.2em;
+    background:#f66;
+    color:#fdd;
+    border-color:#0ac;
+    font-size:14px;
+    font-weight:bold;
+    display:block;
+    border-width:2px;
+    border-radius:1em;
+    width:1.5em;
+    height:1.5em;
+    text-align:center;
+    line-height:1;
+    padding-top:0.2em;
+    text-decoration:none;
+    float:right;
+}
+#info a[href="#"]:hover {
+    background:#f44;
+    color:#fff;
+}

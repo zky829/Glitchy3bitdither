@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Glitchy 3 bit dither</title>
+        <style>
+            * {                 -moz-box-sizing: border-box;
+                                box-sizing: border-box;
+                            }
+            body {
+                font-family: san-serif;
+                font-size: 12px;
+            }
+            #output { width:100%; }
+            #output img {display:inline;width:33%;border:1px solid #AAA;}
+            #output h2 {display:none}
+        </style>
+    </head>
+     <body>
+        <h1>Glitchy 3 Bit Dither:Glitch Cruiser</h1>
+        <div style="width:600px;">
+            <p>Original Implemented by Nolan Caudill, code on github <a href="https://github.com/mncaudill/3bitdither">here</a></p>
+            <p>"Enhanced" by JKirchartz, code also on github <a href="https://github.com/jkirchartz/Glitchy3bitdither">here</a></p>
+            <p>This runs completely client-side, using the FileReader and canvas APIs, your image isn't being uploaded to any server. If you have a decent browser, this could work. Also, you can right-click and save the result of the processing.</p>
+            <p>Check out some curated images at <a href="http://glitches.jkirchartz.com/">glitches.jkirchartz.com</a></p>
+            <p>This is the glitch cruiser version, you might want to see the <a href="index.html">demo version</a>, the <a href="glitch.html">glitch only version</a>, or the <a href="GlitchChooser.html">Glitch Chooser</a>.</p>
+            <h2>Instructions</h2>
+            <p>When you upload an image it appears in the center surrounded by glitchy alternatives.
+               If one of these images suits your fancy, click on it and it will become the new source for the 
+               next round of glitches. If you do not like any of the suggested glitches, click on the center
+               image, and the alternatives will change, but your source will not.</p>
+        </div>
+
+        <input type="file" id="uploader">
+        <label>Enable experimental functions? <input type="checkbox" id="experimental" /></label>
+        <div id="output"></div>
+        <br>
+        <script src="GlitchyDither.js" type="text/javascript"></script>
+        <script src="http://code.jquery.com/jquery-1.9.1.min.js" type="text/javascript"></script>
+        <script>
+            function handleFileSelect(e) {
+                var file = e.target.files[0];
+                // Only process image files.
+                if (!file.type.match('image.*')) {
+                    return;
+                }
+                var reader = new FileReader();
+                // Closure to capture the file information.
+                reader.onload = function(e) {
+                    var img = document.createElement("img");
+                    img.onload = function() {
+                        generate(img);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+                document.getElementById("output").innerHTML = "";
+            }
+
+function generate(img){
+    /* cleanup */
+    $("#output").html("");
+    var imgs = document.getElementsByTagName("img");
+    for(var i = 0; i < imgs.length; i++){
+        imgs[i].destroy();
+    }
+    /* setup */
+    var orig = img;
+    var width = img.width;
+    var height = img.height;
+    var canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+    /* execute */
+    for (var i = 1; i < 10;i++){
+        if(i==5 && typeof img == "object"){
+            ctx.drawImage(orig,0,0);
+            drawDitherResult(canvas,original,"original");
+            /* Original Image */
+        }else{
+            ctx.drawImage(img, 0, 0);
+            drawDitherResult(canvas,seqGlitch,"seqGlitch");
+            /* generated from Original */
+        }
+    }
+    $("#output img").click(function(){
+       generate(this);
+    });
+}
+
+            document.getElementById('uploader').addEventListener('change', handleFileSelect, false);
+        </script>
+    </body>
+</html>
