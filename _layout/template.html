@@ -31,11 +31,13 @@
     </main>
     <script>
         window.onload = function(){
+            // handle the modal window (the rest is just CSS, woot!)
             var info = document.getElementById('info'),
                 info_btn = document.getElementById('info_btn'),
                 close_btn = document.getElementById('close_btn');
             function modal(e) {
                 e.preventDefault;
+                // toggle
                 if(info.style.display === "block"){
                     info.style.display = "none";
                 }else{
@@ -45,7 +47,9 @@
             }
             info_btn.onclick = modal;
             close_btn.onclick = modal;
-            document.body.id = location.pathname.slice(1,-5);
+            // set current page hilight for nav
+            // depends on having a file extension
+            document.body.id = location.pathname.slice(location.pathname.lastIndexOf('/')+1,location.pathname.lastIndexOf('.'));
         }
     </script>
 </body>
