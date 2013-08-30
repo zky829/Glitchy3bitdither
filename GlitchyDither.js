@@ -268,20 +268,26 @@ function randminmax(min,max){
     return [randA,randB];
 }
 function slice_range(width,height){
-    var opt = (Math.random() * 1001) % 3,
+    var opt = (Math.random() * 1001) % 6,
         x=0,y=0,
+        px = (width*height*4),
         ratio=(Math.random()>0.5) ? 1.7 : 1.61803;
     // cheap approximation of phi, or actual phi
     if(opt==1){
-        x = Math.floor((Math.random() * (width * height * 4)));
+        x = Math.floor((Math.random() * px));
         y = Math.floor(x / ratio);
     }else if(opt==2){
-        x = Math.random() < 0.5 ? Math.floor(Math.random() * (width * height * 4)) : (width * height * 4);
+        x = Math.random() < 0.5 ? Math.floor(Math.random() * px) : px;
         y = Math.floor(x / ratio);
-    }else{
-        x = Math.floor(Math.random() * (width * height * 4));
+    }else if(opt==3){
+        x = Math.floor(Math.random() * px);
         y = x - Math.floor((Math.random() * 5101) + 1000);
+    }else{
+        var mm = randminmax(0,px);
+        x = mm[0];
+        y = mm[1];
     }
+    console.log(x,y);
     return [x,y];
 }
 function sum(o){
@@ -422,10 +428,12 @@ function colorShift(imageData) {
 function greenShift(imageData) {
     var width = imageData.width,
     height = imageData.height,
-    data = imageData.data;
+    data = imageData.data,
+    factor = (Math.floor(Math.random() * 100)/10)*2;
+    factor = factor > 10 ? factor - 10 : factor;
     for (var i = 0, size = width * height * 4; i < size; i += 4) {
-        data[i] /= 2;
-        data[i + 2] /= 2;
+        data[i] /= factor;
+        data[i + 2] /= factor;
     }
     return imageData;
 }
@@ -433,10 +441,12 @@ function greenShift(imageData) {
 function redShift(imageData) {
     var width = imageData.width,
     height = imageData.height,
-    data = imageData.data;
+    data = imageData.data,
+    factor = (Math.floor(Math.random() * 100)/10)*2;
+    factor = factor > 10 ? factor - 10 : factor;
     for (var i = 0, size = width * height * 4; i < size; i += 4) {
-        data[i + 1] /= 2;
-        data[i + 2] /= 2;
+        data[i + 1] /= factor;
+        data[i + 2] /= factor;
     }
     return imageData;
 }
@@ -444,10 +454,12 @@ function redShift(imageData) {
 function blueShift(imageData) {
     var width = imageData.width,
     height = imageData.height,
-    data = imageData.data;
+    data = imageData.data,
+    factor = (Math.floor(Math.random() * 100)/10)*2;
+    factor = factor > 10 ? factor - 10 : factor;
     for (var i = 0, size = width * height * 4; i < size; i += 4) {
-        data[i] /= 2;
-        data[i + 1] /= 2;
+        data[i] /= factor;
+        data[i + 1] /= factor;
     }
     return imageData;
 }
@@ -456,10 +468,11 @@ function sslice(imageData) {
     var width = imageData.width,
     height = imageData.height,
     data = imageData.data,
-    mm = randminmax(0,data.length),
-    cutend = mm[0],
-    cutstart = mm[1];
+    mm = slice_range(width,height),
+    cutend = mm[1],
+    cutstart = mm[0];
     cut = data.subarray(cutstart, cutend);
+    console.log(data.length, cut.length);
     data.set(cut, Math.floor(Math.random() * ((width * height * 4)-cut.length)));
     return imageData;
 }
@@ -469,9 +482,9 @@ function sslice2(imageData) {
     height = imageData.height,
     data = imageData.data;
     for (var i = 0, l = (Math.random() * 11); i < l; i++) {
-        var mm = randminmax(0,data.length),
-        cutend = mm[0],
-        cutstart = mm[1];
+        var mm = slice_range(width,height);
+        cutend = mm[1],
+        cutstart = mm[0];
         cut = data.subarray(cutstart, cutend);
         data.set(cut, Math.floor(Math.random() * ((width * height * 4)-cut.length)));
     }
@@ -483,9 +496,9 @@ function sslice3(imageData) {
     height = imageData.height,
     data = imageData.data;
     for (var i = 0, l = (Math.random() * 20); i < l; i++) {
-        var mm = randminmax(0,data.length),
-        cutend = mm[0],
-        cutstart = mm[1],
+        var mm = slice_range(width,height);
+        cutend = mm[1],
+        cutstart = mm[0],
         cut = data.subarray(cutstart, cutend);
         data.set(cut, Math.floor(Math.random() * ((width * height * 4)-cut.length)));
         //data.set(cut, Math.floor(Math.random() * (width * height * 2)));
@@ -774,6 +787,58 @@ function rgb_glitch(imageData) {
             }
         }
     }
+    imageData.data = data;
+    return imageData;
+}
+function DrumrollVerticalWave(imageData) {
+    /* borrowed from https://github.com/ninoseki/glitched-canvas */
+    var data = imageData.data,
+    width = imageData.width, 
+    height = imageData.height, 
+    roll = 0;
+    for (var x = 0; x < width; x++) {
+        if (Math.random() > 0.95) roll = Math.floor(Math.cos(x) * (height * 2));
+        if (Math.random() > 0.98) roll = 0;
+
+        for (var y = 0; y < height; y++) {
+            var idx = (x + y * width) * 4;
+
+            var y2 = y + roll;
+            if (y2 > height - 1) y2 -= height;
+            var idx2 = (x + y2 * width) * 4;
+
+            for (var c = 0; c < 4; c++) {
+                data[idx2 + c] = data[idx + c];
+            }
+        }
+    }
+
+    imageData.data = data;
+    return imageData;
+}
+function DrumrollHorizontalWave(imageData) {
+    /* borrowed from https://github.com/ninoseki/glitched-canvas */
+    var data = imageData.data,
+    width = imageData.width, 
+    height = imageData.height, 
+    roll = 0;
+    for (var x = 0; x < width; x++) {
+        if (Math.random() > 0.95) roll = Math.floor(Math.cos(x) * (height * 2));
+        if (Math.random() > 0.98) roll = 0;
+
+        for (var y = 0; y < height; y++) {
+            var idx = (x + y * width) * 4;
+
+            var x2 = x + roll;
+            if (x2 > width - 1) x2 -= width;
+            var idx2 = (x2 + y * width) * 4;
+
+            for (var c = 0; c < 4; c++) {
+                data[idx2 + c] = data[idx + c];
+            }
+        }
+    }
+
     imageData.data = data;
     return imageData;
 }
