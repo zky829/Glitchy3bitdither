@@ -123,3 +123,6 @@ header a[href="#"]:hover {
     background:#f44;
     color:#fff;
 }
+#form {width:50%;margin:1em auto;border:0.02em solid #AAA;}
+#output { width:100%; }
+#output img {display:inline;width:33%;margin:0.5em;border:0.02em solid #AAA;}

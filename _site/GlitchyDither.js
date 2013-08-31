@@ -9,11 +9,8 @@ function drawDitherResult2(canvas, ditherer, text) {
     ctx.putImageData(ditherer(imageData), 0, 0);
     var img = document.createElement('img');
     img.src = canvas.toDataURL("image/png");
-    //    img.onclick = testImage(this);
-    //h2 = document.createElement('h2');
-    //h2.innerText = text;
     var output = document.getElementById("output");
-    //output.appendChild(h2);
+    output.alt = text;
     output.insertBefore(img,output.childNodes[0]);
 }
 
