@@ -10,10 +10,10 @@
     <header>
         <h1>Glitchy3bitDither</h1>
         <nav>
-            <a href="{{ site.baseurl }}/index.html">Demo</a>
-            <a href="{{ site.baseurl }}/glitch.html">Glitch Only</a>
-            <a href="{{ site.baseurl }}/GlitchCruiser.html">Glitch Cruiser</a>
-            <a href="{{ site.baseurl }}/GlitchChooser.html">Glitch Chooser</a>
+            <a class="index" href="{{ site.baseurl }}/index.html">Demo</a>
+            <a class="glitch" href="{{ site.baseurl }}/glitch.html">Glitch Only</a>
+            <a class="GlitchCruiser" href="{{ site.baseurl }}/GlitchCruiser.html">Glitch Cruiser</a>
+            <a class="GlitchChooser" href="{{ site.baseurl }}/GlitchChooser.html">Glitch Chooser</a>
         </nav>
         <a href="#" id="info_btn">i</a>
     </header>
@@ -56,6 +56,10 @@
             // set current page hilight for nav
             // depends on having a file extension
             document.body.id = location.pathname.slice(location.pathname.lastIndexOf('/')+1,location.pathname.lastIndexOf('.'));
+            if(document.referrer.contains('{{ base_url }}')){
+                /* hide info if you got here from an internal link */
+                info.style.display = "none";
+            }
         }
     </script>
 </body>

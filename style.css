@@ -18,7 +18,7 @@ header {
    box-shadow:0.1em 0.1em 0.1em 0.1em rgba(0,0,0,0.8);
    overflow:hidden;
 }
-h1, nav {display:inline-block;padding-top:0;}
+header h1, nav {display:inline-block;padding-top:0;}
 h1 {
    margin-right:1em;
    text-shadow:0.1em 0.1em 0.1em rgba(0,0,0,0.5);
@@ -129,6 +129,6 @@ header a[href="#"]:hover {
     background:#f44;
     color:#fff;
 }
-#form {width:50%;margin:1em auto;border:0.02em solid #AAA;}
+main h1, h2, main p, #form {width:50%;margin:1em auto;}
 #output { width:100%; }
 #output img {display:inline;width:33%;margin:0.5em;border:0.02em solid #AAA;}
