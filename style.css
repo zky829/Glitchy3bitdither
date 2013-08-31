@@ -129,10 +129,10 @@ header a[href="#"]:hover {
     background:#f44;
     color:#fff;
 }
-main h1, h2, main p, #form {width:50%;margin:1em auto;}
-#form > * { display:block;margin:0.5em; }
-#form > button { display:inline-block; }
+main h1, h2, main p, #form {max-width:60%;margin:1em auto;}
+#form select, #form input, #form button { display:block;margin:0.5em;padding:0.5em;}
+#form button { display:inline-block; }
 #output { width:100%; }
-#output img {display:inline;margin:0.5em;border:0.02em solid #AAA;}
-#GlitchCruiser #output img {display:inline;width:calc(33% - 1em);margin:0.5em;border:0.02em solid #AAA;}
+#output img {display:inline;max-width:calc(100% - 1em - 2px);margin:0.5em;border:2px solid #AAA;}
+#GlitchCruiser #output img {display:inline;width:calc(33% - 1em - 2px);margin:0.5em;border:1px solid #AAA;}
 
