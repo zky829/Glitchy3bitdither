@@ -90,16 +90,14 @@ header a[href="#"]:hover {
    display:table;
    background:#eee;
    border-radius:0.2em;
-   max-width:30em;
+   max-width:32em;
    height:auto;
    top:0; left:0; right:0; bottom:0;
    margin:auto;
+   padding:0.5em;
 }
 #info h1 {
     text-shadow:none;
-}
-#info div p {
-    margin:1em 0.5em;
 }
 #info a[href="#"] {
     position:absolute;
