@@ -76,7 +76,6 @@ header a[href="#"]:hover {
     color:#f66;
 }
 #info {
-    display:none;
     position:fixed;
     top:0;
     left:0;
@@ -95,6 +94,9 @@ header a[href="#"]:hover {
    height:auto;
    top:0; left:0; right:0; bottom:0;
    margin:auto;
+}
+#info h1 {
+    text-shadow:none;
 }
 #info div p {
     margin:1em 0.5em;
