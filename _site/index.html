@@ -10,19 +10,23 @@
     <header>
         <h1>Glitchy3bitDither</h1>
         <nav>
-            <a href="/Glitchy3bitdither/index.html">Demo</a>
-            <a href="/Glitchy3bitdither/glitch.html">Glitch Only</a>
-            <a href="/Glitchy3bitdither/GlitchCruiser.html">Glitch Cruiser</a>
-            <a href="/Glitchy3bitdither/GlitchChooser.html">Glitch Chooser</a>
+            <a class="index" href="index.html">Demo</a>
+            <a class="glitch" href="glitch.html">Glitch Only</a>
+            <a class="GlitchCruiser" href="GlitchCruiser.html">Glitch Cruiser</a>
+            <a class="GlitchChooser" href="GlitchChooser.html">Glitch Chooser</a>
         </nav>
         <a href="#" id="info_btn">i</a>
     </header>
     <div id="info">
         <div>
-            <p>Original Implemented by Nolan Caudill, code on github <a href="https://github.com/mncaudill/3bitdither">here</a></p>
-            <p>"Enhanced" by JKirchartz, code also on github <a href="https://github.com/jkirchartz/Glitchy3bitdither">here</a></p>
-            <p>This runs completely client-side, using the FileReader and canvas APIs, your image isn't being uploaded to any server. If you have a decent browser, this should work. Also, you can right-click and save the result of the processing.</p>
+            <h1>Glitchy3bitDither</h1>
+            <p>This is a utility to mutilate images in unpredictable ways. It can randomly choose between algorithms, and many algorithms randomly mutate themselves.
+               You can choose different encodings, effects, and emulate several glitch techniques, resulting in aleatoric new images and hidden configurations.</p>
+            </p>
             <p>Check out some curated images at <a href="http://glitches.jkirchartz.com/">glitches.jkirchartz.com</a></p>
+            <p>This runs completely client-side, using the FileReader and canvas APIs, your image isn't being uploaded to any server. If you have a decent browser, this should work. Also, you can right-click and save the result of the processing.</p>
+            <p>Based on Nolan Caudill's <a href="https://github.com/mncaudill/3bitdither">3bitdither</a></p>
+            <p>Heavily modified by JKirchartz, <a href="https://github.com/jkirchartz/Glitchy3bitdither">code on github</a></p>
             <a href="#" id="close_btn">×</a>
         </div>
     </div>
@@ -83,8 +87,10 @@
                 // toggle
                 if(info.style.display === "block"){
                     info.style.display = "none";
-                }else{
+                }else if(info.style.display === "none"){
                     info.style.display = "block";
+                }else{
+                    info.style.display = "none";
                 }
                 return false;
             }
@@ -93,6 +99,10 @@
             // set current page hilight for nav
             // depends on having a file extension
             document.body.id = location.pathname.slice(location.pathname.lastIndexOf('/')+1,location.pathname.lastIndexOf('.'));
+            if(document.referrer.indexOf('Glitchy3bitdither')){
+                /* hide info if you got here from an internal link */
+                info.style.display = "none";
+            }
         }
     </script>
 </body>

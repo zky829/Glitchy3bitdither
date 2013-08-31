@@ -18,7 +18,7 @@ header {
    box-shadow:0.1em 0.1em 0.1em 0.1em rgba(0,0,0,0.8);
    overflow:hidden;
 }
-h1, nav {display:inline-block;padding-top:0;}
+header h1, nav {display:inline-block;padding-top:0;}
 h1 {
    margin-right:1em;
    text-shadow:0.1em 0.1em 0.1em rgba(0,0,0,0.5);
@@ -76,7 +76,6 @@ header a[href="#"]:hover {
     color:#f66;
 }
 #info {
-    display:none;
     position:fixed;
     top:0;
     left:0;
@@ -91,13 +90,20 @@ header a[href="#"]:hover {
    display:table;
    background:#eee;
    border-radius:0.2em;
-   max-width:30em;
+   max-width:32em;
    height:auto;
    top:0; left:0; right:0; bottom:0;
    margin:auto;
+   padding:1em 0.5em;
 }
-#info div p {
-    margin:1em 0.5em;
+#info p {
+   padding:0.5em 0;
+}
+#info p:last-of-type {
+   margin-bottom:1em;
+}
+#info h1 {
+    text-shadow:none;
 }
 #info a[href="#"] {
     position:absolute;
@@ -123,6 +129,6 @@ header a[href="#"]:hover {
     background:#f44;
     color:#fff;
 }
-#form {width:50%;margin:1em auto;border:0.02em solid #AAA;}
+main h1, h2, main p, #form {width:50%;margin:1em auto;}
 #output { width:100%; }
 #output img {display:inline;width:33%;margin:0.5em;border:0.02em solid #AAA;}

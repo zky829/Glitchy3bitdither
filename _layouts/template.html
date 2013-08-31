@@ -56,12 +56,9 @@
             // set current page hilight for nav
             // depends on having a file extension
             document.body.id = location.pathname.slice(location.pathname.lastIndexOf('/')+1,location.pathname.lastIndexOf('.'));
-            if(document.referrer != ''){
+            if(document.referrer.indexOf('Glitchy3bitdither')){
                 /* hide info if you got here from an internal link */
-                var url = "" + document.referrer;
-                if(url.contains('Glitchy3bitdither')){
-                    info.style.display = "none";
-                }
+                info.style.display = "none";
             }
         }
     </script>
