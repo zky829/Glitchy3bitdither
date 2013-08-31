@@ -130,5 +130,6 @@ header a[href="#"]:hover {
     color:#fff;
 }
 main h1, h2, main p, #form {width:50%;margin:1em auto;}
+#form > * { display:block; }
 #output { width:100%; }
 #output img {display:inline;width:33%;margin:0.5em;border:0.02em solid #AAA;}
