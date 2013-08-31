@@ -23,7 +23,7 @@ h1 {
    margin-right:1em;
    text-shadow:0.1em 0.1em 0.1em rgba(0,0,0,0.5);
 }
-header a {
+header a, button {
    display:inline-block;
    border:1px solid #666;
    background:#444;
@@ -32,11 +32,14 @@ header a {
    text-decoration:none;
    border-radius:0.2em;
 }
-header a:hover {
+header a:hover, button:hover {
    color:#eee;
    border:1px solid #999;
    box-shadow:0.1em 0.1em 0.1em 0.1em rgba(0,0,0,0.8);
    text-shadow:0.1em 0.1em 0.1em rgba(0,0,0,0.7);
+}
+header a:active, button:active {
+    box-shadow:none;
 }
 header a[href="#"] {
     border-color:#0ac;
@@ -130,7 +133,7 @@ header a[href="#"]:hover {
     color:#fff;
 }
 main h1, h2, main p, #form {max-width:60%;margin:1em auto;}
-#form select, #form input, #form button { display:block;margin:0.5em;padding:0.5em;}
+#form select, #form input, #form button { display:block;margin:0.5em;}
 #form button { display:inline-block; }
 #output { width:100%; }
 #output img {display:inline;max-width:calc(100% - 1em - 2px);margin:0.5em;border:2px solid #AAA;}
