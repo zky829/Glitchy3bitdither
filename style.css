@@ -59,7 +59,7 @@ header a[href="#"] {
 header a[href="#"]:hover {
     color:#7de;
 }
-#index a[href="index.html"]{
+#index a[href="index.html"], #index a[href=""]{
     border-color:#944;
     color:#f66;
 }
