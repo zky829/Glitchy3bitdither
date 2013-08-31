@@ -94,7 +94,10 @@ header a[href="#"]:hover {
    height:auto;
    top:0; left:0; right:0; bottom:0;
    margin:auto;
-   padding:0.5em;
+   padding:1em 0.5em;
+}
+#info p {
+   padding:0.5em 0;
 }
 #info h1 {
     text-shadow:none;
