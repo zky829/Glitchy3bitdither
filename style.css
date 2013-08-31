@@ -99,6 +99,9 @@ header a[href="#"]:hover {
 #info p {
    padding:0.5em 0;
 }
+#info p:last-child {
+   margin-bottom:1em;
+}
 #info h1 {
     text-shadow:none;
 }
