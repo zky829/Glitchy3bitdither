@@ -762,25 +762,42 @@ function rgb_glitch(imageData) {
     width = imageData.width,
     height = imageData.height,
     mm = randminmax(10,width-10),
-    opt = mm[1] % 3;
+    opt = mm[1] % 3,
+    dir = Math.random() > 0.5 ? true : false;
     for (y=0; y<height; y++) {
         for (x=0; x<width; x++) {
             var index = ((width * y) + x) * 4,
             red = data[index],
             green = data[index + 1],
             blue = data[index + 2];
-            if (opt===0){
-                data[index + mm[0]] = red;
-                data[index + mm[0]] = green;
-                data[index] = blue;
-            }else if(opt===1){
-                data[index] = red;
-                data[index + mm[0]] = green;
-                data[index + mm[0]] = blue;
-            } else {
-                data[index + mm[0]] = red;
-                data[index] = green;
-                data[index + mm[0]] = blue;
+            if(dir){
+                if (opt===0){
+                    data[index + mm[0]] = red;
+                    data[index + mm[0]] = green;
+                    data[index] = blue;
+                }else if(opt===1){
+                    data[index] = red;
+                    data[index + mm[0]] = green;
+                    data[index + mm[0]] = blue;
+                } else {
+                    data[index + mm[0]] = red;
+                    data[index] = green;
+                    data[index + mm[0]] = blue;
+                }
+            }else{
+                if (opt===0){
+                    data[index - mm[0]] = red;
+                    data[index - mm[0]] = green;
+                    data[index] = blue;
+                }else if(opt===1){
+                    data[index] = red;
+                    data[index - mm[0]] = green;
+                    data[index - mm[0]] = blue;
+                } else {
+                    data[index - mm[0]] = red;
+                    data[index] = green;
+                    data[index - mm[0]] = blue;
+                }
             }
         }
     }
