@@ -54,13 +54,26 @@
             info_btn.onclick = modal;
             close_btn.onclick = modal;
             // set current page hilight for nav
-            // depends on having a file extension
             document.body.id = location.pathname.slice(location.pathname.lastIndexOf('/')+1,location.pathname.lastIndexOf('.')) || 'index';
             if(document.referrer.indexOf('/Glitchy3bitdither')>0){
                 /* hide info if you got here from an internal link */
                 info.style.display = "none";
             }
         }
+        function loadScript(src){
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.async = true;
+            script.src = src;
+
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(script, s);
+        }
+        var _gaq = _gaq || [],
+            protocol = document.location.protocol;
+        _gaq.push(['_setAccount', 'UA-21180085-1']);
+        _gaq.push(['_trackPageview']);
+        loadScript(('https:' == protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js');
     </script>
 </body>
 </html>
