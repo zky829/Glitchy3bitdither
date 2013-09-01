@@ -60,7 +60,7 @@ layout: template
                 /* generated from Original */
             }
         }
-        document.getElementsBySelector('#output img')[0].addEventListener('click', function(){ generate(this); }, false);
+        document.querySelector('#output img')[0].addEventListener('click', function(){ generate(this); }, false);
     }
     document.getElementById('uploader').addEventListener('change', handleFileSelect, false);
 </script>
