@@ -60,7 +60,7 @@ layout: template
     document.getElementById('output').onclick = function(e){
         if (e.target.tagName.toLowerCase() == 'img'){
             generate(e.target);
-            e.preDefault();
+            e.preventDefault();
         }
     };
     document.getElementById('uploader').addEventListener('change', handleFileSelect, false);
