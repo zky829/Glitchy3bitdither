@@ -35,10 +35,6 @@ layout: template
     function generate(img){
         /* cleanup */
         document.getElementById("output").innerHTML = "";
-        var imgs = document.getElementsByTagName("img");
-        for(var i = 0; i < imgs.length; i++){
-            imgs[i].destroy();
-        }
         /* setup */
         var orig = img;
         var width = img.width;
@@ -60,12 +56,12 @@ layout: template
                 /* generated from Original */
             }
         }
-        document.getElementById('output').onclick = function(e){
-            if (e.target.tagName == 'img'){
-                generate(e.target);
-                e.preDefault();
-            }
-        }
     }
+    document.getElementById('output').onclick = function(e){
+        if (e.target.tagName == 'img'){
+            generate(e.target);
+            e.preDefault();
+        }
+    };
     document.getElementById('uploader').addEventListener('change', handleFileSelect, false);
 </script>
