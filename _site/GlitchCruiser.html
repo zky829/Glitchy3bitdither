@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Glitchy3bitDither</title>
-    <link media="all" rel="stylesheet" href="{{ site.baseurl }}/style.css" type="text/css" />
-    <script src="{{ site.baseurl }}/GlitchyDither.js" type="text/javascript"></script>
+    <link media="all" rel="stylesheet" href="/Glitchy3bitdither/style.css" type="text/css" />
+    <script src="/Glitchy3bitdither/GlitchyDither.js" type="text/javascript"></script>
 </head>
 <body>
     <header>
@@ -32,7 +32,70 @@
         </div>
     </div>
     <main>
-    {{ content }}
+    <h1>Glitch Cruiser</h1>
+<p>When you upload an image it appears in the center surrounded by glitchy alternatives.
+    If one of these images suits your fancy, click on it and it will become the new source for the 
+    next round of glitches. If you do not like any of the suggested glitches, click on the center
+    image, and the alternatives will change, but your source will not.</p>
+<div id="form">
+    <input type="file" id="uploader">
+    <label>Enable experimental functions? <input type="checkbox" id="experimental" /></label>
+</div>
+<div id="output"></div>
+<script>
+    function handleFileSelect(e) {
+        var file = e.target.files[0];
+        // Only process image files.
+        if (!file.type.match('image.*')) {
+            return;
+        }
+        var reader = new FileReader();
+        // Closure to capture the file information.
+        reader.onload = function(e) {
+            var img = document.createElement("img");
+            img.onload = function() {
+                generate(img);
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+        document.getElementById("output").innerHTML = "";
+    }
+
+    function generate(img){
+        /* cleanup */
+        document.getElementById("output").innerHTML = "";
+        /* setup */
+        var orig = img;
+        var width = img.width;
+        var height = img.height;
+        var canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        /* execute */
+        for (var i = 1; i < 10;i++){
+            if(i==5 && typeof img == "object"){
+                ctx.drawImage(orig,0,0);
+                drawDitherResult2(canvas,original,"original");
+                /* Original Image */
+            }else{
+                ctx.drawImage(img, 0, 0);
+                drawDitherResult2(canvas,seqGlitch,"seqGlitch");
+                /* generated from Original */
+            }
+        }
+    }
+    document.getElementById('output').onclick = function(e){
+        if (e.target.tagName.toLowerCase() == 'img'){
+            generate(e.target);
+            e.preventDefault();
+        }
+    };
+    document.getElementById('uploader').addEventListener('change', handleFileSelect, false);
+</script>
+
     </main>
     <script>
         window.onload = function(){
