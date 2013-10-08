@@ -31,9 +31,7 @@ layout: template
                 drawDitherResult(canvas, function(i) {
                     return i;
                 }, 'original');
-                var exp = [sslice, sslice2, sslice3,AnySort,AnyShortSort,rgb_glitch,invert,shortsort,shortbettersort,shortdumbsort,sort,bettersort,dumbsort,fractalGhosts,fractalGhosts2,DrumrollHorizontal,DrumrollVertical],
-                    orig = [focusImage, slice, slice2, slice3, ditherBitshift, colorShift, ditherRandom, ditherRandom2, ditherBayer, ditherBayer3, redShift, greenShift, blueShift, superShift, superSlice, superSlice2, ditherAtkinsons, ditherFloydSteinberg, ditherHalftone, dither8Bit],
-                    functions = document.getElementById("experimental").checked ? orig.concat(exp) : orig;
+                var functions = document.getElementById("experimental").checked ? orig.concat(exp) : orig;
                 for(var i = 0;i<functions.length;i++){
                     console.log(i,functions[i]);
                     ctx.drawImage(img, 0, 0);
