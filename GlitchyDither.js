@@ -602,6 +602,39 @@ function pixelSort(imageData) {
 }
 
 
+function XYtemplate(imageData) {
+    var data = new Uint32Array(imageData.data),
+    width = imageData.width, height = imageData.height;
+    for(var y = 0; y < height; ++y){
+        for (var x = 0; x < width; ++x) {
+            /* do stuff to a 32bit pixel */
+            data[y * width + x] = 255 - data[y * width + x];
+        }
+    }
+    imageData.data.set(data);
+    return imageData;
+}
+function RowTemplate(imageData) {
+    var data = new Uint32Array(imageData.data),
+    width = imageData.width, height = imageData.height;
+    for(var i = 0, row; i < data.length; i += width) {
+        row = Array.apply([], data.subarray(i,i+width));
+        /* do stuff to an array of 32bit pixels */
+        for(var j = 0, l = row.length; j < l; j++){
+            row[j] = 255 - row[j];
+        }
+        data.set(row,i);
+    }
+    imageData.data.set(data);
+}
+function templateTest(imageData) {
+    var xy = XYtemplate(imageData),
+        row = RowTemplate(imageData);
+    console.log(xy,row)
+    imageData = Math.random() > 0.5 ? xy : row;
+    return imageData;
+}
+
 function focusImage(imageData) {
     var data = imageData.data,
     height = imageData.height,
@@ -984,7 +1017,7 @@ function DrumrollHorizontal(imageData) {
 }
 
 /* global arrays of functions */
-var exp = [AnySort,AnyShortSort,shortsort,shortbettersort,shortdumbsort,sort,bettersort,dumbsort,fractalGhosts3,DrumrollHorizontalWave,DrumrollVerticalWave,slicesort,sortRows,randomSortRows,orSortRows,andSortRows,pixelSort],
+var exp = [AnySort,AnyShortSort,shortsort,shortbettersort,shortdumbsort,sort,bettersort,dumbsort,fractalGhosts3,DrumrollHorizontalWave,DrumrollVerticalWave,slicesort,sortRows,randomSortRows,orSortRows,andSortRows,pixelSort,templateTest],
     orig = [focusImage, rgb_glitch,invert, slice, slice2, slice3,sliceB, sliceB2, sliceB3, fractalGhosts, fractalGhosts2, DrumrollHorizontal, DrumrollVertical, ditherBitshift, colorShift, ditherRandom, ditherRandom2, ditherBayer, ditherBayer3, redShift, greenShift, blueShift, superShift, superSlice, superSlice2, ditherAtkinsons, ditherFloydSteinberg, ditherHalftone, dither8Bit];
 
 /* these run random set of functions */

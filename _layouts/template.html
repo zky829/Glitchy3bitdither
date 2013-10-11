@@ -48,15 +48,21 @@
                 }else if(info.style.display === "none"){
                     info.style.display = "block";
                 }else{
+                    // eh, it could happen
                     info.style.display = "none";
                 }
                 return false;
             }
             info_btn.onclick = modal;
             close_btn.onclick = modal;
+            /* keypress to kill modal */
+            window.addEventListener('keypress', function(){
+                info.style.display = "none";
+                this.removeEventListener('click',arguments.callee);
+            });
             // set current page hilight for nav
             document.body.id = location.pathname.slice(location.pathname.lastIndexOf('/')+1,location.pathname.lastIndexOf('.')) || 'index';
-            if(document.referrer.indexOf('/Glitchy3bitdither')==0){
+            if(document.referrer.indexOf('/Glitchy3bitdither') == -1){
                 /*  show info if you got here from an external link */
                 info.style.display = "block";
             }

@@ -86,6 +86,7 @@ header a[href="#"]:active, header a[href="#"]:hover {
     width:100%;
     background:rgba(0,0,0,0.7);
     z-index:3;
+    display:none;
 }
 #info div {
    position:absolute;
