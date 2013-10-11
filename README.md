@@ -2,6 +2,9 @@ Glitchy 3 Bit Dither
 ==============
 
 <h1>Glitchy3bitDither</h1>
+
+<a href="http://jkirchartz.com/Glitchy3bitdither" title="Demo" class="minibutton">Demo</a>
+
 <p>This is a utility to mutilate images in unpredictable ways. It can randomly choose between algorithms, and many algorithms randomly mutate themselves.
     You can choose different encodings, effects, and emulate several glitch techniques, resulting in aleatoric new images and hidden configurations.</p>
 </p>
