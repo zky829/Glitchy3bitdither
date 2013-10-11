@@ -1,14 +1,15 @@
 Glitchy 3 Bit Dither
 ==============
 
-<p>Originally, Nolan Caudill's demo used two different error-diffusion dithering algorithms: <a href="http://verlagmartinkoch.at/software/dither/index.html">Atkinson's</a> and the <a href="http://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering">Floyd-Steinberg</a>. Now it does more. So much more. ( Insert maniacal laughter )
-
-<p>This runs completely client-side, using the FileReader and canvas APIs. If you have a decent browser, this should work (probably). Also, you can right-click and save the result of the processing.</p>
-
-The increasingly attractive demo lives [here](http://jkirchartz.com/Glitchy3bitdither/)
-
-To see my curated images check out <http://glitches.jkirchartz.com/>
-
+<h1>Glitchy3bitDither</h1>
+<p>This is a utility to mutilate images in unpredictable ways. It can randomly choose between algorithms, and many algorithms randomly mutate themselves.
+    You can choose different encodings, effects, and emulate several glitch techniques, resulting in aleatoric new images and hidden configurations.</p>
+</p>
+<p>Check out some curated images at <a href="http://glitches.jkirchartz.com/">glitches.jkirchartz.com</a></p>
+<p>This runs completely client-side, using the FileReader and canvas APIs, your image isn't being uploaded to any server. If you have a decent browser, this should work. Also, you can right-click and save the result of the processing.</p>
+<p>Based on Nolan Caudill's <a href="https://github.com/mncaudill/3bitdither">3bitdither</a></p>
+<p>Heavily modified by JKirchartz, <a href="https://github.com/jkirchartz/Glitchy3bitdither">code on github</a></p>
+<p>Experimental functions may not be 100% stable, this is a work in progress.</p>
 
 ##Sample Code
 
