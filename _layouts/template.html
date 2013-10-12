@@ -18,7 +18,7 @@
         <a href="#" id="info_btn">i</a>
     </header>
     <div id="info">
-        <div>
+        <span>
             <h1>Glitchy3bitDither</h1>
             <p>This is a utility to mutilate images in unpredictable ways. It can randomly choose between algorithms, and many algorithms randomly mutate themselves.
                You can choose different encodings, effects, and emulate several glitch techniques, resulting in aleatoric new images and hidden configurations.</p>
@@ -29,7 +29,7 @@
             <p>Heavily modified by JKirchartz, <a href="https://github.com/jkirchartz/Glitchy3bitdither">code on github</a></p>
             <p>Experimental functions may not be 100% stable, this is a work in progress.</p>
             <a href="#" id="close_btn">×</a>
-        </div>
+        </span>
     </div>
     <main>
     {{ content }}
@@ -56,6 +56,12 @@
             info_btn.onclick = modal;
             close_btn.onclick = modal;
             /* keypress to kill modal */
+            info.onclick = function(e){
+                console.log(e);
+                if(e.target.id = "info" && e.target.nodeName == "DIV"){
+                    this.style.display = "none";
+                }
+            };
             window.addEventListener('keypress', function(){
                 info.style.display = "none";
                 this.removeEventListener('click',arguments.callee);

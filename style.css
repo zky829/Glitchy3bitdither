@@ -88,7 +88,7 @@ header a[href="#"]:active, header a[href="#"]:hover {
     z-index:3;
     display:none;
 }
-#info div {
+#info span {
    position:absolute;
    z-index:5;
    display:table;
