@@ -53,9 +53,9 @@ Check out the increasingly insane <a href="http://jkirchartz.com/Glitchy3bitdith
 7. Add Glitches:
   * move each "row" in opposite directions (1px at a time)
   * kaleidoscope
-
-
 8. Gimp or Photoshop/After Effects plugin/extension/script ( is canvas compatible with Adobe's JS system? )
+
+
 ##run locally
 The demo site in this repo is a [Jekyll](http://jekyllrb.com) project, to run locally install the gem &amp; run `jekyll --serve`.
 You can also use the `--auto` flag to make jekyll automatically update the site as files change.
