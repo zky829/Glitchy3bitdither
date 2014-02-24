@@ -1,0 +1,27 @@
+{
+  "name": "Glitchy3bitdither",
+  "version": "0.0.0",
+  "description": "Image Glitch effects",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JKirchartz/Glitchy3bitdither.git"
+  },
+  "keywords": [
+    "glitch",
+    "image",
+    "new",
+    "aesthetic",
+    "art",
+    "dither"
+  ],
+  "author": "JKirchartz",
+  "license": "Copyleft",
+  "bugs": {
+    "url": "https://github.com/JKirchartz/Glitchy3bitdither/issues"
+  },
+  "homepage": "https://github.com/JKirchartz/Glitchy3bitdither"
+}
