@@ -2,7 +2,7 @@
   "name": "Glitchy3bitdither",
   "version": "0.0.0",
   "description": "Image Glitch effects",
-  "main": "index.js",
+  "main": "glitchy.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,6 +18,9 @@
     "art",
     "dither"
   ],
+  "dependencies": {
+        "commander": "2.1.0"
+  },
   "author": "JKirchartz",
   "license": "Copyleft",
   "bugs": {
