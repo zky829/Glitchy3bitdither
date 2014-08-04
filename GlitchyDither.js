@@ -703,23 +703,11 @@ function slice3(imageData) {
 }
 function slicesort(imageData) {
     var width = imageData.width,
-    height = imageData.height,
-    data = imageData.data,
-    mm = slice_range(width,height),
-    cutend = mm[1],
-    cutstart = mm[0],
-    cut = data.subarray(cutstart, cutend),
-    da = [];
-    for (var i=0;i<cut.length;i+=4){
-        da[i] = [cut[i],cut[i+1],cut[i+2],cut[i+3]];
-    }
-    da.sort(colorSort)
-    for (var j=0;j<da.length;j+=4){
-        cut[j] = da[j][0];
-        cut[j+1] = da[j][1];
-        cut[j+2] = da[j][2];
-        cut[j+3] = da[j][3];
-    }
+        height = imageData.height,
+        data = new Uint32Array(imageData.data.buffer),
+        mm = slice_range(width,height),
+        cut = data.subarray(mm[0], mm[1]);
+    cut.sort(colorSort);
     data.set(cut, Math.floor(Math.random() * ((width * height * 4)-cut.length)));
     imageData.data.set(data);
     return imageData;
