@@ -586,7 +586,9 @@ function andSortRows(imageData) {
 }
 
 function pixelSort(imageData) {
-    var data = new Uint32Array(imageData.data.buffer);
+    var data = new Uint32Array(imageData.data.buffer),
+        width = imageData.width,
+	height = imageData.height;
     for(var i = 0, cut, da, mm; i < data.length; i += width) {
         mm = randminmax(i,i+width);
         da = Array.apply([], data.subarray(i+mm[0],i+mm[1]));
