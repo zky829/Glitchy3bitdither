@@ -540,6 +540,7 @@ function sortRows(imageData) {
     width = imageData.width, height = imageData.height;
     for (var i = 0, size = data.length+1; i < size; i += width) {
         var da = new Array(data.subarray(i,i+width));
+	console.log(da.length, data.length);
         da.sort(numericSort);
         data.set(da, i);
     }
