@@ -7,7 +7,6 @@ function drawDitherResult2(canvas, ditherer, text) {
     var ctx = canvas.getContext('2d');
     var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     var result = ditherer(imageData);
-    console.log(typeof result, result);
     ctx.putImageData(result, 0, 0);
     var img = document.createElement('img');
     img.src = canvas.toDataURL("image/png");
@@ -478,7 +477,6 @@ function sliceB(imageData) {
     cutend = mm[1],
     cutstart = mm[0];
     cut = data.subarray(cutstart, cutend);
-    console.log(data.length, cut.length);
     data.set(cut, Math.floor(Math.random() * ((width * height * 4)-cut.length)));
     return imageData;
 }
@@ -535,7 +533,6 @@ function shortsort(imageData) {
     sub = data.subarray(mm[0],mm[1]);
     var da = Array.apply( [], sub);
     da.sort(function(a,b){return (a-b)/4 - (a-b)/2;});
-    console.log(da,mm,sub);
     imageData.data.set(data);
     return imageData;
 }
@@ -546,7 +543,6 @@ function sortRows(imageData) {
         var da = Array.apply( [], data.subarray(i,i+width));
         da.sort(numericSort);
         data.set(da, i);
-        console.log(i,width,size);
     }
     imageData.data.set(data);
     return imageData;
@@ -633,7 +629,6 @@ function RowTemplate(imageData) {
 function templateTest(imageData) {
     var xy = XYtemplate(imageData),
         row = RowTemplate(imageData);
-    console.log(xy,row);
     imageData = Math.random() > 0.5 ? xy : row;
     return imageData;
 }
@@ -1116,7 +1111,7 @@ function glitch(imageData) {
             break;
         }
     }
-    console.log("glitch",hist);
+    console.log("glitch history",hist);
     return imageData;
 }
 var seqCounter = 0;
@@ -1124,7 +1119,7 @@ function seqGlitch(imageData) {
     var functions = document.getElementById("experimental").checked ? orig.concat(exp) : orig.slice(0),
         i = seqCounter%functions.length;
     seqCounter++;
-    console.log(functions[i].name,seqCounter);
+    console.log("seqGlitch", functions[i].name,seqCounter);
     return functions[i](imageData);
 }
 /*

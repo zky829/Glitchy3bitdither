@@ -33,7 +33,7 @@ layout: template
                 }, 'original');
                 var functions = document.getElementById("experimental").checked ? orig.concat(exp) : orig;
                 for(var i = 0;i<functions.length;i++){
-                    console.log(i,functions[i]);
+                    console.log(i,functions[i].name);
                     ctx.drawImage(img, 0, 0);
                     drawDitherResult(canvas,functions[i],functions[i].name);
                 }
