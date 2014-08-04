@@ -707,9 +707,10 @@ function slicesort(imageData) {
         height = imageData.height,
         data = new Uint32Array(imageData.data.buffer),
         mm = slice_range(width,height),
-        cut = new Array(data.subarray(mm[0], mm[1]));
+        cut = new Array(data.subarray(mm[0], mm[1])),
+	offset = Math.floor(Math.random() * ((width * height)-cut.length);
     cut.sort(numericSort);
-    data.set(cut, Math.floor(Math.random() * ((width * height * 4)-cut.length)));
+    data.set(cut, offset);
     imageData.data.set(data);
     return imageData;
 }
