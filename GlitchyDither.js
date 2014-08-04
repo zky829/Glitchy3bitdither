@@ -380,10 +380,9 @@ function sum(o){
 }
 function numericSort(a,b){return a-b;}
 function randomSort(a,b){return Math.random() > 0.5;}
-function colorSort(a,b){return sum(a)-sum(b);}
-function orSort(a,b){return a|b;}
-function xorSort(a,b){return a^b;}
-function andSort(a,b){return a&b;}
+function orSort(a,b){return 2147483647.5 - (a | b);}
+function xorSort(a,b){return 2147483647.5 - (a ^ b);}
+function andSort(a,b){return 2147483647.5 - (a & b);}
 /*
    function avg(o){
    var l = o.length;
@@ -707,7 +706,7 @@ function slicesort(imageData) {
         data = new Uint32Array(imageData.data.buffer),
         mm = slice_range(width,height),
         cut = data.subarray(mm[0], mm[1]);
-    cut.sort(colorSort);
+    cut.sort(numericSort);
     data.set(cut, Math.floor(Math.random() * ((width * height * 4)-cut.length)));
     imageData.data.set(data);
     return imageData;
@@ -843,15 +842,11 @@ function AnySort(imageData){
     }
 }
 function invert(imageData) {
-    var data = imageData.data;
+    var data = new Uint32Array(imageData.data.buffer);
     for(var i=0;i<data.length;i++){
-        if (i%4) {
-            continue;
-        } else {
-            data[i] = 255-data[i];
-        }
+            data[i] = ~ data[i] | 0xFF000000;
     }
-    imageData.data = data;
+    imageData.data.set(data);
     return imageData;
 }
 function rgb_glitch(imageData) {
