@@ -528,56 +528,55 @@ function ditherBitshift(imageData) {
     return imageData;
 }
 function shortsort(imageData) {
-    var data = imageData.data,
+    var data = new Uint32Array(imageData.data.buffer),
     mm = slice_range(imageData.width,imageData.height),
-    sub = data.subarray(mm[0],mm[1]);
-    var da = Array.apply( [], sub);
+    da = new Array(data.subarray(mm[0],mm[1]));
     da.sort(function(a,b){return (a-b)/4 - (a-b)/2;});
-    imageData.data.set(data);
+    imageData.data.set(data.buffer);
     return imageData;
 }
 function sortRows(imageData) {
-    var data = new Uint32Array(imageData.data),
+    var data = new Uint32Array(imageData.data.buffer),
     width = imageData.width, height = imageData.height;
     for (var i = 0, size = data.length+1; i < size; i += width) {
-        var da = Array.apply( [], data.subarray(i,i+width));
+        var da = new Array(data.subarray(i,i+width));
         da.sort(numericSort);
         data.set(da, i);
     }
-    imageData.data.set(data);
+    imageData.data.set(data.buffer);
     return imageData;
 }
 function randomSortRows(imageData) {
-    var data = new Uint32Array(imageData.data),
+    var data = new Uint32Array(imageData.data.buffer),
     width = imageData.width, height = imageData.height;
     for (var i = 0, size = data.length; i < size; i += width) {
-        var da = Array.apply( [], data.subarray(i,i+width));
+        var da = new Array(data.subarray(i,i+width));
         da.sort(randomSort);
         data.set(da, i);
     }
-    imageData.data.set(data);
+    imageData.data.set(data.buffer);
     return imageData;
 }
 function orSortRows(imageData) {
-    var data = new Uint32Array(imageData.data),
+    var data = new Uint32Array(imageData.data.buffer),
     width = imageData.width, height = imageData.height;
     for (var i = 0, size = data.length; i < size; i += width) {
-        var da = Array.apply( [], data.subarray(i,i+width));
+        var da = new Array(data.subarray(i,i+width));
         da.sort(orSort);
         data.set(da, i);
     }
-    imageData.data.set(data);
+    imageData.data.set(data.buffer);
     return imageData;
 }
 function andSortRows(imageData) {
-    var data = new Uint32Array(imageData.data),
+    var data = new Uint32Array(imageData.data.buffer),
     width = imageData.width, height = imageData.height;
     for (var i = 0, size = data.length; i < size; i += width) {
-        var da = Array.apply( [], data.subarray(i,i+width));
+        var da = new Array(data.subarray(i,i+width));
         da.sort(andSort);
         data.set(da, i);
     }
-    imageData.data.set(data);
+    imageData.data.set(data.buffer);
     return imageData;
 }
 
@@ -775,8 +774,7 @@ function fractalGhosts3(imageData) {
 function shortbettersort(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
     mm = slice_range(imageData.width,imageData.height),
-    sub = data.subarray(mm[0],mm[1]),
-    da = Array.apply( [], sub);
+    da = new Array(data.subarray(mm[0],mm[1]));
     da.sort(numericSort);
     imageData.data.set(da,mm[0]);
     return imageData;
@@ -784,8 +782,7 @@ function shortbettersort(imageData) {
 function shortdumbsort(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
     mm = slice_range(imageData.width,imageData.height),
-    sub = data.subarray(mm[0],mm[1]),
-    da = Array.apply( [], sub);
+    da = new Array(data.subarray(mm[0],mm[1]));
     da.sort();
     imageData.data.set(da,mm[0]);
     return imageData;
@@ -804,8 +801,7 @@ function AnyShortSort(imageData){
 function sort(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
     mm = randminmax(0,data.length),
-    sub = data.subarray(mm[0],mm[1]),
-    da = Array.apply( [], sub);
+    da = new Array(data.subarray(mm[0],mm[1]));
     da.sort(function(a,b){return (a-b)/4 - (a-b)/2;});
     //bitwise produces some cool stuff, but generally crashes my browser :(
     //da.sort(function(a,b){return a^b;});
@@ -816,8 +812,7 @@ function sort(imageData) {
 function bettersort(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
     mm = randminmax(0,data.length),
-    sub = data.subarray(mm[0],mm[1]),
-    da = Array.apply( [], sub);
+    da = new Array(data.subarray(mm[0],mm[1]));
     da.sort(numericSort);
     imageData.data.set(da,mm[0]);
     return imageData;
@@ -825,8 +820,7 @@ function bettersort(imageData) {
 function dumbsort(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
     mm = randminmax(0,data.length),
-    sub = data.subarray(mm[0],mm[1]),
-    da = Array.apply( [], sub);
+    da = new Array(data.subarray(mm[0],mm[1]));
     da.sort();
     imageData.data.set(da,mm[0]);
     return imageData;
