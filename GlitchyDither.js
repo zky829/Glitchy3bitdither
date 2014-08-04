@@ -846,7 +846,7 @@ function invert(imageData) {
     for(var i=0;i<data.length;i++){
             data[i] = ~ data[i] | 0xFF000000;
     }
-    imageData.data.set(data);
+    imageData.data.set(data.buffer);
     return imageData;
 }
 function rgb_glitch(imageData) {
