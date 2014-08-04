@@ -587,15 +587,16 @@ function andSortRows(imageData) {
 }
 
 function pixelSort(imageData) {
-    var data = new Uint32Array(imageData.data),
-    width = imageData.width, height = imageData.height;
+    var data = new Uint32Array(imageData.data.buffer);
     for(var i = 0, cut, da, mm; i < data.length; i += width) {
-        cut = data.subarray(i,i+width);
-        mm = randminmax(0,width-1);
-        da = Array.apply([], cut.subarray(mm[0],mm[1]));
+        mm = randminmax(i,i+width);
+        da = Array.apply([], data.subarray(i+mm[0],i+mm[1]));
         da.sort(numericSort);
-        cut.set(da,mm[0]);
-        data.set(cut,i);
+        try{
+            data.set(da,i+mm[0]-1);
+        }catch(e){
+           console.log(e,i+mm[0],i+mm[1]);
+        }
     }
     imageData.data.set(data);
     return imageData;
@@ -603,34 +604,35 @@ function pixelSort(imageData) {
 
 
 function XYtemplate(imageData) {
-    var data = new Uint32Array(imageData.data),
-    width = imageData.width, height = imageData.height;
+    var data = new Uint32Array(imageData.data.buffer),
+        width = imageData.width, height = imageData.height;
     for(var y = 0; y < height; ++y){
         for (var x = 0; x < width; ++x) {
             /* do stuff to a 32bit pixel */
-            data[y * width + x] = 255 - data[y * width + x];
+            data[y * width + x] = ~ data[y * width + x] | 0xFF000000;
         }
     }
     imageData.data.set(data);
     return imageData;
 }
 function RowTemplate(imageData) {
-    var data = new Uint32Array(imageData.data),
-    width = imageData.width, height = imageData.height;
+    var data = new Uint32Array(imageData.data.buffer),
+        width = imageData.width, height = imageData.height;
     for(var i = 0, row; i < data.length; i += width) {
         row = Array.apply([], data.subarray(i,i+width));
         /* do stuff to an array of 32bit pixels */
         for(var j = 0, l = row.length; j < l; j++){
-            row[j] = 255 - row[j];
+            row[j] = ~ row[j] | 0xFF000000;
         }
         data.set(row,i);
     }
     imageData.data.set(data);
+    return imageData;
 }
 function templateTest(imageData) {
     var xy = XYtemplate(imageData),
         row = RowTemplate(imageData);
-    console.log(xy,row)
+    console.log(xy,row);
     imageData = Math.random() > 0.5 ? xy : row;
     return imageData;
 }
