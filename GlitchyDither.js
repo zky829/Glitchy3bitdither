@@ -587,12 +587,12 @@ function pixelSort(imageData) {
 	height = imageData.height;
     for(var i = 0, cut, da, mm; i < data.length; i += width) {
         mm = randminmax(i,i+width);
-        da = Array.apply([], data.subarray(i+mm[0],i+mm[1]));
+        da = Array.apply([], data.subarray(mm[0],mm[1]));
         da.sort(numericSort);
         try{
-            data.set(da,i+mm[0]);
+            data.set(da,mm[0]);
         }catch(e){
-           console.log(e,i+mm[0], da.length, data.length);
+           console.log(e,mm[0], da.length, data.length);
         }
     }
     imageData.data.set(data);
