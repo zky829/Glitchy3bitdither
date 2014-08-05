@@ -592,7 +592,7 @@ function pixelSort(imageData) {
         try{
             data.set(da,i+mm[0]);
         }catch(e){
-           console.log(e,i+mm[0],i+mm[1]);
+           console.log(e,i+mm[0], da.length, data.length);
         }
     }
     imageData.data.set(data);
