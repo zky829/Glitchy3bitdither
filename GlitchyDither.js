@@ -22,7 +22,7 @@ function drawDitherResult(canvas, ditherer, text) {
     var img = document.createElement('img');
     img.src = canvas.toDataURL("image/png");
     //    img.onclick = testImage(this);
-    h2 = document.createElement('h2');
+    var h2 = document.createElement('h2');
     h2.innerText = text;
     var output = document.getElementById("output");
     output.appendChild(h2);
@@ -43,15 +43,15 @@ function adjustPixelError(data, i, error, multiplier) {
 function dither8Bit(imageData) {
     var width = imageData.width,
     height = imageData.height,
-    data = imageData.data;
-    size = 4;
-    for (y = 0; y < height; y += size) {
-        for (x = 0; x < width; x += size) {
+    data = imageData.data,
+    size = 4, sum_r, sum_g, sum_b;
+    for (var y = 0; y < height; y += size) {
+        for (var x = 0; x < width; x += size) {
             sum_r = 0;
             sum_g = 0;
             sum_b = 0;
-            for (s_y = 0; s_y < size; s_y++) {
-                for (s_x = 0; s_x < size; s_x++) {
+            for (var s_y = 0; s_y < size; s_y++) {
+                for (var s_x = 0; s_x < size; s_x++) {
                     i = 4 * (width * (y + s_y) + (x + s_x));
                     sum_r += data[i];
                     sum_g += data[i + 1];
@@ -61,8 +61,8 @@ function dither8Bit(imageData) {
             avg_r = (sum_r / (size * size)) > 127 ? 0xff : 0;
             avg_g = (sum_g / (size * size)) > 127 ? 0xff : 0;
             avg_b = (sum_b / (size * size)) > 127 ? 0xff : 0;
-            for (s_y = 0; s_y < size; s_y++) {
-                for (s_x = 0; s_x < size; s_x++) {
+            for (var s_y = 0; s_y < size; s_y++) {
+                for (var s_x = 0; s_x < size; s_x++) {
                     i = 4 * (width * (y + s_y) + (x + s_x));
                     data[i] = avg_r;
                     data[i + 1] = avg_g;
@@ -83,8 +83,8 @@ function ditherHalftone(imageData) {
             sum_r = sum_g = sum_b = 0;
             indexed = [];
             count = 0;
-            for (s_y = 0; s_y < 3; s_y++) {
-                for (s_x = 0; s_x < 3; s_x++) {
+            for (var s_y = 0; s_y < 3; s_y++) {
+                for (var s_x = 0; s_x < 3; s_x++) {
                     i = 4 * (width * (y + s_y) + (x + s_x));
                     sum_r += data[i];
                     sum_g += data[i + 1];
@@ -486,7 +486,7 @@ function sliceB2(imageData) {
     height = imageData.height,
     data = imageData.data;
     for (var i = 0, l = (Math.random() * 11); i < l; i++) {
-        var mm = slice_range(width,height);
+        var mm = slice_range(width,height),
         cutend = mm[1],
         cutstart = mm[0];
         cut = data.subarray(cutstart, cutend);
@@ -500,7 +500,7 @@ function sliceB3(imageData) {
     height = imageData.height,
     data = imageData.data;
     for (var i = 0, l = (Math.random() * 20); i < l; i++) {
-        var mm = slice_range(width,height);
+        var mm = slice_range(width,height),
         cutend = mm[1],
         cutstart = mm[0],
         cut = data.subarray(cutstart, cutend);
@@ -590,7 +590,7 @@ function pixelSort(imageData) {
         da = Array.apply([], data.subarray(i+mm[0],i+mm[1]));
         da.sort(numericSort);
         try{
-            data.set(da,i+mm[0]-1);
+            data.set(da,i+mm[0]);
         }catch(e){
            console.log(e,i+mm[0],i+mm[1]);
         }
@@ -851,8 +851,8 @@ function rgb_glitch(imageData) {
     mm = randminmax(10,width-10),
     opt = mm[1] % 3,
     dir = Math.random() > 0.5 ? true : false;
-    for (y=0; y<height; y++) {
-        for (x=0; x<width; x++) {
+    for (var y=0; y<height; y++) {
+        for (var x=0; x<width; x++) {
             var index = ((width * y) + x) * 4,
             red = data[index],
             green = data[index + 1],
@@ -860,28 +860,28 @@ function rgb_glitch(imageData) {
             if(dir){
                 if (opt===0){
                     data[index + mm[0]] = red;
-                    data[index + mm[0]] = green;
+                    data[index + mm[0] + 1] = green;
                     data[index] = blue;
                 }else if(opt===1){
                     data[index] = red;
-                    data[index + mm[0]] = green;
+                    data[index + mm[0] + 1] = green;
                     data[index + mm[0]] = blue;
                 } else {
                     data[index + mm[0]] = red;
-                    data[index] = green;
+                    data[index + 1] = green;
                     data[index + mm[0]] = blue;
                 }
             }else{
                 if (opt===0){
-                    data[index - mm[0]] = red;
+                    data[index - mm[0] + 1] = red;
                     data[index - mm[0]] = green;
                     data[index] = blue;
                 }else if(opt===1){
-                    data[index] = red;
+                    data[index + 1] = red;
                     data[index - mm[0]] = green;
                     data[index - mm[0]] = blue;
                 } else {
-                    data[index - mm[0]] = red;
+                    data[index - mm[0] + 1] = red;
                     data[index] = green;
                     data[index - mm[0]] = blue;
                 }
