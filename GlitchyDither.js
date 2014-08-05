@@ -590,7 +590,9 @@ function pixelSort(imageData) {
         da = Array.apply([], data.subarray(mm[0],mm[1]));
         da.sort(numericSort);
         try{
-            data.set(da,mm[0]);
+	    for(var i = mm[0], j = 0; i < mm[1]; i ++, j++){
+                data.set(i,da[j]);
+	    }
         }catch(e){
            console.log(e,mm[0], da.length, data.length);
         }
