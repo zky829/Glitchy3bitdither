@@ -585,13 +585,14 @@ function pixelSort(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
         width = imageData.width,
 	height = imageData.height;
-    for(var i = 0, cut, da, mm; i < data.length; i += width) {
+    for(var i = 0, da, mm; i < data.length; i += width) {
         mm = randminmax(i,i+width);
         da = Array.apply([], data.subarray(mm[0],mm[1]));
         da.sort(numericSort);
         try{
-	    for(var x = mm[0], j = 0; x < mm[1]; x ++, j++){
+	    for(var x = mm[0], j = 0; x < mm[1]; x ++){
                 data.set(x,da[j]);
+		j++;
 	    }
         }catch(e){
            console.log(e,mm[0], da.length, data.length);
