@@ -258,7 +258,7 @@ function ditherBayer(imageData) {
     var width = imageData.width,
     height = imageData.height,
     data = imageData.data,
-    /* I added in more threshold maps, and the randomizer, the rest is stock - joel */
+    /* added more threshold maps and the randomizer, the rest is stock */
     threshold_maps = [
         [
             [3, 7, 4],
@@ -300,7 +300,7 @@ function ditherBayer3(imageData) {
     var width = imageData.width,
     height = imageData.height,
     data = imageData.data,
-    /* I added in more threshold maps, and the randomizer - joel */
+    /* adding in more threshold maps, and the randomizer */
     threshold_maps = [
         [
             [3, 7, 4],
@@ -329,7 +329,7 @@ function ditherBayer3(imageData) {
     for (var y = 0; y < height; y++) {
         for (var x = 0; x < width; x++) {
             i = 4 * (y * width + x);
-            /* and applied the tranformation to each color - joel */
+            /* apply the tranformation to each color */
             data[i] = ((data[i] * 17) / 255) < threshold_map[x % size][y % size] ? 0 : 0xff;
             data[i + 1] = ((data[i + 1] * 17) / 255) < threshold_map[x % size][y % size] ? 0 : 0xff;
             data[i + 2] = ((data[i + 2] * 17) / 255) < threshold_map[x % size][y % size] ? 0 : 0xff;
@@ -590,8 +590,8 @@ function pixelSort(imageData) {
         da = Array.apply([], data.subarray(mm[0],mm[1]));
         da.sort(numericSort);
         try{
-	    for(var i = mm[0], j = 0; i < mm[1]; i ++, j++){
-                data.set(i,da[j]);
+	    for(var x = mm[0], j = 0; x < mm[1]; x ++, j++){
+                data.set(x,da[j]);
 	    }
         }catch(e){
            console.log(e,mm[0], da.length, data.length);
