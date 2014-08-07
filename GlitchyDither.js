@@ -351,10 +351,14 @@ function randminmax(min,max){
     }
     return [randA,randB];
 }
-function slice_range(width,height){
+function slice_range(width,height,depth){
+    var multiplier = 4; // 8-bit needs to be multiplied by 4 to get correct pixel range
+    if(depth === 32){
+        multiplier = 1; // 32-bit already has correct pixel range
+    }
     var opt = (Math.random() * 1001) % 4,
         x=0,y=0,
-        px = (width*height*4),
+        px = (width*height*multiplier),
         ratio=(Math.random()>0.5) ? 1.7 : 1.61803; // cheap approximation of phi, or actual phi
     if(opt==1){
         x = Math.floor((Math.random() * px));
@@ -473,7 +477,7 @@ function sliceB(imageData) {
     var width = imageData.width,
     height = imageData.height,
     data = imageData.data,
-    mm = slice_range(width,height),
+    mm = slice_range(width,height,8),
     cutend = mm[1],
     cutstart = mm[0];
     cut = data.subarray(cutstart, cutend);
@@ -486,7 +490,7 @@ function sliceB2(imageData) {
     height = imageData.height,
     data = imageData.data;
     for (var i = 0, l = (Math.random() * 11); i < l; i++) {
-        var mm = slice_range(width,height),
+        var mm = slice_range(width,height,8),
         cutend = mm[1],
         cutstart = mm[0];
         cut = data.subarray(cutstart, cutend);
@@ -500,7 +504,7 @@ function sliceB3(imageData) {
     height = imageData.height,
     data = imageData.data;
     for (var i = 0, l = (Math.random() * 20); i < l; i++) {
-        var mm = slice_range(width,height),
+        var mm = slice_range(width,height,8),
         cutend = mm[1],
         cutstart = mm[0],
         cut = data.subarray(cutstart, cutend);
@@ -529,7 +533,7 @@ function ditherBitshift(imageData) {
 }
 function shortsort(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
-    mm = slice_range(imageData.width,imageData.height),
+    mm = slice_range(imageData.width,imageData.height, 32),
     da = Array.apply([], data.subarray(mm[0],mm[1]));
     da.sort(function(a,b){return (a-b)/4 - (a-b)/2;});
     imageData.data.set(data.buffer);
@@ -539,7 +543,7 @@ function slicesort(imageData) {
     var width = imageData.width,
         height = imageData.height,
         data = new Uint32Array(imageData.data.buffer),
-        mm = slice_range(width,height);
+        mm = slice_range(width,height,32);
         var cut = data.subarray(mm[0], mm[1]),
 	offset = Math.floor((Math.random() * (width * height))-cut.length);
     console.log("slicesort", data, mm, cut, offset);
@@ -779,7 +783,7 @@ function fractalGhosts3(imageData) {
 
 function shortbettersort(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
-    mm = slice_range(imageData.width,imageData.height),
+    mm = slice_range(imageData.width,imageData.height, 32),
     da = Array.apply([], data.subarray(mm[0],mm[1]));
     da.sort(numericSort);
     imageData.data.set(da,mm[0]);
@@ -787,7 +791,7 @@ function shortbettersort(imageData) {
 }
 function shortdumbsort(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
-    mm = slice_range(imageData.width,imageData.height),
+    mm = slice_range(imageData.width,imageData.height, 32),
     da = Array.apply([], data.subarray(mm[0],mm[1]));
     da.sort();
     imageData.data.set(da,mm[0]);
