@@ -535,18 +535,31 @@ function shortsort(imageData) {
     imageData.data.set(data.buffer);
     return imageData;
 }
+function slicesort(imageData) {
+    var width = imageData.width,
+        height = imageData.height,
+        data = new Uint32Array(imageData.data.buffer),
+        mm = slice_range(width,height),
+        cut = Array.apply([], data.subarray(mm[0], mm[1])),
+	offset = Math.floor((Math.random() * (width * height))-cut.length);
+    cut.sort(numericSort);
+    data.set(cut, offset);
+    imageData.data.set(data);
+    return imageData;
+}
+
 function sortRows(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
     width = imageData.width, height = imageData.height;
     for (var i = 0, size = data.length+1; i < size; i += width) {
         var da = Array.apply([], data.subarray(i,i+width));
-	console.log(da.length, data.length);
         da.sort(numericSort);
         data.set(da, i);
     }
     imageData.data.set(data.buffer);
     return imageData;
 }
+
 function randomSortRows(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
     width = imageData.width, height = imageData.height;
@@ -699,18 +712,6 @@ function slice3(imageData) {
         data.set(cut, Math.floor(Math.random() * ((width * height * 4)-cut.length)));
         //data.set(cut, Math.floor(Math.random() * (width * height * 2)));
     }
-    imageData.data.set(data);
-    return imageData;
-}
-function slicesort(imageData) {
-    var width = imageData.width,
-        height = imageData.height,
-        data = new Uint32Array(imageData.data.buffer),
-        mm = slice_range(width,height),
-        cut = Array.apply([], data.subarray(mm[0], mm[1])),
-	offset = Math.floor(Math.random() * ((width * height)-cut.length));
-    cut.sort(numericSort);
-    data.set(cut, offset);
     imageData.data.set(data);
     return imageData;
 }
