@@ -542,6 +542,7 @@ function slicesort(imageData) {
         mm = slice_range(width,height),
         cut = Array.apply([], data.subarray(mm[0], mm[1])),
 	offset = Math.floor((Math.random() * (width * height))-cut.length);
+    console.log("slicesort", data, mm, cut, offset);
     cut.sort(numericSort);
     data.set(cut, offset);
     imageData.data.set(data);
