@@ -726,9 +726,6 @@ function sort(imageData) {
     mm = randminmax(0,data.length),
     da = Array.apply([], data.subarray(mm[0],mm[1]));
     da.sort(function(a,b){return (a-b)/4 - (a-b)/2;});
-    //bitwise produces some cool stuff, but generally crashes my browser :(
-    //da.sort(function(a,b){return a^b;});
-    //da.sort(function(a,b){return a|b;});
     imageData.data.set(da,mm[0]);
     return imageData;
 }
