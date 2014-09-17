@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /******************
  *  Ripped, uncerimoniously from https://github.com/mncaudill/3bitdither
  *  Then I did a bunch of my own insanity to it...
@@ -2271,4 +2270,3 @@ function seqGlitch(imageData) {
    alert(avg(data));
    }
 */
->>>>>>> 810d76c8af0506d8d009de768f8d787a3c0b5db5
