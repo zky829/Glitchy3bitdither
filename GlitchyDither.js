@@ -732,7 +732,7 @@ function sort(imageData) {
 function bettersort(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
     mm = randminmax(0,data.length),
-    cut = Array.apply([], data.subarray(mm[0],mm[1]));
+    cut = data.subarray(mm[0],mm[1]);
     Array.prototype.sort.call(cut, numericSort);
     imageData.data.set(data.buffer);
     return imageData;
@@ -748,7 +748,7 @@ function AnySort(imageData){
 function shortsort(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
     mm = slice_range(imageData.width,imageData.height, 32),
-    cut = Array.apply([], data.subarray(mm[0],mm[1]));
+    cut = data.subarray(mm[0],mm[1]);
     Array.prototype.sort.call(cut, numericSort);
     imageData.data.set(data.buffer);
     return imageData;
