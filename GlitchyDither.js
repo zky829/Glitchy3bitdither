@@ -732,24 +732,14 @@ function sort(imageData) {
 function bettersort(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
     mm = randminmax(0,data.length),
-    da = Array.apply([], data.subarray(mm[0],mm[1]));
-    da.sort(numericSort);
-    imageData.data.set(da,mm[0]);
-    return imageData;
-}
-function dumbsort(imageData) {
-    var data = new Uint32Array(imageData.data.buffer),
-    mm = randminmax(0,data.length),
-    da = Array.apply([], data.subarray(mm[0],mm[1]));
-    da.sort();
-    imageData.data.set(da,mm[0]);
+    cut = Array.apply([], data.subarray(mm[0],mm[1]));
+    Array.prototype.sort.call(cut, numericSort);
+    imageData.data.set(data.buffer);
     return imageData;
 }
 function AnySort(imageData){
     var opt = Math.floor(Math.random() * 1001) % 3;
     if(opt==1){
-        return dumbsort(imageData);
-    } else if(opt==2){
         return bettersort(imageData);
     } else {
         return sort(imageData);
@@ -758,8 +748,8 @@ function AnySort(imageData){
 function shortsort(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
     mm = slice_range(imageData.width,imageData.height, 32),
-    da = Array.apply([], data.subarray(mm[0],mm[1]));
-    da.sort(function(a,b){return (a-b)/4 - (a-b)/2;});
+    cut = Array.apply([], data.subarray(mm[0],mm[1]));
+    Array.prototype.sort.call(cut, numericSort);
     imageData.data.set(data.buffer);
     return imageData;
 }
@@ -770,9 +760,7 @@ function slicesort(imageData) {
         mm = slice_range(width,height,32);
         var cut = data.subarray(mm[0], mm[1]),
 	offset = Math.floor((Math.random() * (width * height))-cut.length);
-    //console.log("slicesort", data, mm, cut, offset);
     Array.prototype.sort.call(cut, numericSort);
-    //data.set(cut, offset);
     imageData.data.set(data);
     return imageData;
 }
@@ -827,7 +815,7 @@ function pixelSort(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
         width = imageData.width,
 	height = imageData.height;
-    for(var i = 0, da, mm; i < data.length; i += width) {
+    for(var i = 0, da = null, mm = [0,0], size = data.length ; i < size; i += width) {
         mm = randminmax(i,i+width);
         da = Array.apply([], data.subarray(mm[0],mm[1]));
         da.sort(numericSort);
@@ -1005,7 +993,7 @@ function DrumrollHorizontal(imageData) {
 }
 
 /* global arrays of functions */
-var exp = [AnySort,AnyShortSort,shortsort,shortbettersort,shortdumbsort,sort,bettersort,dumbsort,fractalGhosts3,DrumrollHorizontalWave,DrumrollVerticalWave,slicesort,sortRows,randomSortRows,orSortRows,andSortRows,pixelSort,templateTest],
+var exp = [AnySort,AnyShortSort,shortsort,shortbettersort,shortdumbsort,sort,bettersort,fractalGhosts3,DrumrollHorizontalWave,DrumrollVerticalWave,slicesort,sortRows,randomSortRows,orSortRows,andSortRows,pixelSort,templateTest],
     orig = [focusImage, rgb_glitch,invert, slice, slice2, slice3,sliceB, sliceB2, sliceB3, fractalGhosts, fractalGhosts2, DrumrollHorizontal, DrumrollVertical, ditherBitshift, colorShift, ditherRandom, ditherRandom2, ditherBayer, ditherBayer3, redShift, greenShift, blueShift, superShift, superSlice, superSlice2, ditherAtkinsons, ditherFloydSteinberg, ditherHalftone, dither8Bit];
 
 /* these run random set of functions */
