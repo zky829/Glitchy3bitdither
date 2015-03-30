@@ -47,13 +47,14 @@ Check out the increasingly insane <a href="http://jkirchartz.com/Glitchy3bitdith
 1. optimize code w/ better code from the row-sorting algos
 2. web workers
 3. namespace
-4. function names
+4. better function names
 5. better comments
 6. add paremeters for granular control - but use randomness as default functionality if no params are used
 7. Add Glitches:
+  * scan lines (1px black line the entire width every N lines)
   * move each "row" in opposite directions (1px at a time)
   * kaleidoscope
-8. nodejs/cli - for batch processing etc.
+8. nodejs/cli - for batch/bots/etc. (via [CamanJS](http://camanjs.com/))
 
 
 ##run locally
