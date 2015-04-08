@@ -1,46 +1,38 @@
 Glitchy 3 Bit Dither
 ==============
 
-Check out the increasingly insane <a href="http://jkirchartz.com/Glitchy3bitdither" title="Demo">Demo</a>.
+Check out the increasingly inane online <a href="http://jkirchartz.com/Glitchy3bitdither" title="Demo">Demo</a>.
 
 <p>This is a utility to mutilate images in unpredictable ways. It can randomly choose between algorithms, and many algorithms randomly mutate themselves.
     You can choose different encodings, effects, and emulate several glitch techniques, resulting in aleatoric new images and hidden configurations.</p>
 </p>
 <p>Check out some curated images at <a href="http://glitches.jkirchartz.com/">glitches.jkirchartz.com</a></p>
-<p>This runs completely client-side, using the FileReader and canvas APIs, your image isn't being uploaded to any server. If you have a decent browser, this should work. Also, you can right-click and save the result of the processing.</p>
+<p>This is a node standalone version using Caman.js; I'm just getting started so 
+bear with me.</p>
+
 <p>Based on Nolan Caudill's <a href="https://github.com/mncaudill/3bitdither">3bitdither</a></p>
 <p>Heavily modified by JKirchartz, <a href="https://github.com/jkirchartz/Glitchy3bitdither">code on github</a></p>
 <p>Experimental functions may not be 100% stable, this is a work in progress.</p>
 
 ##Sample Code
 
-    // setup canvas
-    var canvas = document.createElement('canvas');
-    canvas.width = 500;
-    canvas.height = 500;
-    var ctx = canvas.getContext('2d');
+**coming soon**
 
-    // draw some red circles with black outlines
-    for (var i = 0; i < 12; i++) {
-        var centerX = Math.floor(Math.random() * 500) + 10;
-        var centerY = Math.floor(Math.random() * 500) + 10;
-        var radius = Math.floor(Math.random() * 50) + 20;
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-        ctx.fillStyle = "#ff0000";
-        ctx.fill();
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = "#000000";
-        ctx.stroke();
+probably something like
+
+    glitcher <input> <output> <functions(s)>
+
+
+or
+
+    
+    var glitcher = require('Glitchy3bitDither');
+
+    http.get('<img url>', function(data) {
+        data.pipe(glitcher.<function>).pipe(glitcher.<function>)
     }
-    // get data
-    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    // apply a corruption to an image
-    ctx.putImageData(glitch(imageData), 0, 0);
-    var out = document.createElement('img');
-    // send output to img element on the page
-    out.src = canvas.toDataURL("image/png");
-    document.body.appendChild(out);
+
+I'm not sure, that's just speculation.
 
 
 ##todo:
