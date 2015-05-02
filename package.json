@@ -25,5 +25,8 @@
   "homepage": "https://github.com/jkirchartz/Glitchy3bitDither",
   "dependencies": {
     "caman": "~4.1.2"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5"
   }
 }
