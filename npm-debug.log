@@ -1,0 +1,66 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/node',
+1 verbose cli   '/usr/bin/npm',
+1 verbose cli   'install',
+1 verbose cli   '--save-dev',
+1 verbose cli   'grunt-contrib-coffee' ]
+2 info using npm@1.4.28
+3 info using node@v0.10.32
+4 verbose node symlink /usr/bin/node
+5 verbose readDependencies using package.json deps
+6 verbose cache add [ 'grunt-contrib-coffee', null ]
+7 verbose cache add name=undefined spec="grunt-contrib-coffee" args=["grunt-contrib-coffee",null]
+8 verbose parsed url { protocol: null,
+8 verbose parsed url   slashes: null,
+8 verbose parsed url   auth: null,
+8 verbose parsed url   host: null,
+8 verbose parsed url   port: null,
+8 verbose parsed url   hostname: null,
+8 verbose parsed url   hash: null,
+8 verbose parsed url   search: null,
+8 verbose parsed url   query: null,
+8 verbose parsed url   pathname: 'grunt-contrib-coffee',
+8 verbose parsed url   path: 'grunt-contrib-coffee',
+8 verbose parsed url   href: 'grunt-contrib-coffee' }
+9 silly lockFile c5771075-grunt-contrib-coffee grunt-contrib-coffee
+10 verbose lock grunt-contrib-coffee /root/.npm/c5771075-grunt-contrib-coffee.lock
+11 silly lockFile c5771075-grunt-contrib-coffee grunt-contrib-coffee
+12 silly lockFile c5771075-grunt-contrib-coffee grunt-contrib-coffee
+13 verbose addNamed [ 'grunt-contrib-coffee', '' ]
+14 verbose addNamed [ null, '*' ]
+15 silly lockFile 5fd8084b-grunt-contrib-coffee grunt-contrib-coffee@
+16 verbose lock grunt-contrib-coffee@ /root/.npm/5fd8084b-grunt-contrib-coffee.lock
+17 silly addNameRange { name: 'grunt-contrib-coffee', range: '*', hasData: false }
+18 verbose request where is /grunt-contrib-coffee
+19 verbose request registry https://registry.npmjs.org/
+20 verbose request id 91c42931e0046864
+21 verbose url raw /grunt-contrib-coffee
+22 verbose url resolving [ 'https://registry.npmjs.org/', './grunt-contrib-coffee' ]
+23 verbose url resolved https://registry.npmjs.org/grunt-contrib-coffee
+24 verbose request where is https://registry.npmjs.org/grunt-contrib-coffee
+25 info trying registry request attempt 1 at 13:56:27
+26 http GET https://registry.npmjs.org/grunt-contrib-coffee
+27 info retry will retry, error on last attempt: Error: getaddrinfo ENOTFOUND
+28 info trying registry request attempt 2 at 13:56:58
+29 http GET https://registry.npmjs.org/grunt-contrib-coffee
+30 info retry will retry, error on last attempt: Error: getaddrinfo ENOTFOUND
+31 info trying registry request attempt 3 at 13:58:18
+32 http GET https://registry.npmjs.org/grunt-contrib-coffee
+33 silly lockFile 5fd8084b-grunt-contrib-coffee grunt-contrib-coffee@
+34 silly lockFile 5fd8084b-grunt-contrib-coffee grunt-contrib-coffee@
+35 error network getaddrinfo ENOTFOUND
+35 error network This is most likely not a problem with npm itself
+35 error network and is related to network connectivity.
+35 error network In most cases you are behind a proxy or have bad network settings.
+35 error network
+35 error network If you are behind a proxy, please make sure that the
+35 error network 'proxy' config is set properly.  See: 'npm help config'
+36 error System Linux 3.2.0-4-686-pae
+37 error command "/usr/bin/node" "/usr/bin/npm" "install" "--save-dev" "grunt-contrib-coffee"
+38 error cwd /home/vagrant/projects/Glitchy3bitDither
+39 error node -v v0.10.32
+40 error npm -v 1.4.28
+41 error syscall getaddrinfo
+42 error code ENOTFOUND
+43 error errno ENOTFOUND
+44 verbose exit [ 1, true ]
