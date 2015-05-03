@@ -12,6 +12,10 @@ swapEnd32 = (val) -> (((val & 0xFF) << 24) | ((val & 0xFF00) << 8) |
                   ((val >> 8) & 0xFF00) | ((val >> 24) & 0xFF)) >>> 8
 
 # Image manipulations
+Caman.Filter.register 'color884', ->
+  @process 'color884', (rgba) ->
+    rgba.b = rgba.b >> 4
+
 Caman.Filter.register 'randomColorShift', ->
   r = Caman.Calculate.randomRange(-50,50)
   g = Caman.Calculate.randomRange(-50,50)
