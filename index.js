@@ -1,5 +1,5 @@
 var caman = require('caman').Caman;
-// require('./lib/gleech.js');
+require('./lib/gleech.js')();
 
 /* global arrays of functions */
 var exp = [AnySort, AnyShortSort, shortsort, shortbettersort, shortdumbsort,

@@ -5,9 +5,7 @@ module.exports = function(grunt) {
     coffee: {
       compile: {
         files: {
-//          'path/to/result.js': 'path/to/source.coffee', // 1:1 compile
-          'lib/gleech.js': ['src/**.coffee', 'src/**.js']
-          // compile and concat all sources into single file
+          'lib/gleech.js': 'src/gleech.coffee'
         }
       }
     }

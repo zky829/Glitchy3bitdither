@@ -27,6 +27,7 @@
     "caman": "~4.1.2"
   },
   "devDependencies": {
-    "grunt": "^0.4.5"
+    "grunt": "^0.4.5",
+    "grunt-contrib-coffee": "^0.13.0"
   }
 }

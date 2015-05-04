@@ -134,7 +134,7 @@ Caman.Filter.register 'slice', ->
   cutstart = Math.floor(cutend / 1.7)
   cut = data.subarray(cutstart, cutend)
   data.set(cut, Math.floor(Math.random() *
-                           ((width * height * 4) - cut.length)))
+                          ((width * height * 4) - cut.length)))
   @
 
 
@@ -186,5 +186,3 @@ Caman.Filter.register 'dither8bit', (size = 4) ->
           data[ind(y,r_y,x,r_x) + 1] = avg_g
           data[ind(y,r_y,x,r_x) + 2] = avg_b
   @
-
-
