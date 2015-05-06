@@ -496,32 +496,6 @@ function superSlice(imageData) {
 }
 
 
-function shortbettersort(imageData) {
-  var data = new Uint32Array(imageData.data.buffer),
-  mm = slice_range(imageData.width, imageData.height, 32),
-  da = Array.apply([], data.subarray(mm[0], mm[1]));
-  da.sort(numericSort);
-  imageData.data.set(da, mm[0]);
-  return imageData;
-}
-function shortdumbsort(imageData) {
-  var data = new Uint32Array(imageData.data.buffer),
-  mm = slice_range(imageData.width, imageData.height, 32),
-  da = Array.apply([], data.subarray(mm[0], mm[1]));
-  da.sort();
-  imageData.data.set(da, mm[0]);
-  return imageData;
-}
-function AnyShortSort(imageData) {
-  var opt = Math.floor(Math.random() * 1001) % 3;
-  if (opt == 1) {
-    return shortdumbsort(imageData);
-  } else if (opt == 2) {
-    return shortbettersort(imageData);
-  } else {
-    return shortsort(imageData);
-  }
-}
 
 function sort(imageData) {
   var data = new Uint32Array(imageData.data.buffer),

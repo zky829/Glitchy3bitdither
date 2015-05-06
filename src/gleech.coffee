@@ -36,7 +36,7 @@ Caman.Filter.register 'randomGreenShift', ->
 
 
 Caman.Filter.register 'superRandomShift', ->
-  rand = ((Math.random * 10) + 1)
+  rand = (Math.round(Math.random * 10) + 1)
   while rand -= 1
     @randomColorShift
 
@@ -73,7 +73,7 @@ Caman.Filter.register 'blueShift', ->
 
 
 Caman.Filter.register 'superShift', ->
-  rand = ((Math.random * 10) + 1)
+  rand = (Math.round(Math.random * 10) + 1)
   while rand -= 1
     @colorShift
 
@@ -186,3 +186,27 @@ Caman.Filter.register 'dither8bit', (size = 4) ->
           data[ind(y,r_y,x,r_x) + 1] = avg_g
           data[ind(y,r_y,x,r_x) + 2] = avg_b
   @
+
+Caman.Filter.register 'shortNumericSort', () ->
+  data = new Uint32Array(@pixelData)
+  mm = slice_range(imageData.width, imageData.height, 32)
+  da = Array.apply([], data.subarray(mm[0], mm[1]))
+  da.sort(numericSort)
+  @pixelData.data.set(da, mm[0])
+
+Caman.Filter.register 'shortDumbSort', () ->
+  data = new Uint32Array(@pixelData)
+  mm = slice_range(imageData.width, imageData.height, 32)
+  da = Array.apply([], data.subarray(mm[0], mm[1]))
+  da.sort()
+  @pixelData.data.set(da, mm[0])
+
+Caman.Filter.register 'AnyShortSort', () ->
+  opt = Math.floor(Math.random() * 1001) % 3
+  if opt == 1
+    @shortDumbSort()
+  else if (opt == 2)
+    @shortNumericSort()
+  else
+    @shortSort()
+

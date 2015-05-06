@@ -1,17 +1,14 @@
-Glitchy 3 Bit Dither
+Gleech
 ==============
 
-Check out the increasingly inane online <a href="http://jkirchartz.com/Glitchy3bitdither" title="Demo">Demo</a>.
 
 <p>This is a utility to mutilate images in unpredictable ways. It can randomly choose between algorithms, and many algorithms randomly mutate themselves.
     You can choose different encodings, effects, and emulate several glitch techniques, resulting in aleatoric new images and hidden configurations.</p>
+<p>
+Check out the <a href="http://jkirchartz.com/Glitchy3bitdither" title="Demo">Web Demo</a> or some curated images at <a href="http://glitches.jkirchartz.com/">glitches.jkirchartz.com</a></p>
 </p>
-<p>Check out some curated images at <a href="http://glitches.jkirchartz.com/">glitches.jkirchartz.com</a></p>
-<p>This is a node standalone version using Caman.js; I'm just getting started so 
-bear with me.</p>
 
-<p>Based on Nolan Caudill's <a href="https://github.com/mncaudill/3bitdither">3bitdither</a></p>
-<p>Heavily modified by JKirchartz, <a href="https://github.com/jkirchartz/Glitchy3bitdither">code on github</a></p>
+<p>Based on <a href="http://github.com/jkirchartz/Glitchy3bitDither">Glitchy3bitDither</a>, powered by <a href="https://github.com/meltingice/camanjs">camanjs</a></p>
 <p>Experimental functions may not be 100% stable, this is a work in progress.</p>
 
 ##Sample Code
@@ -25,10 +22,9 @@ probably something like
 
 or
 
-    
-    var glitcher = require('Glitchy3bitDither');
+    var g = require('Gleech');
 
-    http.get('<img url>', function(data) {
+    g.get('<img url>', function(data) {
         data.pipe(glitcher.<function>).pipe(glitcher.<function>)
     }
 
@@ -49,12 +45,7 @@ I'm not sure, that's just speculation.
 8. nodejs/cli - for batch/bots/etc. (via [CamanJS](http://camanjs.com/))
 
 
-##run locally
-The demo site in this repo is a [Jekyll](http://jekyllrb.com) project, to run locally install the gem &amp; run `jekyll --serve`.
-You can also use the `--auto` flag to make jekyll automatically update the site as files change.
-
-portions under the included MIT license, copyright 2013 Matthew Nolan Caudill, as noted.
-99% of the rest copyleft 2013 JKirchartz, except as noted.
+copyleft 2015 JKirchartz, all rights reversed
 
 hack away! huzzah!
 
