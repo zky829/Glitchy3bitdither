@@ -232,6 +232,7 @@ function ditherBayer(imageData) {
   data = imageData.data,
   /* added more threshold maps and the randomizer, the rest is stock */
   threshold_maps = [
+    [[1, 3], [4, 2]],
     [
     [3, 7, 4],
     [6, 1, 9],
@@ -275,6 +276,7 @@ function ditherBayer3(imageData) {
   data = imageData.data,
   /* adding in more threshold maps, and the randomizer */
   threshold_maps = [
+    [[1, 3], [4, 2]],
     [
     [3, 7, 4],
     [6, 1, 9],
@@ -318,44 +320,6 @@ function ditherBayer3(imageData) {
  *  here's where my fun begins
  */
 // some helper functions
-function randminmax(min, max) {
-  // generate min & max values by picking
-  // one 'fairly', then picking another from the remainder
-  var randA = Math.floor(min + (max - min) * Math.random());
-  var randB = Math.floor(randA + (max - randA) * Math.random());
-  if (randB - randA > 20000) {
-    return randminmax(min, max);
-  }
-  return [randA, randB];
-}
-function slice_range(width, height, depth) {
-  var multiplier = 4;
-  // 8-bit needs to be multiplied by 4 to get correct pixel range
-  if (depth === 32) {
-    multiplier = 1; // 32-bit already has correct pixel range
-  }
-  var opt = (Math.random() * 1001) % 4,
-  x = 0, y = 0,
-  px = (width * height * multiplier),
-  ratio = (Math.random() > 0.5) ? 1.7 : 1.61803;
-  // cheap approximation of phi, or actual phi
-  if (opt == 1) {
-    x = Math.floor((Math.random() * px));
-    y = Math.floor(x / ratio);
-  }else if (opt == 2) {
-    x = Math.random() < 0.5 ? Math.floor(Math.random() * px) : px;
-    y = Math.floor(x / ratio);
-  }else if (opt == 3) {
-    x = Math.floor(Math.random() * px);
-    y = x - Math.floor((Math.random() * 5101) + 1000);
-  }else {
-    var mm = randminmax(0, px);
-    x = mm[0];
-    y = mm[1];
-  }
-  var tmp = x - y;
-  return [x, y];
-}
 /*
    function avg(o){
    var l = o.length;
@@ -497,30 +461,6 @@ function superSlice(imageData) {
 
 
 
-function sort(imageData) {
-  var data = new Uint32Array(imageData.data.buffer),
-  mm = randminmax(0, data.length),
-  da = Array.apply([], data.subarray(mm[0], mm[1]));
-  da.sort(function(a, b) {return (a - b) / 4 - (a - b) / 2;});
-  imageData.data.set(da, mm[0]);
-  return imageData;
-}
-function bettersort(imageData) {
-  var data = new Uint32Array(imageData.data.buffer),
-  mm = randminmax(0, data.length),
-  cut = data.subarray(mm[0], mm[1]);
-  Array.prototype.sort.call(cut, numericSort);
-  imageData.data.set(data.buffer);
-  return imageData;
-}
-function AnySort(imageData) {
-  var opt = Math.floor(Math.random() * 1001) % 3;
-  if (opt == 1) {
-    return bettersort(imageData);
-  } else {
-    return sort(imageData);
-  }
-}
 function shortsort(imageData) {
   var data = new Uint32Array(imageData.data.buffer),
   mm = slice_range(imageData.width, imageData.height, 32),

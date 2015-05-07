@@ -11,6 +11,37 @@ andSort = (a, b) -> 2147483647.5 - (a & b)
 swapEnd32 = (val) -> (((val & 0xFF) << 24) | ((val & 0xFF00) << 8) |
                   ((val >> 8) & 0xFF00) | ((val >> 24) & 0xFF)) >>> 8
 
+randminmax = (min, max) ->
+  # generate min & max values by picking
+  # one 'fairly', then picking another from the remainder
+  randA = Math.floor(max * Math.random())
+  randB = Math.floor(randA * Math.random())
+  return [randB, randA]
+
+slice_range = (width, height, multiplier = 4) ->
+  opt = (Math.random() * 1001) % 4
+  x = 0
+  y = 0
+  px = (width * height * multiplier)
+  ratio = (Math.random() > 0.5) ? 1.7 : 1.61803
+  # cheap approximation of phi, or actual phi
+  if (opt == 1)
+    x = Math.floor((Math.random() * px))
+    y = Math.floor(x / ratio)
+  else if (opt == 2)
+    x = if Math.random() < 0.5 then Math.floor(Math.random() * px) else px
+    y = Math.floor(x / ratio)
+  else if (opt == 3)
+    x = Math.floor(Math.random() * px)
+    y = x - Math.floor((Math.random() * 5101) + 1000)
+  else
+    mm = randminmax(0, px)
+    x = mm[0]
+    y = mm[1]
+
+  tmp = x - y
+  return [x, y]
+
 # Image manipulations
 Caman.Filter.register 'color884', ->
   @process 'color884', (rgba) ->
@@ -189,24 +220,44 @@ Caman.Filter.register 'dither8bit', (size = 4) ->
 
 Caman.Filter.register 'shortNumericSort', () ->
   data = new Uint32Array(@pixelData)
-  mm = slice_range(imageData.width, imageData.height, 32)
+  mm = slice_range(@width, @height, 1)
   da = Array.apply([], data.subarray(mm[0], mm[1]))
   da.sort(numericSort)
   @pixelData.data.set(da, mm[0])
 
 Caman.Filter.register 'shortDumbSort', () ->
   data = new Uint32Array(@pixelData)
-  mm = slice_range(imageData.width, imageData.height, 32)
+  mm = slice_range(@width, @height, 1)
   da = Array.apply([], data.subarray(mm[0], mm[1]))
   da.sort()
   @pixelData.data.set(da, mm[0])
 
 Caman.Filter.register 'AnyShortSort', () ->
-  opt = Math.floor(Math.random() * 1001) % 3
+  opt = Math.round(Math.random())
   if opt == 1
     @shortDumbSort()
-  else if (opt == 2)
+  else 
     @shortNumericSort()
-  else
-    @shortSort()
 
+Caman.Filter.register 'sort', () ->
+  data = new Uint32Array(@pixelData)
+  mm = randminmax(0, data.length)
+  da = Array.apply([], data.subarray(mm[0], mm[1]))
+  da.sort(numericSort)
+  @pixelData.data.set(da, mm[0])
+
+
+Caman.Filter.register 'bettersort', () ->
+  data = new Uint32Array(@pixelData)
+  mm = randminmax(0, data.length)
+  cut = data.subarray(mm[0], mm[1])
+  Array.prototype.sort.call(cut, numericSort)
+  @pixelData.data.set(data.buffer)
+
+
+Caman.Filter.register 'AnySort', () ->
+  opt = Math.round(Math.random())
+  if (opt == 1)
+    @bettersort()
+  else
+    @sort()
