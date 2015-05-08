@@ -469,17 +469,6 @@ function shortsort(imageData) {
   imageData.data.set(data.buffer);
   return imageData;
 }
-function slicesort(imageData) {
-  var width = imageData.width,
-  height = imageData.height,
-  data = new Uint32Array(imageData.data.buffer),
-  mm = slice_range(width, height, 32);
-  var cut = data.subarray(mm[0], mm[1]),
-  offset = Math.floor((Math.random() * (width * height)) - cut.length);
-  Array.prototype.sort.call(cut, numericSort);
-  imageData.data.set(data);
-  return imageData;
-}
 
 function sortRows(imageData) {
   var data = new Uint32Array(imageData.data.buffer),
@@ -551,61 +540,6 @@ function pixelSort(imageData) {
   return imageData;
 }
 
-function invert(imageData) {
-  var data = new Uint32Array(imageData.data.buffer);
-  for (var i = 0; i < data.length; i++) {
-    data[i] = ~ data[i] | 0xFF000000;
-  }
-  imageData.data.set(data.buffer);
-  return imageData;
-}
-function rgb_glitch(imageData) {
-  var data = imageData.data,
-  width = imageData.width,
-  height = imageData.height,
-  mm = randminmax(10, width - 10),
-  opt = mm[1] % 3,
-  dir = Math.random() > 0.5 ? true : false;
-  for (var y = 0; y < height; y++) {
-    for (var x = 0; x < width; x++) {
-      var index = ((width * y) + x) * 4,
-      red = data[index],
-      green = data[index + 1],
-      blue = data[index + 2];
-      if (dir) {
-        if (opt === 0) {
-          data[index + mm[0]] = red;
-          data[index + mm[0] + 1] = green;
-          data[index] = blue;
-        }else if (opt === 1) {
-          data[index] = red;
-          data[index + mm[0] + 1] = green;
-          data[index + mm[0]] = blue;
-        } else {
-          data[index + mm[0]] = red;
-          data[index + 1] = green;
-          data[index + mm[0]] = blue;
-        }
-      }else {
-        if (opt === 0) {
-          data[index - mm[0] + 1] = red;
-          data[index - mm[0]] = green;
-          data[index] = blue;
-        }else if (opt === 1) {
-          data[index + 1] = red;
-          data[index - mm[0]] = green;
-          data[index - mm[0]] = blue;
-        } else {
-          data[index - mm[0] + 1] = red;
-          data[index] = green;
-          data[index - mm[0]] = blue;
-        }
-      }
-    }
-  }
-  imageData.data = data;
-  return imageData;
-}
 function DrumrollVerticalWave(imageData) {
   /* borrowed from https://github.com/ninoseki/glitched-canvas &
    * modified w/ cosine */

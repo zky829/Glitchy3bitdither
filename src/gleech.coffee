@@ -46,6 +46,7 @@ slice_range = (width, height, multiplier = 4) ->
 Caman.Filter.register 'color884', ->
   @process 'color884', (rgba) ->
     rgba.b = rgba.b >> 4
+    rgba
 
 Caman.Filter.register 'randomColorShift', ->
   r = Caman.Calculate.randomRange(-50,50)
@@ -77,7 +78,7 @@ Caman.Filter.register 'colorShift', ->
     rgba.r = if rgba.r > Math.random() * 255 then  rgba.g else  rgba.b
     rgba.g = if rgba.g > Math.random() * 255 then  rgba.r else  rgba.b
     rgba.b = if rgba.b > Math.random() * 255 then  rgba.g else  rgba.r
-
+    rgba
 
 Caman.Filter.register 'redShift', ->
   factor = Math.floor((Math.random() * 128) / 2)
@@ -85,6 +86,7 @@ Caman.Filter.register 'redShift', ->
     rgba.r += factor % 255
     rgba.g -= factor
     rgba.b -= factor
+    rgba
 
 
 Caman.Filter.register 'greenShift', ->
@@ -93,6 +95,7 @@ Caman.Filter.register 'greenShift', ->
     rgba.r -= factor
     rgba.g += factor % 255
     rgba.b -= factor
+    rgba
 
 
 Caman.Filter.register 'blueShift', ->
@@ -101,6 +104,7 @@ Caman.Filter.register 'blueShift', ->
     rgba.r -= factor
     rgba.g -= factor
     rgba.b += factor % 255
+    rgba
 
 
 Caman.Filter.register 'superShift', ->
@@ -174,6 +178,7 @@ Caman.Filter.register 'ditherRandom', ->
     gray = (rgba.r + rgba.g + rgba.b / 3) % 255
     val = if gray < Math.round(Math.random() * 128) then 0 else 0xff
     rgba.r = rgba.g = rgba.b = val
+    rgba
 
 
 Caman.Filter.register 'ditherRandomColor', ->
@@ -181,6 +186,7 @@ Caman.Filter.register 'ditherRandomColor', ->
     rgba.r = if rgba.r < Math.round(Math.random() * 128) then 0 else 0xff
     rgba.g = if rgba.g < Math.round(Math.random() * 128) then 0 else 0xff
     rgba.b = if rgba.b < Math.round(Math.random() * 128) then 0 else 0xff
+    rgba
 
 
 Caman.Filter.register 'ditherBitshift',
@@ -191,6 +197,7 @@ Caman.Filter.register 'ditherBitshift',
     rgba.r &= masks[mask]
     rgba.g &= masks[mask]
     rgba.b &= masks[mask]
+    rgba
 
 
 Caman.Filter.register 'dither8bit', (size = 4) ->
@@ -224,6 +231,7 @@ Caman.Filter.register 'shortNumericSort', () ->
   da = Array.apply([], data.subarray(mm[0], mm[1]))
   da.sort(numericSort)
   @pixelData.data.set(da, mm[0])
+  @
 
 Caman.Filter.register 'shortDumbSort', () ->
   data = new Uint32Array(@pixelData)
@@ -231,33 +239,97 @@ Caman.Filter.register 'shortDumbSort', () ->
   da = Array.apply([], data.subarray(mm[0], mm[1]))
   da.sort()
   @pixelData.data.set(da, mm[0])
+  @
 
-Caman.Filter.register 'AnyShortSort', () ->
+Caman.Filter.register 'anyShortSort', () ->
   opt = Math.round(Math.random())
   if opt == 1
     @shortDumbSort()
   else 
     @shortNumericSort()
 
-Caman.Filter.register 'sort', () ->
+Caman.Filter.register 'sortA', () ->
   data = new Uint32Array(@pixelData)
   mm = randminmax(0, data.length)
   da = Array.apply([], data.subarray(mm[0], mm[1]))
   da.sort(numericSort)
   @pixelData.data.set(da, mm[0])
+  @
 
 
-Caman.Filter.register 'bettersort', () ->
+Caman.Filter.register 'sortB', () ->
   data = new Uint32Array(@pixelData)
   mm = randminmax(0, data.length)
   cut = data.subarray(mm[0], mm[1])
   Array.prototype.sort.call(cut, numericSort)
   @pixelData.data.set(data.buffer)
+  @
 
 
-Caman.Filter.register 'AnySort', () ->
+Caman.Filter.register 'anySort', () ->
   opt = Math.round(Math.random())
   if (opt == 1)
-    @bettersort()
+    @sortA()
   else
-    @sort()
+    @sortB()
+
+Caman.Filter.register 'sliceSort', () ->
+  width = @width
+  height = @height
+  data = new Uint32Array(@pixelData.buffer)
+  mm = slice_range(width, height, 1)
+  cut = data.subarray(mm[0], mm[1])
+  offset = Math.floor((Math.random() * (width * height)) - cut.length)
+  Array.prototype.sort.call(cut, numericSort)
+  @pixelData.set(data, offset)
+  @
+
+Caman.Filter.register 'rgbGlitch', (dir = (Math.random() > 0.5)) ->
+  data = @pixelData
+  width = @width
+  height = @height
+  mm = randminmax(10, width)
+  opt = mm[1] % 3
+  for y in [0..height]
+    for x in [0..width]
+      index = ((width * y) + x) * 4
+      red = data[index]
+      green = data[index + 1]
+      blue = data[index + 2]
+      if (dir)
+        if (opt == 0)
+          data[index + mm[0]] = red
+          data[index + mm[0] + 1] = green
+          data[index] = blue
+        else if (opt == 1)
+          data[index] = red
+          data[index + mm[0] + 1] = green
+          data[index + mm[0]] = blue
+        else
+          data[index + mm[0]] = red
+          data[index + 1] = green
+          data[index + mm[0]] = blue
+      else
+        if (opt == 0)
+          data[index - mm[0] + 1] = red
+          data[index - mm[0]] = green
+          data[index] = blue
+        else if (opt == 1)
+          data[index + 1] = red
+          data[index - mm[0]] = green
+          data[index - mm[0]] = blue
+        else
+          data[index - mm[0] + 1] = red
+          data[index] = green
+          data[index - mm[0]] = blue
+  @pixelData = data
+  @
+
+
+Caman.Filter.register 'invert', () ->
+  data = new Uint32Array(@pixelData.buffer)
+  for i in data
+    data[i] = ~ data[i] | 0xFF000000
+  @pixelData = data
+  @
+
