@@ -114,6 +114,9 @@ Caman.Filter.register 'superShift', ->
 
 
 Caman.Filter.register 'pixelate', (pixelation = 5) ->
+  @processPlugin 'pixelate', [pixelation]
+
+Caman.Plugin.register 'pixelate', (pixelation = 5) ->
   width = @dimensions.width
   height = @dimensions.height
   data = @pixelData
@@ -130,7 +133,10 @@ Caman.Filter.register 'pixelate', (pixelation = 5) ->
   @
 
 
-Caman.Filter.register 'fractalGhosts', ->
+Caman.Filter.register 'fractalGhosts',  ()->
+  @processPlugin 'fractalGhosts', []
+
+Caman.Plugin.register 'fractalGhosts',  ()->
   data = @pixelData
   for i in data
     if (parseInt(data[i * 2 % data.length], 10) < parseInt(data[i], 10))
@@ -138,30 +144,37 @@ Caman.Filter.register 'fractalGhosts', ->
   @
 
 
-Caman.Filter.register 'fractalGhosts2', ->
+Caman.Filter.register 'fractalGhosts2',  (amount = 1 + Math.round(Math.random() * 10))->
+  @processPlugin 'fractalGhosts2', [amount]
+
+Caman.Plugin.register 'fractalGhosts2',  (amount = 1 + Math.round(Math.random() * 10))->
   data = @pixelData
-  rand = 1 + Math.floor(Math.random() * 11)
   for i in data
     if (parseInt(data[i * 2 % data.length], 10) < parseInt(data[i], 10))
-      tmp = (i * rand) % data.length
+      tmp = (i * amount) % data.length
       if (parseInt(data[tmp], 10) < parseInt(data[i], 10))
         data[i] = data[tmp]
   @
 
 
-Caman.Filter.register 'fractalGhosts3', ->
+Caman.Filter.register 'fractalGhosts3', (amount = 1 + Math.round(Math.random() * 10), gap = 4) ->
+  @processPlugin 'fractalGhosts3', [amount, gap]
+
+Caman.Plugin.register 'fractalGhosts3',  (amount = 1 + Math.round(Math.random() * 10), gap = 4)->
   data = @pixelData
-  rand = 1 + Math.floor(Math.random() * 11)
   for i in data
     if (parseInt(data[i * 2 % data.length], 10) < parseInt(data[i], 10))
-      if i % 4 == 0 then continue
-      tmp = (i * rand) % data.length
+      if i % gap == 0 then continue
+      tmp = (i * amount) % data.length
       if (parseInt(data[tmp], 10) < parseInt(data[i], 10))
         data[i] = data[tmp]
   @
 
 
 Caman.Filter.register 'slice', ->
+  @processPlugin 'slice', []
+
+Caman.Plugin.register 'slice', ->
   width = @dimensions.width
   height = @dimensions.height
   data = @pixelData
@@ -189,8 +202,7 @@ Caman.Filter.register 'ditherRandomColor', ->
     rgba
 
 
-Caman.Filter.register 'ditherBitshift',
-      (mask = Math.floor(Math.random() * 3)) ->
+Caman.Filter.register 'ditherBitshift', (mask = Math.floor(Math.random() * 3)) ->
   mask = (mask % 3)
   masks = [ 0xc0, 0xe0, 0xf0 ] # var mask order = 3, 1, 2
   @process 'ditherBitshift', (rgba) ->
@@ -201,6 +213,9 @@ Caman.Filter.register 'ditherBitshift',
 
 
 Caman.Filter.register 'dither8bit', (size = 4) ->
+  @processPlugin 'dither8bit', [size]
+
+Caman.Plugin.register 'dither8bit', (size = 4) ->
   width = @dimensions.width
   height = @dimensions.height
   data = @pixelData
@@ -226,22 +241,31 @@ Caman.Filter.register 'dither8bit', (size = 4) ->
   @
 
 Caman.Filter.register 'shortNumericSort', () ->
+  @processPlugin 'shortNumericSort', []
+
+Caman.Plugin.register 'shortNumericSort', () ->
   data = new Uint32Array(@pixelData)
-  mm = slice_range(@width, @height, 1)
+  mm = slice_range(@dimensions.width, @dimensions.height, 1)
   da = Array.apply([], data.subarray(mm[0], mm[1]))
   da.sort(numericSort)
   @pixelData.data.set(da, mm[0])
   @
 
 Caman.Filter.register 'shortDumbSort', () ->
+  @processPlugin 'shortDumbSort', []
+
+Caman.Plugin.register 'shortDumbSort', () ->
   data = new Uint32Array(@pixelData)
-  mm = slice_range(@width, @height, 1)
+  mm = slice_range(@dimensions.width, @dimensions.height, 1)
   da = Array.apply([], data.subarray(mm[0], mm[1]))
   da.sort()
   @pixelData.data.set(da, mm[0])
   @
 
 Caman.Filter.register 'anyShortSort', () ->
+  @processPlugin 'anyShortSort', []
+
+Caman.Plugin.register 'anyShortSort', () ->
   opt = Math.round(Math.random())
   if opt == 1
     @shortDumbSort()
@@ -249,6 +273,9 @@ Caman.Filter.register 'anyShortSort', () ->
     @shortNumericSort()
 
 Caman.Filter.register 'sortA', () ->
+  @processPlugin 'sortA', []
+
+Caman.Plugin.register 'sortA', () ->
   data = new Uint32Array(@pixelData)
   mm = randminmax(0, data.length)
   da = Array.apply([], data.subarray(mm[0], mm[1]))
@@ -258,6 +285,9 @@ Caman.Filter.register 'sortA', () ->
 
 
 Caman.Filter.register 'sortB', () ->
+  @processPlugin 'sortB', []
+
+Caman.Plugin.register 'sortB', () ->
   data = new Uint32Array(@pixelData)
   mm = randminmax(0, data.length)
   cut = data.subarray(mm[0], mm[1])
@@ -274,8 +304,11 @@ Caman.Filter.register 'anySort', () ->
     @sortB()
 
 Caman.Filter.register 'sliceSort', () ->
-  width = @width
-  height = @height
+  @processPlugin 'sliceSort', []
+
+Caman.Plugin.register 'sliceSort', () ->
+  width = @dimensions.width
+  height = @dimensions.height
   data = new Uint32Array(@pixelData.buffer)
   mm = slice_range(width, height, 1)
   cut = data.subarray(mm[0], mm[1])
@@ -285,9 +318,12 @@ Caman.Filter.register 'sliceSort', () ->
   @
 
 Caman.Filter.register 'rgbGlitch', (dir = (Math.random() > 0.5)) ->
+  @processPlugin 'rgbGlitch', [dir]
+
+Caman.Plugin.register 'rgbGlitch', (dir = (Math.random() > 0.5)) ->
   data = @pixelData
-  width = @width
-  height = @height
+  width = @dimensions.width
+  height = @dimensions.height
   mm = randminmax(10, width)
   opt = mm[1] % 3
   for y in [0..height]
@@ -327,6 +363,9 @@ Caman.Filter.register 'rgbGlitch', (dir = (Math.random() > 0.5)) ->
 
 
 Caman.Filter.register 'invert', () ->
+  @processPlugin 'invert', []
+
+Caman.Plugin.register 'invert', () ->
   data = new Uint32Array(@pixelData.buffer)
   for i in data
     data[i] = ~ data[i] | 0xFF000000
