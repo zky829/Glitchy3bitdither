@@ -461,38 +461,6 @@ function superSlice(imageData) {
 
 
 
-function shortsort(imageData) {
-  var data = new Uint32Array(imageData.data.buffer),
-  mm = slice_range(imageData.width, imageData.height, 32),
-  cut = data.subarray(mm[0], mm[1]);
-  Array.prototype.sort.call(cut, numericSort);
-  imageData.data.set(data.buffer);
-  return imageData;
-}
-
-function sortRows(imageData) {
-  var data = new Uint32Array(imageData.data.buffer),
-  width = imageData.width, height = imageData.height;
-  for (var i = 0, size = data.length + 1; i < size; i += width) {
-    var da = Array.apply([], data.subarray(i, i + width));
-    da.sort(numericSort);
-    data.set(da, i);
-  }
-  imageData.data.set(data.buffer);
-  return imageData;
-}
-
-function randomSortRows(imageData) {
-  var data = new Uint32Array(imageData.data.buffer),
-  width = imageData.width, height = imageData.height;
-  for (var i = 0, size = data.length; i < size; i += width) {
-    var da = Array.apply([], data.subarray(i, i + width));
-    da.sort(randomSort);
-    data.set(da, i);
-  }
-  imageData.data.set(data.buffer);
-  return imageData;
-}
 function orSortRows(imageData) {
   var data = new Uint32Array(imageData.data.buffer),
   width = imageData.width, height = imageData.height;
