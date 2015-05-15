@@ -364,7 +364,7 @@ Caman.Filter.register 'blueShift', ->
 
 Caman.Filter.register 'superShift', ->
   rand = (Math.round(Math.random * 10) + 1)
-  while rand -= 1
+  while rand--
     @colorShift
 
 
