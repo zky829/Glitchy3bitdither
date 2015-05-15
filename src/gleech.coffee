@@ -144,51 +144,77 @@ Caman.Plugin.register 'dither8bit', (size = 4) ->
           data[ind(y,r_y,x,r_x) + 2] = avg_b
   @
 
-Caman.Filter.register 'shortNumericSort', () ->
-  @processPlugin 'shortNumericSort', []
+Caman.Filter.register 'shortSort', (algo) ->
+  algos = ['', 'numericSort','randomSort', 'orSort', 'xorSort', 'andSort']
+  if algo is ''
+    #dumb sort
+  else if algo is null
+    algo = algos[Math.floor(algos.length * Math.random())]
+  else
+    if algo.indexof 'Sort' == -1
+      algo += 'Sort'
+    if algo not in algos
+      algo = algos[Math.floor(algos.length * Math.random())]
+      console.log('Invalid algo, try this on for size: %s', algo)
+  @processPlugin 'shortSort', [algo]
 
-Caman.Plugin.register 'shortNumericSort', () ->
+Caman.Plugin.register 'shortSort', (algo) ->
   data = new Uint32Array(@pixelData)
   mm = Util.slice_range(@dimensions.width, @dimensions.height, 1)
   da = Array.apply([], data.subarray(mm[0], mm[1]))
-  da.sort(Util.numericSort)
+  if algo is ''
+    da.sort()
+  else
+    da.sort(Util[algo])
   @pixelData.data.set(da, mm[0])
   @
 
-Caman.Filter.register 'shortDumbSort', () ->
-  @processPlugin 'shortDumbSort', []
-
-Caman.Plugin.register 'shortDumbSort', () ->
-  data = new Uint32Array(@pixelData)
-  mm = Util.slice_range(@dimensions.width, @dimensions.height, 1)
-  da = Array.apply([], data.subarray(mm[0], mm[1]))
-  da.sort()
-  @pixelData.data.set(da, mm[0])
-  @
 
 Caman.Filter.register 'sortA', () ->
-  @processPlugin 'sortA', []
+  @processPlugin 'sortA', ['numericSort']
 
-Caman.Plugin.register 'sortA', () ->
+Caman.Plugin.register 'sortA', (algo = '') ->
   data = new Uint32Array(@pixelData)
   mm = Util.randminmax(0, data.length)
   da = Array.apply([], data.subarray(mm[0], mm[1]))
-  da.sort(Util.numericSort)
+  if algo is ''
+    da.sort()
+  else
+    da.sort(Util[algo])
   @pixelData.data.set(da, mm[0])
   @
 
 
 Caman.Filter.register 'sortB', () ->
-  @processPlugin 'sortB', []
+  @processPlugin 'sortB', ['numericSort']
 
-Caman.Plugin.register 'sortB', () ->
+Caman.Plugin.register 'sortB', (algo = '') ->
   data = new Uint32Array(@pixelData)
   mm = Util.randminmax(0, data.length)
   cut = data.subarray(mm[0], mm[1])
-  Array.prototype.sort.call(cut, numericSort)
+  if algo is ''
+    Array.prototype.sort.call(cut)
+  else
+    Array.prototype.sort.call(cut, Util[algo])
   @pixelData.data.set(data.buffer)
   @
 
+Caman.Filter.register 'sort', (algo, type = 'A') ->
+  algos = ['', 'numericSort','randomSort', 'orSort', 'xorSort', 'andSort']
+  if algo is ''
+    #dumb sort
+  else if algo is null
+    algo = algos[Math.floor(algos.length * Math.random())]
+  else
+    if algo.indexof 'Sort' == -1
+      algo += 'Sort'
+    if algo not in algos
+      algo = algos[Math.floor(algos.length * Math.random())]
+      console.log('Invalid algo, try this on for size: %s', algo)
+  if type is 'A'
+    @processPlugin 'sortA', [algo]
+  else
+    @processPlugin 'sortB', [algo]
 
 Caman.Filter.register 'sliceSort', () ->
   @processPlugin 'sliceSort', []
@@ -204,14 +230,20 @@ Caman.Plugin.register 'sliceSort', () ->
   @pixelData.set(data, offset)
   @
 
-Caman.Plugin.register 'shortsort', () ->
-  data = new Uint32Array(@pixelData.buffer)
-  mm = Util.slice_range(@dimensions.width, @dimensions.height, 32)
-  cut = data.subarray(mm[0], mm[1])
-  Array.prototype.sort.call(cut, Util.numericSort)
-  @pixelData.set(data.buffer)
-  @
 
+Caman.Filter.register 'sortRows', (algo) ->
+  algos = ['', 'numericSort','randomSort', 'orSort', 'xorSort', 'andSort']
+  if algo is ''
+    #dumb sort
+  else if algo is null
+    algo = algos[Math.floor(algos.length * Math.random())]
+  else
+    if algo.indexof 'Sort' == -1
+      algo += 'Sort'
+    if algo not in algos
+      algo = algos[Math.floor(algos.length * Math.random())]
+      console.log('Invalid algo, try this on for size: %s', algo)
+  @processPlugin 'sortRows', [algo]
 
 Caman.Plugin.register 'sortRows', () ->
   data = new Uint32Array(@pixelData.buffer)
@@ -219,21 +251,28 @@ Caman.Plugin.register 'sortRows', () ->
   height = @dimensions.height
   for i in [0..data.length] by width
     da = Array.apply([], data.subarray(i, i + width))
-    da.sort(Util.numericSort)
+    if algo is ''
+      da.sort()
+    else
+      da.sort(Util[algo])
     data.set(da, i)
   @pixelData.set(data.buffer)
   @
 
 
 Caman.Filter.register 'rgbGlitch', (dir = (Math.random() > 0.5)) ->
-  @processPlugin 'rgbGlitch', [dir]
+  if typeof dir is 'number' or 'string'
+    dir = dir % 4
+  @processPlugin 'rgbGlitch', [dir, amount]
 
-Caman.Plugin.register 'rgbGlitch', (dir = (Math.random() > 0.5)) ->
+Caman.Plugin.register 'rgbGlitch', (dir = (Math.random() > 0.5), amount) ->
   data = @pixelData
   width = @dimensions.width
   height = @dimensions.height
   mm = Util.randminmax(10, width)
   opt = mm[1] % 3
+  if amount
+    mm[0] = amount
   for y in [0..height]
     for x in [0..width]
       index = ((width * y) + x) * 4
