@@ -1,46 +1,47 @@
-# Helper Functions
+Caman = require('caman').Caman
 
-Util::sum = (arr) -> arr.reduce (t, s) -> t + s
+class Util
+  sum: (arr) -> arr.reduce (t, s) -> t + s
   # sorts
-Util::numericSort = (a, b) -> a - b
-Util::randomSort = (a, b) -> Math.random() > 0.5
+  numericSort: (a, b) -> a - b
+  randomSort: (a, b) -> Math.random() > 0.5
   # 2147483647.5 is half the colorspace in decimal
-Util::orSort = (a, b) -> 2147483647.5 - (a | b)
-Util::xorSort = (a, b) -> 2147483647.5 - (a ^ b)
-Util::andSort = (a, b) -> 2147483647.5 - (a & b)
+  orSort: (a, b) -> 2147483647.5 - (a | b)
+  xorSort: (a, b) -> 2147483647.5 - (a ^ b)
+  andSort: (a, b) -> 2147483647.5 - (a & b)
   # change endianess
-Util::swapEnd32 = (val) -> (((val & 0xFF) << 24) | ((val & 0xFF00) << 8) |
-                    ((val >> 8) & 0xFF00) | ((val >> 24) & 0xFF)) >>> 8
-Util::randminmax = (min, max) ->
-    # generate min & max values by picking
-    # one 'fairly', then picking another from the remainder
-    randA = Math.floor(max * Math.random())
-    randB = Math.floor(randA * Math.random())
-    return [randB, randA]
+  swapEnd32: (val) -> (((val & 0xFF) << 24) | ((val & 0xFF00) << 8) |
+                      ((val >> 8) & 0xFF00) | ((val >> 24) & 0xFF)) >>> 8
+  randminmax: (min, max) ->
+      # generate min & max values by picking
+      # one 'fairly', then picking another from the remainder
+      randA = Math.floor(max * Math.random())
+      randB = Math.floor(randA * Math.random())
+      return [randB, randA]
 
-Util::slice_range = (width, height, multiplier = 4) ->
-    opt = (Math.random() * 1001) % 4
-    x = 0
-    y = 0
-    px = (width * height * multiplier)
-    ratio = (Math.random() > 0.5) ? 1.7 : 1.61803
-    # cheap approximation of phi, or actual phi
-    if (opt == 1)
-      x = Math.floor((Math.random() * px))
-      y = Math.floor(x / ratio)
-    else if (opt == 2)
-      x = if Math.random() < 0.5 then Math.floor(Math.random() * px) else px
-      y = Math.floor(x / ratio)
-    else if (opt == 3)
-      x = Math.floor(Math.random() * px)
-      y = x - Math.floor((Math.random() * 5101) + 1000)
-    else
-      mm = Util.randminmax(0, px)
-      x = mm[0]
-      y = mm[1]
+  slice_range: (width, height, multiplier = 4) ->
+      opt = (Math.random() * 1001) % 4
+      x = 0
+      y = 0
+      px = (width * height * multiplier)
+      ratio = (Math.random() > 0.5) ? 1.7 : 1.61803
+      # cheap approximation of phi, or actual phi
+      if (opt == 1)
+        x = Math.floor((Math.random() * px))
+        y = Math.floor(x / ratio)
+      else if (opt == 2)
+        x = if Math.random() < 0.5 then Math.floor(Math.random() * px) else px
+        y = Math.floor(x / ratio)
+      else if (opt == 3)
+        x = Math.floor(Math.random() * px)
+        y = x - Math.floor((Math.random() * 5101) + 1000)
+      else
+        mm = Util.randminmax(0, px)
+        x = mm[0]
+        y = mm[1]
 
-    tmp = x - y
-    return [x, y]
+      tmp = x - y
+      return [x, y]
 
 # Image manipulations
 Caman.Filter.register 'pixelate', (pixelation = 5) ->
@@ -61,6 +62,13 @@ Caman.Plugin.register 'pixelate', (pixelation = 5) ->
             data[j + 1] = data[i + 1]
             data[j + 2] = data[i + 2]
   @
+
+Caman.Filter.register 'pixelate2', (pixelation = 5) ->
+  @process 'pixelate2', (rgba) ->
+    loc = @locationXY
+    for n in [0..pixelation]
+      for m in [0..pixelation]
+        @putPixel(loc.x + n , loc.y + m, rgba)
 
 
 Caman.Filter.register 'fractalGhosts',  ()->
@@ -393,4 +401,4 @@ Caman.Filter.register 'ditherBitshift', (mask = Math.floor(Math.random() * 3)) -
     rgba.b &= masks[mask]
     rgba
 
-
+exports.gleech = Caman
