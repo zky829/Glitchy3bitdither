@@ -64,15 +64,6 @@ Caman.Plugin.register 'pixelate', (pixelation = 5) ->
   @pixelData = data
   @
 
-Caman.Filter.register 'pixelate2', (pixelation = 5) ->
-  @process 'pixelate2', (rgba) ->
-    that = @
-    for n in [0...pixelation]
-      do (that) ->
-        for m in [0...pixelation]
-          loc = that.locationXY()
-          that.putPixel(loc.x + n , loc.y + m, rgba)
-
 
 Caman.Filter.register 'fractalGhosts',  ()->
   @processPlugin 'fractalGhosts', []
@@ -82,6 +73,7 @@ Caman.Plugin.register 'fractalGhosts',  ()->
   for i in data
     if (parseInt(data[i * 2 % data.length], 10) < parseInt(data[i], 10))
       data[i] = data[i * 2 % data.length]
+  @pixelData = data
   @
 
 
@@ -95,6 +87,7 @@ Caman.Plugin.register 'fractalGhosts2',  (amount = 1 + Math.round(Math.random() 
       tmp = (i * amount) % data.length
       if (parseInt(data[tmp], 10) < parseInt(data[i], 10))
         data[i] = data[tmp]
+  @pixelData = data
   @
 
 
@@ -109,6 +102,7 @@ Caman.Plugin.register 'fractalGhosts3',  (amount = 1 + Math.round(Math.random() 
       tmp = (i * amount) % data.length
       if (parseInt(data[tmp], 10) < parseInt(data[i], 10))
         data[i] = data[tmp]
+  @pixelData = data
   @
 
 
@@ -153,6 +147,7 @@ Caman.Plugin.register 'dither8bit', (size = 4) ->
           data[ind(y,r_y,x,r_x)] = avg_r
           data[ind(y,r_y,x,r_x) + 1] = avg_g
           data[ind(y,r_y,x,r_x) + 2] = avg_b
+  @pixelData = data
   @
 
 Caman.Filter.register 'shortSort', (algo) ->
