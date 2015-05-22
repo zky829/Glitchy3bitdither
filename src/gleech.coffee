@@ -51,24 +51,27 @@ Caman.Plugin.register 'pixelate', (pixelation = 5) ->
   width = @dimensions.width
   height = @dimensions.height
   data = @pixelData
-  for y in [0..height] by pixelation
-    for x in [0..width] by pixelation
+  for y in [0...height] by pixelation
+    for x in [0...width] by pixelation
       i = 4 * (y * width + x)
-      for n in [0..pixelation]
-        for m in [0..pixelation]
+      for n in [0...pixelation]
+        for m in [0...pixelation]
           if (x + m < width)
             j = ((width * (y + n)) + (x + m)) * 4
             data[j] = data[i]
             data[j + 1] = data[i + 1]
             data[j + 2] = data[i + 2]
+  @pixelData = data
   @
 
 Caman.Filter.register 'pixelate2', (pixelation = 5) ->
   @process 'pixelate2', (rgba) ->
-    loc = @locationXY
-    for n in [0..pixelation]
-      for m in [0..pixelation]
-        @putPixel(loc.x + n , loc.y + m, rgba)
+    that = @
+    for n in [0...pixelation]
+      do (that) ->
+        for m in [0...pixelation]
+          loc = that.locationXY()
+          that.putPixel(loc.x + n , loc.y + m, rgba)
 
 
 Caman.Filter.register 'fractalGhosts',  ()->
@@ -132,21 +135,21 @@ Caman.Plugin.register 'dither8bit', (size = 4) ->
   height = @dimensions.height
   data = @pixelData
   ind = (a,b,c,d) => 4 * (width * (a + b)) + c + d
-  for y in [0..height]
-    for x in [0..width]
+  for y in [0...height]
+    for x in [0...width]
       sum_r = 0
       sum_g = 0
       sum_b = 0
-      for s_y in [0..size]
-        for s_x in [0..size]
+      for s_y in [0...size]
+        for s_x in [0...size]
           sum_r += data[ind(y,s_y,x,s_x)]
           sum_g += data[ind(y,s_y,x,s_x) + 1]
           sum_b += data[ind(y,s_y,x,s_x) + 2]
       avg_r = if sum_r / (size * size) > 127 then 0xff else 0
       avg_g = if sum_g / (size * size) > 127 then 0xff else 0
       avg_b = if sum_b / (size * size) > 127 then 0xff else 0
-      for r_y in [0..size]
-        for r_x in [0..size]
+      for r_y in [0...size]
+        for r_x in [0...size]
           data[ind(y,r_y,x,r_x)] = avg_r
           data[ind(y,r_y,x,r_x) + 1] = avg_g
           data[ind(y,r_y,x,r_x) + 2] = avg_b
@@ -257,7 +260,7 @@ Caman.Plugin.register 'sortRows', () ->
   data = new Uint32Array(@pixelData.buffer)
   width = @dimensions.width
   height = @dimensions.height
-  for i in [0..data.length] by width
+  for i in [0...data.length] by width
     da = Array.apply([], data.subarray(i, i + width))
     if algo is ''
       da.sort()
@@ -281,8 +284,8 @@ Caman.Plugin.register 'rgbGlitch', (dir = (Math.random() > 0.5), amount) ->
   opt = mm[1] % 3
   if amount
     mm[0] = amount
-  for y in [0..height]
-    for x in [0..width]
+  for y in [0...height]
+    for x in [0...width]
       index = ((width * y) + x) * 4
       red = data[index]
       green = data[index + 1]
