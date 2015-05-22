@@ -1,47 +1,46 @@
 Caman = require('caman').Caman
 
-class Util
-  sum: (arr) -> arr.reduce (t, s) -> t + s
-  # sorts
-  numericSort: (a, b) -> a - b
-  randomSort: (a, b) -> Math.random() > 0.5
-  # 2147483647.5 is half the colorspace in decimal
-  orSort: (a, b) -> 2147483647.5 - (a | b)
-  xorSort: (a, b) -> 2147483647.5 - (a ^ b)
-  andSort: (a, b) -> 2147483647.5 - (a & b)
-  # change endianess
-  swapEnd32: (val) -> (((val & 0xFF) << 24) | ((val & 0xFF00) << 8) |
-                      ((val >> 8) & 0xFF00) | ((val >> 24) & 0xFF)) >>> 8
-  randminmax: (min, max) ->
-      # generate min & max values by picking
-      # one 'fairly', then picking another from the remainder
-      randA = Math.floor(max * Math.random())
-      randB = Math.floor(randA * Math.random())
-      return [randB, randA]
+sum = (arr) -> arr.reduce (t, s) -> t + s
+# sorts
+numericSort = (a, b) -> a - b
+randomSort = (a, b) -> Math.random() > 0.5
+# 2147483647.5 is half the colorspace in decimal
+orSort = (a, b) -> 2147483647.5 - (a | b)
+xorSort = (a, b) -> 2147483647.5 - (a ^ b)
+andSort = (a, b) -> 2147483647.5 - (a & b)
+# change endianess
+swapEnd32 = (val) -> (((val & 0xFF) << 24) | ((val & 0xFF00) << 8) |
+                    ((val >> 8) & 0xFF00) | ((val >> 24) & 0xFF)) >>> 8
+randminmax = (min, max) ->
+    # generate min & max values by picking
+    # one 'fairly', then picking another from the remainder
+    randA = Math.floor(max * Math.random())
+    randB = Math.floor(randA * Math.random())
+    return [randB, randA]
 
-  slice_range: (width, height, multiplier = 4) ->
-      opt = (Math.random() * 1001) % 4
-      x = 0
-      y = 0
-      px = (width * height * multiplier)
-      ratio = (Math.random() > 0.5) ? 1.7 : 1.61803
-      # cheap approximation of phi, or actual phi
-      if (opt == 1)
-        x = Math.floor((Math.random() * px))
-        y = Math.floor(x / ratio)
-      else if (opt == 2)
-        x = if Math.random() < 0.5 then Math.floor(Math.random() * px) else px
-        y = Math.floor(x / ratio)
-      else if (opt == 3)
-        x = Math.floor(Math.random() * px)
-        y = x - Math.floor((Math.random() * 5101) + 1000)
-      else
-        mm = Util.randminmax(0, px)
-        x = mm[0]
-        y = mm[1]
+slice_range = (width, height, multiplier = 4) ->
+    opt = (Math.random() * 1001) % 4
+    x = 0
+    y = 0
+    px = (width * height * multiplier)
+    ratio = if (Math.random() > 0.5) then 1.7  else 1.61803
+    # cheap approximation of phi, or actual phi
+    if (opt == 1)
+      x = Math.floor((Math.random() * px))
+      y = Math.floor(x / ratio)
+    else if (opt == 2)
+      x = if Math.random() < 0.5 then Math.floor(Math.random() * px) else px
+      y = Math.floor(x / ratio)
+    else if (opt == 3)
+      x = Math.floor(Math.random() * px)
+      y = x - Math.floor((Math.random() * 5101) + 1000)
+    else
+      mm = randminmax(0, px)
+      x = mm[0]
+      y = mm[1]
 
-      tmp = x - y
-      return [x, y]
+    tmp = x - y
+    return [x, y]
 
 # Image manipulations
 Caman.Filter.register 'pixelate', (pixelation = 5) ->
@@ -157,7 +156,7 @@ Caman.Filter.register 'shortSort', (algo) ->
   else if algo is null
     algo = algos[Math.floor(algos.length * Math.random())]
   else
-    if algo.indexof 'Sort' == -1
+    if algo.indexOf 'Sort' == -1
       algo += 'Sort'
     if algo not in algos
       algo = algos[Math.floor(algos.length * Math.random())]
@@ -166,12 +165,12 @@ Caman.Filter.register 'shortSort', (algo) ->
 
 Caman.Plugin.register 'shortSort', (algo) ->
   data = new Uint32Array(@pixelData)
-  mm = Util.slice_range(@dimensions.width, @dimensions.height, 1)
+  mm = slice_range(@dimensions.width, @dimensions.height, 1)
   da = Array.apply([], data.subarray(mm[0], mm[1]))
   if algo is ''
     da.sort()
   else
-    da.sort(Util[algo])
+    da.sort(Helper[algo])
   @pixelData.data.set(da, mm[0])
   @
 
@@ -181,12 +180,13 @@ Caman.Filter.register 'sortA', () ->
 
 Caman.Plugin.register 'sortA', (algo = '') ->
   data = new Uint32Array(@pixelData)
-  mm = Util.randminmax(0, data.length)
+  mm = randminmax(0, data.length)
+  # Array.apply may be unsuitable for larger arrays
   da = Array.apply([], data.subarray(mm[0], mm[1]))
   if algo is ''
     da.sort()
   else
-    da.sort(Util[algo])
+    da.sort(Helper[algo])
   @pixelData.data.set(da, mm[0])
   @
 
@@ -196,12 +196,12 @@ Caman.Filter.register 'sortB', () ->
 
 Caman.Plugin.register 'sortB', (algo = '') ->
   data = new Uint32Array(@pixelData)
-  mm = Util.randminmax(0, data.length)
+  mm = randminmax(0, data.length)
   cut = data.subarray(mm[0], mm[1])
   if algo is ''
     Array.prototype.sort.call(cut)
   else
-    Array.prototype.sort.call(cut, Util[algo])
+    Array.prototype.sort.call(cut, Helper[algo])
   @pixelData.data.set(data.buffer)
   @
 
@@ -212,7 +212,7 @@ Caman.Filter.register 'sort', (algo, type = 'A') ->
   else if algo is null
     algo = algos[Math.floor(algos.length * Math.random())]
   else
-    if algo.indexof 'Sort' == -1
+    if algo.indexOf 'Sort' == -1
       algo += 'Sort'
     if algo not in algos
       algo = algos[Math.floor(algos.length * Math.random())]
@@ -229,10 +229,10 @@ Caman.Plugin.register 'sliceSort', () ->
   width = @dimensions.width
   height = @dimensions.height
   data = new Uint32Array(@pixelData.buffer)
-  mm = Util.slice_range(width, height, 1)
+  mm = slice_range(width, height, 1)
   cut = data.subarray(mm[0], mm[1])
   offset = Math.floor((Math.random() * (width * height)) - cut.length)
-  Array.prototype.sort.call(cut, Util.numericSort)
+  Array.prototype.sort.call(cut, numericSort)
   @pixelData.set(data, offset)
   @
 
@@ -244,7 +244,7 @@ Caman.Filter.register 'sortRows', (algo) ->
   else if algo is null
     algo = algos[Math.floor(algos.length * Math.random())]
   else
-    if algo.indexof 'Sort' == -1
+    if algo.indexOf 'Sort' == -1
       algo += 'Sort'
     if algo not in algos
       algo = algos[Math.floor(algos.length * Math.random())]
@@ -260,13 +260,13 @@ Caman.Plugin.register 'sortRows', () ->
     if algo is ''
       da.sort()
     else
-      da.sort(Util[algo])
+      da.sort(Helper[algo])
     data.set(da, i)
   @pixelData.set(data.buffer)
   @
 
 
-Caman.Filter.register 'rgbGlitch', (dir = (Math.random() > 0.5)) ->
+Caman.Filter.register 'rgbGlitch', (dir = (Math.random() > 0.5), amount) ->
   if typeof dir is 'number' or 'string'
     dir = dir % 4
   @processPlugin 'rgbGlitch', [dir, amount]
@@ -275,7 +275,7 @@ Caman.Plugin.register 'rgbGlitch', (dir = (Math.random() > 0.5), amount) ->
   data = @pixelData
   width = @dimensions.width
   height = @dimensions.height
-  mm = Util.randminmax(10, width)
+  mm = randminmax(10, width)
   opt = mm[1] % 3
   if amount
     mm[0] = amount
