@@ -24,10 +24,21 @@ var functions = [
   'ditherRandomColor',
   'ditherBitshift'
 ];
-gleech('./examples/Lenna.png', function() {
-  var i = ~~(functions.length * Math.random());
-  this[functions[i]]();
-  this.render(function() {
-    this.save('./examples/output.png');
-  });
-});
+
+var i = functions.length - 1;
+(function() {
+  var fun = functions[i];
+  try {
+    gleech('./examples/Lenna.png', function(fun) {
+      console.log(fun);
+      this[fun]();
+      this.render(function() {
+        this.save('./examples/' + fun + '.png');
+      });
+    });
+  } catch (e) {
+    console.log('%s failed with %s', fun, e);
+  }
+  i--;
+  setTimeout(arguments.callee, 30);
+})(i);
