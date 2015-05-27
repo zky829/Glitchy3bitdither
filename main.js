@@ -7,15 +7,11 @@ var functions = [
   'slice',
   'dither8bit',
   'shortSort',
-  'sortA',
-  'sortB',
   'sort',
   'sliceSort',
   'sortRows',
   'rgbGlitch',
   'invert',
-  'anySort',
-  'anyShortSort',
   'redShift',
   'greenShift',
   'blueShift',
@@ -25,20 +21,16 @@ var functions = [
   'ditherBitshift'
 ];
 
-var i = functions.length - 1;
-(function() {
-  var fun = functions[i];
-  try {
-    gleech('./examples/Lenna.png', function(fun) {
-      console.log(fun);
-      this[fun]();
-      this.render(function() {
-        this.save('./examples/' + fun + '.png');
-      });
+try {
+  gleech('./examples/Lenna.png', function(fun) {
+    var i = Math.floor(functions.length * Math.random());
+    var fun = process.argv[2] || functions[i];
+    console.log(' > attempting to run funtion: %s', fun);
+    this[fun]();
+    this.render(function() {
+      this.save('./examples/' + fun + '.png');
     });
-  } catch (e) {
-    console.log('%s failed with %s', fun, e);
-  }
-  i--;
-  setTimeout(arguments.callee, 30);
-})(i);
+  });
+} catch (e) {
+  console.log('%s failed with %s', fun, e);
+}
