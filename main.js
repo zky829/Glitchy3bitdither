@@ -24,7 +24,7 @@ var functions = [
 try {
   gleech('./examples/Lenna.png', function(fun) {
     var i = Math.floor(functions.length * Math.random());
-    var fun = process.argv[2] || functions[i];
+    fun = process.argv[2] || functions[i];
     console.log(' > attempting to run funtion: %s', fun);
     this[fun]();
     this.render(function() {

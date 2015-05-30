@@ -42,6 +42,15 @@ slice_range = (width, height, multiplier = 4) ->
     tmp = x - y
     return [x, y]
 
+arrToCanvas = (arr, width, height) ->
+  can = if exports? then new Canvas() else document.createElement('canvas')
+  can.width = width
+  can.height = height
+  ctx = can.getContext('2d')
+  buff = new Uint8ClampedArray(arr)
+  ctx.putImageData(buff)
+  return can
+
 # Image manipulations
 Caman.Filter.register 'pixelate', (pixelation = 5) ->
   @processPlugin 'pixelate', [pixelation]
@@ -60,8 +69,8 @@ Caman.Plugin.register 'pixelate', (pixelation = 5) ->
             data[j] = data[i]
             data[j + 1] = data[i + 1]
             data[j + 2] = data[i + 2]
-  @pixelData = data
-  @
+  @replaceCanvas arrToCanvas(data)
+  return @
 
 
 Caman.Filter.register 'fractalGhosts',  ()->
@@ -72,8 +81,8 @@ Caman.Plugin.register 'fractalGhosts',  ()->
   for i in data
     if (parseInt(data[i * 2 % data.length], 10) < parseInt(data[i], 10))
       data[i] = data[i * 2 % data.length]
-  @pixelData = data
-  @
+  @replaceCanvas arrToCanvas(data)
+  return @
 
 
 Caman.Filter.register 'fractalGhosts2',  (amount = 1 + Math.round(Math.random() * 10))->
@@ -86,8 +95,8 @@ Caman.Plugin.register 'fractalGhosts2',  (amount = 1 + Math.round(Math.random() 
       tmp = (i * amount) % data.length
       if (parseInt(data[tmp], 10) < parseInt(data[i], 10))
         data[i] = data[tmp]
-  @pixelData = data
-  @
+  @replaceCanvas arrToCanvas(data)
+  return @
 
 
 Caman.Filter.register 'fractalGhosts3', (amount = 1 + Math.round(Math.random() * 10), gap = 4) ->
@@ -101,8 +110,8 @@ Caman.Plugin.register 'fractalGhosts3',  (amount = 1 + Math.round(Math.random() 
       tmp = (i * amount) % data.length
       if (parseInt(data[tmp], 10) < parseInt(data[i], 10))
         data[i] = data[tmp]
-  @pixelData = data
-  @
+  @replaceCanvas arrToCanvas(data)
+  return @
 
 
 Caman.Filter.register 'slice', ->
@@ -117,8 +126,8 @@ Caman.Plugin.register 'slice', ->
   cut = data.subarray(cutstart, cutend)
   data.set(cut, Math.floor(Math.random() *
                           ((width * height * 4) - cut.length)))
-  @pixelData = data
-  @
+  @replaceCanvas arrToCanvas(data)
+  return @
 
 
 Caman.Filter.register 'dither8bit', (size = 4) ->
@@ -147,8 +156,8 @@ Caman.Plugin.register 'dither8bit', (size = 4) ->
           data[ind(y,r_y,x,r_x)] = avg_r
           data[ind(y,r_y,x,r_x) + 1] = avg_g
           data[ind(y,r_y,x,r_x) + 2] = avg_b
-  @pixelData = data
-  @
+  @replaceCanvas arrToCanvas(data)
+  return @
 
 Caman.Filter.register 'shortSort', (algo) ->
   algos = ['', 'numericSort','randomSort', 'orSort', 'xorSort', 'andSort']
@@ -173,8 +182,8 @@ Caman.Plugin.register 'shortSort', (algo) ->
   else
     Array.prototype.sort.call(da, @[algo])
   data.set(da, mm[0])
-  @pixelData = data
-  @
+  @replaceCanvas arrToCanvas(data)
+  return @
 
 
 Caman.Filter.register 'sort', (algo) ->
@@ -200,8 +209,8 @@ Caman.Plugin.register 'sort', (algo) ->
   else
     Array.prototype.sort.call(da, @[algo])
   data.set(da, mm[0])
-  @pixelData = data
-  @
+  @replaceCanvas arrToCanvas(data)
+  return @
 
 
 Caman.Filter.register 'sliceSort', (algo) ->
@@ -219,8 +228,8 @@ Caman.Plugin.register 'sliceSort', (algo) ->
   else
     Array.prototype.sort.call(da, @[algo])
   data.set(da, offset)
-  @pixelData = data
-  @
+  @replaceCanvas arrToCanvas(data)
+  return @
 
 
 Caman.Filter.register 'sortRows', (algo) ->
@@ -245,8 +254,8 @@ Caman.Plugin.register 'sortRows', (algo) ->
     cut = data.subarray(i, i+width)
     Array.prototype.sort.call(cut, @[algo])
     data.set(cut, i)
-  @pixelData = data
-  @
+  @replaceCanvas arrToCanvas(data)
+  return @
 
 
 Caman.Filter.register 'sortRows', (algo) ->
@@ -274,8 +283,8 @@ Caman.Plugin.register 'sortRows', (algo) ->
     else
       Array.prototype.sort.call(da, @[algo])
     data.set(da, i)
-  @pixelData = data
-  @
+  @replaceCanvas arrToCanvas(data)
+  return @
 
 
 Caman.Filter.register 'rgbGlitch', (dir = (Math.random() > 0.5), amount) ->
@@ -323,8 +332,8 @@ Caman.Plugin.register 'rgbGlitch', (dir = (Math.random() > 0.5), amount) ->
           data[index - mm[0] + 1] = red
           data[index] = green
           data[index - mm[0]] = blue
-  @pixelData = data
-  @
+  @replaceCanvas arrToCanvas(data)
+  return @
 
 
 Caman.Filter.register 'invert', () ->
@@ -334,8 +343,8 @@ Caman.Plugin.register 'invert', () ->
   data = new Uint32Array(@pixelData)
   for i in data
     data[i] = ~ data[i] | 0xFF000000
-  @pixelData = data
-  @
+  @replaceCanvas arrToCanvas(data)
+  return @
 
 
 Caman.Filter.register 'redShift', ->
