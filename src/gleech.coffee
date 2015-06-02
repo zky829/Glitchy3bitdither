@@ -1,4 +1,5 @@
-Caman = require('caman').Caman
+if require?
+  Caman = require('caman').Caman
 
 sum = (arr) -> arr.reduce (t, s) -> t + s
 # sorts
@@ -405,4 +406,5 @@ Caman.Filter.register 'ditherBitshift', (mask = Math.floor(Math.random() * 3)) -
     rgba.b &= masks[mask]
     rgba
 
-exports.gleech = Caman
+if exports?
+  exports.gleech = Caman
