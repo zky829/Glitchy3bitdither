@@ -21,6 +21,8 @@ funs[19]="ditherBitshift"
 
 for fun in ${funs[@]}
 do
+  rm -f "./examples/$fun\.png"
   node main.js $fun
 done
 
+git status --porcelain | cut -b 13-

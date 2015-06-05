@@ -1,5 +1,6 @@
 if require?
   Caman = require('caman').Caman
+  Canvas = require 'caman/node_modules/canvas'
 
 sum = (arr) -> arr.reduce (t, s) -> t + s
 # sorts
@@ -43,14 +44,17 @@ slice_range = (width, height, multiplier = 4) ->
     tmp = x - y
     return [x, y]
 
-arrToCanvas = (arr, width, height) ->
+ArrayToCanvas = (arr, width, height) ->
   can = if exports? then new Canvas() else document.createElement('canvas')
   can.width = width
   can.height = height
   ctx = can.getContext('2d')
+  data = ctx.createImageData(width, height);
   buff = new Uint8ClampedArray(arr)
-  ctx.putImageData(buff)
+  for i in buff
+    data[i] = buff[i]
   return can
+
 
 # Image manipulations
 Caman.Filter.register 'pixelate', (pixelation = 5) ->
@@ -70,7 +74,7 @@ Caman.Plugin.register 'pixelate', (pixelation = 5) ->
             data[j] = data[i]
             data[j + 1] = data[i + 1]
             data[j + 2] = data[i + 2]
-  @replaceCanvas arrToCanvas(data)
+  @replaceCanvas ArrayToCanvas(data, width, height)
   return @
 
 
@@ -79,10 +83,12 @@ Caman.Filter.register 'fractalGhosts',  ()->
 
 Caman.Plugin.register 'fractalGhosts',  ()->
   data = @pixelData
+  width = @dimensions.width
+  height = @dimensions.height
   for i in data
     if (parseInt(data[i * 2 % data.length], 10) < parseInt(data[i], 10))
       data[i] = data[i * 2 % data.length]
-  @replaceCanvas arrToCanvas(data)
+  @replaceCanvas ArrayToCanvas(data, width, height)
   return @
 
 
@@ -90,13 +96,15 @@ Caman.Filter.register 'fractalGhosts2',  (amount = 1 + Math.round(Math.random() 
   @processPlugin 'fractalGhosts2', [amount]
 
 Caman.Plugin.register 'fractalGhosts2',  (amount = 1 + Math.round(Math.random() * 10))->
+  width = @dimensions.width
+  height = @dimensions.height
   data = @pixelData
   for i in data
     if (parseInt(data[i * 2 % data.length], 10) < parseInt(data[i], 10))
       tmp = (i * amount) % data.length
       if (parseInt(data[tmp], 10) < parseInt(data[i], 10))
         data[i] = data[tmp]
-  @replaceCanvas arrToCanvas(data)
+  @replaceCanvas ArrayToCanvas(data, width, height)
   return @
 
 
@@ -104,6 +112,8 @@ Caman.Filter.register 'fractalGhosts3', (amount = 1 + Math.round(Math.random() *
   @processPlugin 'fractalGhosts3', [amount, gap]
 
 Caman.Plugin.register 'fractalGhosts3',  (amount = 1 + Math.round(Math.random() * 10), gap = 4)->
+  width = @dimensions.width
+  height = @dimensions.height
   data = @pixelData
   for i in data
     if (parseInt(data[i * 2 % data.length], 10) < parseInt(data[i], 10))
@@ -111,7 +121,7 @@ Caman.Plugin.register 'fractalGhosts3',  (amount = 1 + Math.round(Math.random() 
       tmp = (i * amount) % data.length
       if (parseInt(data[tmp], 10) < parseInt(data[i], 10))
         data[i] = data[tmp]
-  @replaceCanvas arrToCanvas(data)
+  @replaceCanvas ArrayToCanvas(data, width, height)
   return @
 
 
@@ -125,9 +135,8 @@ Caman.Plugin.register 'slice', ->
   cutend = Math.floor((Math.random() * (width * height * 4)))
   cutstart = Math.floor(cutend / 1.7)
   cut = data.subarray(cutstart, cutend)
-  data.set(cut, Math.floor(Math.random() *
-                          ((width * height * 4) - cut.length)))
-  @replaceCanvas arrToCanvas(data)
+  data.set(cut, Math.floor(Math.random() * cutstart))
+  @replaceCanvas ArrayToCanvas(data, width, height)
   return @
 
 
@@ -156,8 +165,7 @@ Caman.Plugin.register 'dither8bit', (size = 4) ->
         for r_x in [0...size]
           data[ind(y,r_y,x,r_x)] = avg_r
           data[ind(y,r_y,x,r_x) + 1] = avg_g
-          data[ind(y,r_y,x,r_x) + 2] = avg_b
-  @replaceCanvas arrToCanvas(data)
+  @replaceCanvas ArrayToCanvas(data, width, height)
   return @
 
 Caman.Filter.register 'shortSort', (algo) ->
@@ -176,14 +184,15 @@ Caman.Filter.register 'shortSort', (algo) ->
 
 Caman.Plugin.register 'shortSort', (algo) ->
   data = new Uint32Array(@pixelData)
+  width = @dimensions.width
+  height = @dimensions.height
   mm = slice_range(@dimensions.width, @dimensions.height, 1)
   da = data.subarray(mm[0], mm[1])
   if algo is ''
     Array.prototype.sort.call(da)
   else
     Array.prototype.sort.call(da, @[algo])
-  data.set(da, mm[0])
-  @replaceCanvas arrToCanvas(data)
+  @replaceCanvas ArrayToCanvas(data, width, height)
   return @
 
 
@@ -202,6 +211,8 @@ Caman.Filter.register 'sort', (algo) ->
   @processPlugin 'sort', [algo]
 
 Caman.Plugin.register 'sort', (algo) ->
+  width = @dimensions.width
+  height = @dimensions.height
   data = new Uint32Array(@pixelData)
   mm = randminmax(@dimensions.width, @dimensions.height, 1)
   da = data.subarray(mm[0], mm[1])
@@ -210,7 +221,7 @@ Caman.Plugin.register 'sort', (algo) ->
   else
     Array.prototype.sort.call(da, @[algo])
   data.set(da, mm[0])
-  @replaceCanvas arrToCanvas(data)
+  @replaceCanvas ArrayToCanvas(data, width, height)
   return @
 
 
@@ -221,15 +232,16 @@ Caman.Plugin.register 'sliceSort', (algo) ->
   width = @dimensions.width
   height = @dimensions.height
   data = new Uint32Array(@pixelData)
+  width = @dimensions.width
+  height = @dimensions.height
   mm = slice_range(width, height, 1)
   da = data.subarray(mm[0], mm[1])
-  offset = Math.floor((Math.random() * (width * height)) - da.length)
+  offset = Math.abs(Math.floor((Math.random() * (width * height)) - da.length))
   if algo is ''
     Array.prototype.sort.call(da)
   else
     Array.prototype.sort.call(da, @[algo])
-  data.set(da, offset)
-  @replaceCanvas arrToCanvas(data)
+  @replaceCanvas ArrayToCanvas(data, width, height)
   return @
 
 
@@ -248,14 +260,15 @@ Caman.Filter.register 'sortRows', (algo) ->
   @processPlugin 'sortRows', [algo]
 
 Caman.Plugin.register 'sortRows', (algo) ->
+  width = @dimensions.width
+  height = @dimensions.height
   data = new Uint32Array(@pixelData)
   width = @dimensions.width
   height = @dimensions.height
   for i in [0...data.length] by width
     cut = data.subarray(i, i+width)
     Array.prototype.sort.call(cut, @[algo])
-    data.set(cut, i)
-  @replaceCanvas arrToCanvas(data)
+  @replaceCanvas ArrayToCanvas(data, width, height)
   return @
 
 
@@ -283,8 +296,7 @@ Caman.Plugin.register 'sortRows', (algo) ->
       Array.prototype.sort.call(da)
     else
       Array.prototype.sort.call(da, @[algo])
-    data.set(da, i)
-  @replaceCanvas arrToCanvas(data)
+  @replaceCanvas ArrayToCanvas(data, width, height)
   return @
 
 
@@ -330,10 +342,10 @@ Caman.Plugin.register 'rgbGlitch', (dir = (Math.random() > 0.5), amount) ->
           data[index - mm[0]] = green
           data[index - mm[0]] = blue
         else
-          data[index - mm[0] + 1] = red
+          data[index - mm[0]] = red
           data[index] = green
           data[index - mm[0]] = blue
-  @replaceCanvas arrToCanvas(data)
+  @replaceCanvas ArrayToCanvas(data, width, height)
   return @
 
 
@@ -341,10 +353,12 @@ Caman.Filter.register 'invert', () ->
   @processPlugin 'invert', []
 
 Caman.Plugin.register 'invert', () ->
+  width = @dimensions.width
+  height = @dimensions.height
   data = new Uint32Array(@pixelData)
   for i in data
     data[i] = ~ data[i] | 0xFF000000
-  @replaceCanvas arrToCanvas(data)
+  @replaceCanvas ArrayToCanvas(data, width, height)
   return @
 
 
