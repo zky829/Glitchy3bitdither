@@ -49,10 +49,11 @@ ArrayToCanvas = (arr, width, height) ->
   can.width = width
   can.height = height
   ctx = can.getContext('2d')
-  data = ctx.createImageData(width, height);
   buff = new Uint8ClampedArray(arr)
-  for i in buff
-    data[i] = buff[i]
+  imgdata = ctx.createImageData(width,height)
+  pixelData = imgdata.data
+  pixelData[i] = pixel for pixel, i in buff
+  ctx.putImageData imgdata, 0, 0
   return can
 
 
@@ -86,7 +87,7 @@ Caman.Plugin.register 'fractalGhosts',  ()->
   width = @dimensions.width
   height = @dimensions.height
   for i in data
-    if (parseInt(data[i * 2 % data.length], 10) < parseInt(data[i], 10))
+    if (parseInt(data[i * 3 % data.length], 10) < parseInt(data[i], 10))
       data[i] = data[i * 2 % data.length]
   @replaceCanvas ArrayToCanvas(data, width, height)
   return @
