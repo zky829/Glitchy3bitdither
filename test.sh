@@ -18,6 +18,7 @@ funs[16]="superShift"
 funs[17]="ditherRandom"
 funs[18]="ditherRandomColor"
 funs[19]="ditherBitshift"
+funs[20]="ditherShuffle"
 
 for fun in ${funs[@]}
 do

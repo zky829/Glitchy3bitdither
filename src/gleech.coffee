@@ -393,6 +393,17 @@ Caman.Filter.register 'superShift', ->
     @colorShift
 
 
+Caman.Filter.register 'ditherShuffle', ->
+  count = 0
+  @process 'ditherShuffle', () ->
+    count++
+    if count %2
+      loc = this.locationXY()
+      x = this.width - loc.x
+      y = this.height - loc.y
+      pxl = this.getPixel(loc.x, loc.y)
+      this.putPixel(x, y, pix)
+
 Caman.Filter.register 'ditherRandom', ->
   @process 'ditherRandom', (rgba) ->
     gray = (rgba.r + rgba.g + rgba.b / 3) % 255
