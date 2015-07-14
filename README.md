@@ -64,5 +64,6 @@ You can also use the `--auto` flag to make jekyll automatically update the site 
 portions under the included MIT license, copyright 2013 Matthew Nolan Caudill, as noted.
 99% of the rest copyleft 2013 JKirchartz, except as noted.
 
-hack away! huzzah!
+## I am open to any and all Pull Requests
+so... hack away! huzzah!
 
