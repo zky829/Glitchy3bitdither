@@ -9,8 +9,8 @@ function drawDitherResult2(canvas, ditherer, text) {
     ctx.putImageData(result, 0, 0);
     var img = document.createElement('img');
     img.src = canvas.toDataURL('image/png');
+    img.alt = text;
     var output = document.getElementById('output');
-    output.alt = text;
     output.insertBefore(img, output.childNodes[0]);
 }
 
@@ -20,6 +20,7 @@ function drawDitherResult(canvas, ditherer, text) {
     ctx.putImageData(ditherer(imageData), 0, 0);
     var img = document.createElement('img');
     img.src = canvas.toDataURL('image/png');
+    img.alt = text;
     //    img.onclick = testImage(this);
     var h2 = document.createElement('h2');
     h2.innerHTML = text;
@@ -657,15 +658,17 @@ function shortsort(imageData) {
     mm = randMinMax(0, imageData.height * imageData.width), cut;
     mm = randMinMax(mm[0], mm[1]);
     cut = data.subarray(mm[0], mm[1]);
+    console.log(mm[0], mm[1]);
     Array.prototype.sort.call(cut, numericSort);
     imageData.data.set(data.buffer);
     return imageData;
 }
 function shortdumbsort(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
-    mm = randRange(0, imageData.width * imageData.height), da;
+    mm = randMinMax(0, imageData.width * imageData.height), da;
     mm = randMinMax(mm[0], mm[1]);
     da = data.subarray(mm[0], mm[1]);
+    console.log(mm[0], mm[1]);
     Array.prototype.sort.call(da);
     imageData.data.set(da, mm[0]);
     return imageData;

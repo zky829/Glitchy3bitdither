@@ -34,6 +34,7 @@ layout: template
     var replace = document.getElementById('replace');
     apply.onclick = function(){place(false);};
     replace.onclick = function(){place(true);};
+    replace.disabled = true;
 
     function handleFileSelect(e) {
         var file = e.target.files[0];
@@ -65,6 +66,9 @@ layout: template
     }
     function generate(img,chosen){
         /* setup */
+        if (document.getElementsByTagName('img').length >= 1) {
+          replace.disabled = false;
+        }
         var width = img.width;
         var height = img.height;
         var canvas = document.createElement('canvas');

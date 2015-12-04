@@ -43,13 +43,10 @@
             function modal(e) {
                 e.preventDefault;
                 // toggle
-                if(info.style.display === "block"){
-                    info.style.display = "none";
-                }else if(info.style.display === "none"){
-                    info.style.display = "block";
-                }else{
-                    // eh, it could happen
-                    info.style.display = "none";
+                if(info.classList.contains('on')){
+                    info.classList.remove('on');
+                } else {
+                    info.classList.add('on');
                 }
                 return false;
             }
@@ -58,19 +55,19 @@
             /* keypress to kill modal */
             info.onclick = function(e){
                 console.log(e);
-                if(e.target.id = "info" && e.target.nodeName == "DIV"){
-                    this.style.display = "none";
+                if(e.target.id == "info" && e.target.nodeName == "DIV"){
+                    info.classList.remove('on');
                 }
             };
             window.addEventListener('keypress', function(){
-                info.style.display = "none";
+                info.classList.remove('on');
                 this.removeEventListener('click',arguments.callee);
             });
             // set current page hilight for nav
             document.body.id = location.pathname.slice(location.pathname.lastIndexOf('/')+1,location.pathname.lastIndexOf('.')) || 'index';
             if(document.referrer.indexOf('Glitchy3bitdither') == -1){
                 /*  show info if you got here from an external link */
-                info.style.display = "block";
+                info.classList.add('on');
             }
         }
         function loadScript(src){

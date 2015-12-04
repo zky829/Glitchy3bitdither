@@ -38,13 +38,19 @@ header a:active, button:active, header a:hover, button:hover {
    box-shadow:0.1em 0.1em 0.1em 0.1em rgba(0,0,0,0.8);
    text-shadow:0.1em 0.1em 0.1em rgba(0,0,0,0.7);
 }
+button[disabled]:active, button[disabled]:hover {
+   color:#aaa;
+   border:1px solid #666;
+   box-shadow:none;
+   text-shadow:none;
+}
 header a:active, button:active {
     box-shadow:none;
 }
 header a[href="#"] {
     border-color:#0ac;
     color:#0ac;
-    font-size:14px;
+    font-size:1em;
     font-family:serif;
     font-weight:bold;
     display:block;
@@ -57,7 +63,8 @@ header a[href="#"] {
     font-style:italic;
     text-decoration:none;
     float:right;
-    margin-top:0.7em;
+    margin-top:0.4em;
+    padding:0.36em;
 }
 header a[href="#"]:active, header a[href="#"]:hover {
     color:#7de;
@@ -88,16 +95,18 @@ header a[href="#"]:active, header a[href="#"]:hover {
     z-index:3;
     display:none;
 }
+#info.on {
+    display:block;
+}
 #info span {
    position:absolute;
    z-index:5;
-   display:table;
    background:#eee;
    border-radius:0.2em;
    max-width:32em;
    height:auto;
-   top:0; left:0; right:0; bottom:0;
-   margin:auto;
+   top:50%; left:50%;
+   transform: translate(-50%, -50%);
    padding:1em 0.5em;
 }
 #info p {
@@ -137,6 +146,5 @@ main h1, h2, main p, #form {max-width:60%;margin:1em auto;}
 #form select, #form input, #form button { display:block;margin:0.5em;}
 #form button { display:inline-block; }
 #output { width:100%; }
-#output img {display:inline;max-width:calc(100% - 1em - 2px);margin:0.5em;border:2px solid #AAA;}
+#output img {display:inline-block;max-width:calc(100% - 1em - 2px);box-sizing:border-box;margin:0.5em;border:2px solid #AAA;}
 #GlitchCruiser #output img {display:inline;width:calc(33% - 1em - 2px);margin:0.5em;border:1px solid #AAA;}
-
