@@ -33,9 +33,11 @@ layout: template
                 }, 'original');
                 var functions = document.getElementById("experimental").checked ? orig.concat(exp) : orig;
                 for(var i = 0;i<functions.length;i++){
-                    console.log(i,functions[i].name);
+                  setTimeout((function(functions, i, ctx, canvas) {
                     ctx.drawImage(img, 0, 0);
+                    console.log(functions[i].name);
                     drawDitherResult(canvas,functions[i],functions[i].name);
+                  })(functions, i, ctx, canvas), 0);
                 }
             };
             img.src = e.target.result;

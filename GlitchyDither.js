@@ -1,7 +1,6 @@
-/******************
- *  Ripped, uncerimoniously from https://github.com/mncaudill/3bitdither
- *  Then I did a bunch of my own insanity to it...
- ******************/
+/***************************************************
+ * Helper Functions
+ ***************************************************/
 
 function drawDitherResult2(canvas, ditherer, text) {
     var ctx = canvas.getContext('2d');
@@ -9,10 +8,10 @@ function drawDitherResult2(canvas, ditherer, text) {
     var result = ditherer(imageData);
     ctx.putImageData(result, 0, 0);
     var img = document.createElement('img');
-    img.src = canvas.toDataURL("image/png");
-    var output = document.getElementById("output");
+    img.src = canvas.toDataURL('image/png');
+    var output = document.getElementById('output');
     output.alt = text;
-    output.insertBefore(img,output.childNodes[0]);
+    output.insertBefore(img, output.childNodes[0]);
 }
 
 function drawDitherResult(canvas, ditherer, text) {
@@ -20,11 +19,11 @@ function drawDitherResult(canvas, ditherer, text) {
     var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     ctx.putImageData(ditherer(imageData), 0, 0);
     var img = document.createElement('img');
-    img.src = canvas.toDataURL("image/png");
+    img.src = canvas.toDataURL('image/png');
     //    img.onclick = testImage(this);
     var h2 = document.createElement('h2');
-    h2.innerText = text;
-    var output = document.getElementById("output");
+    h2.innerHTML = text;
+    var output = document.getElementById('output');
     output.appendChild(h2);
     output.appendChild(img);
 }
@@ -32,7 +31,7 @@ function drawDitherResult(canvas, ditherer, text) {
 
 function original(imageData) {
     return imageData;
-} /* from here down to where noted, is all mint-condition from mncaudill */
+}
 
 function adjustPixelError(data, i, error, multiplier) {
     data[i] = data[i] + multiplier * error[0];
@@ -40,6 +39,52 @@ function adjustPixelError(data, i, error, multiplier) {
     data[i + 2] = data[i + 2] + multiplier * error[2];
 }
 
+// return random # < a
+function randFloor(a) {return Math.floor(Math.random() * a);}
+// return random # <= a
+function randRound(a) {return Math.round(Math.random() * a);}
+// return random # between A & B
+function randRange(a, b) {return Math.round(Math.random() * (b + 1)) + a;}
+// relatively fair 50/50
+function coinToss() {return !!(Math.random() > 0.5);}
+function randMinMax(min, max) {
+    // generate min & max values by picking
+    // one 'fairly', then picking another from the remainder
+    var randA = Math.round(randRange(min, max));
+    var randB = Math.round(randRange(randA, max));
+    return [randA, randB];
+}
+function randChoice(arr) {
+  return arr[randFloor(arr.length)];
+}
+
+function randChance(percent) {
+  // percent is a number 1-100
+  return (Math.random() < (percent / 100));
+}
+
+function sum(o) {
+    for (var s = 0, i = o.length; i; s += o[--i]) {}
+    return s;
+}
+function numericSort(a, b) {return !!(a - b);}
+// 2147483647.5 is half the max-value of a 32 bit number
+function orSort(a, b) {return !!(2147483647.5 - (a | b));}
+function xorSort(a, b) {return !!(2147483647.5 - (a ^ b));}
+function andSort(a, b) {return !!(2147483647.5 - (a & b));}
+
+/*
+   function avg(o){
+   var l = o.length;
+   for(var s = 0, i = l; i; s += o[--i]){};
+   return s/l;
+   }
+   */
+
+
+/***************************************************
+ * Dithering
+ ***************************************************/
 function dither8Bit(imageData) {
     var width = imageData.width,
     height = imageData.height,
@@ -171,7 +216,7 @@ function ditherAtkinsons(imageData) {
             // Redistribute the pixel's error like this:
             //       *  1/8 1/8
             //  1/8 1/8 1/8
-            //      1/8 
+            //      1/8
             // The ones to the right...
             if (x < width - 1) {
                 adj_i = i + 4;
@@ -228,7 +273,7 @@ function ditherFloydSteinberg(imageData) {
             err_b = old_b - new_b;
             // Redistribute the pixel's error like this:
             //   * 7
-            // 3 5 1 
+            // 3 5 1
             // The ones to the right...
             if (x < width - 1) {
                 right_i = i + 4;
@@ -236,7 +281,8 @@ function ditherFloydSteinberg(imageData) {
                 // The pixel that's down and to the right
                 if (y < height - 1) {
                     next_right_i = right_i + (width * 4);
-                    adjustPixelError(data, next_right_i, [err_r, err_g, err_b], 1 / 16);
+                    adjustPixelError(data, next_right_i, [err_r, err_g, err_b],
+                                     1 / 16);
                 }
             }
             if (y < height - 1) {
@@ -246,7 +292,8 @@ function ditherFloydSteinberg(imageData) {
                 if (x > 0) {
                     // The one down and to the left...
                     left_i = down_i - 4;
-                    adjustPixelError(data, left_i, [err_r, err_g, err_b], 3 / 16);
+                    adjustPixelError(data, left_i, [err_r, err_g, err_b], 3 /
+                                     16);
                 }
             }
         }
@@ -282,7 +329,7 @@ function ditherBayer(imageData) {
         [43, 27, 39, 23, 42, 26, 38, 22]
     ]
     ],
-    threshold_map = threshold_maps[Math.floor(Math.random() * threshold_maps.length)];
+    threshold_map = threshold_maps[randFloor(threshold_maps.length)];
     size = threshold_map.length;
     for (var y = 0; y < height; y++) {
         for (var x = 0; x < width; x++) {
@@ -324,75 +371,22 @@ function ditherBayer3(imageData) {
         [43, 27, 39, 23, 42, 26, 38, 22]
     ]
     ],
-    threshold_map = threshold_maps[Math.floor(Math.random() * threshold_maps.length)],
+    threshold_map = threshold_maps[randFloor(threshold_maps.length)],
     size = threshold_map.length;
     for (var y = 0; y < height; y++) {
         for (var x = 0; x < width; x++) {
             i = 4 * (y * width + x);
             /* apply the tranformation to each color */
-            data[i] = ((data[i] * 17) / 255) < threshold_map[x % size][y % size] ? 0 : 0xff;
-            data[i + 1] = ((data[i + 1] * 17) / 255) < threshold_map[x % size][y % size] ? 0 : 0xff;
-            data[i + 2] = ((data[i + 2] * 17) / 255) < threshold_map[x % size][y % size] ? 0 : 0xff;
+            data[i] = ((data[i] * 17) / 255) < threshold_map[x % size][y %
+              size] ? 0 : 0xff;
+            data[i + 1] = ((data[i + 1] * 17) / 255) < threshold_map[x %
+              size][y % size] ? 0 : 0xff;
+            data[i + 2] = ((data[i + 2] * 17) / 255) < threshold_map[x %
+              size][y % size] ? 0 : 0xff;
         }
     }
     return imageData;
 }
-/************************************
- *  here's where my fun begins
- *************************************/
-// some helper functions
-function randminmax(min,max){
-    // generate min & max values by picking
-    // one "fairly", then picking another from the remainder
-    var randA = Math.floor(min + (max-min) * Math.random());
-    var randB = Math.floor(randA + (max-randA) * Math.random());
-    if(randB-randA>20000){
-        return randminmax(min,max);
-    }
-    return [randA,randB];
-}
-function slice_range(width,height,depth){
-    var multiplier = 4; // 8-bit needs to be multiplied by 4 to get correct pixel range
-    if(depth === 32){
-        multiplier = 1; // 32-bit already has correct pixel range
-    }
-    var opt = (Math.random() * 1001) % 4,
-        x=0,y=0,
-        px = (width*height*multiplier),
-        ratio=(Math.random()>0.5) ? 1.7 : 1.61803; // cheap approximation of phi, or actual phi
-    if(opt==1){
-        x = Math.floor((Math.random() * px));
-        y = Math.floor(x / ratio);
-    }else if(opt==2){
-        x = Math.random() < 0.5 ? Math.floor(Math.random() * px) : px;
-        y = Math.floor(x / ratio);
-    }else if(opt==3){
-        x = Math.floor(Math.random() * px);
-        y = x - Math.floor((Math.random() * 5101) + 1000);
-    }else{
-        var mm = randminmax(0,px);
-        x = mm[0];
-        y = mm[1];
-    }
-    var tmp = x-y;
-    return [x,y];
-}
-function sum(o){
-    for(var s = 0, i = o.length; i; s += o[--i]){}
-    return s;
-}
-function numericSort(a,b){return a-b;}
-function randomSort(a,b){return Math.random() > 0.5;}
-function orSort(a,b){return 2147483647.5 - (a | b);}
-function xorSort(a,b){return 2147483647.5 - (a ^ b);}
-function andSort(a,b){return 2147483647.5 - (a & b);}
-/*
-   function avg(o){
-   var l = o.length;
-   for(var s = 0, i = l; i; s += o[--i]){};
-   return s/l;
-   }
-   */
 
 function ditherRandom(imageData) {
     var width = imageData.width,
@@ -401,7 +395,7 @@ function ditherRandom(imageData) {
     for (var i = 0, size = width * height * 4; i < size; i += 4) {
         gray = (data[i] + data[i + 1] + data[i + 2]) / 3;
         scaled = gray % 255;
-        val = scaled < Math.round(Math.random() * 128) ? 0 : 0xff;
+        val = scaled < randRound(128) ? 0 : 0xff;
         data[i] = data[i + 1] = data[i + 2] = val;
     }
     return imageData;
@@ -412,24 +406,69 @@ function ditherRandom2(imageData) {
     height = imageData.height,
     data = imageData.data;
     for (var i = 0, size = width * height * 4; i < size; i += 4) {
-        data[i] = data[i] < Math.round(Math.random() * 128) ? 0 : 0xff;
-        data[i + 1] = data[i + 1] < Math.round(Math.random() * 128) ? 0 : 0xff;
-        data[i + 2] = data[i + 2] < Math.round(Math.random() * 128) ? 0 : 0xff;
+        data[i] = data[i] < randRound(128) ? 0 : 0xff;
+        data[i + 1] = data[i + 1] < randRound(128) ? 0 : 0xff;
+        data[i + 2] = data[i + 2] < randRound(128) ? 0 : 0xff;
     }
     return imageData;
 }
 
-function colorShift(imageData) {
+function ditherBitmask(imageData) {
     var width = imageData.width,
     height = imageData.height,
-    data = imageData.data;
+    data = imageData.data,
+    M = randRange(1, 125);
+    console.log('ditherBitshift', M);
+    // 0xc0; 2 bits
+    // 0xe0  3 bits
+    // 0xf0  4 bits
+    for (var i = 0, size = width * height * 4; i < size; i += 4) {
+        // data[i] |= M;
+        // data[i + 1] |= M;
+        // data[i + 2] |= M;
+        data[i] |= M;
+        data[i + 1] |= M;
+        data[i + 2] |= M;
+    }
+    return imageData;
+}
+
+
+/***************************************************
+ * Glitch
+ ***************************************************/
+function colorShift(imageData) {
+    var width = imageData.width,
+        height = imageData.height,
+        data = imageData.data,
+        dir = coinToss();
     for (var i = 0, size = width * height * 4; i < size; i += 4) {
         var r = data[i],
         g = data[i + 1],
         b = data[i + 2];
-        data[i] = r > Math.random() * 255 ? g : b;
-        data[i + 1] = g > Math.random() * 255 ? r : b;
-        data[i + 2] = b > Math.random() * 255 ? g : r;
+        data[i] = dir ? g : b;
+        data[i + 1] = dir ? b : r;
+        data[i + 2] = dir ? r : g;
+    }
+    return imageData;
+}
+function colorShift2(imageData) {
+    var width = imageData.width,
+    height = imageData.height,
+    data = new Uint32Array(imageData.data.buffer),
+    dir = coinToss();
+    for (var i = 0, size = data.length; i < size; i++) {
+        var a = data[i] >> 24 & 0xFF,
+            r = data[i] >> 16 & 0xFF,
+            g = data[i] >> 8 & 0xFF,
+            b = data[i] & 0xFF;
+        if (randFloor(10) < 2) {
+          console.log(a, r, g, b);
+        }
+        r = (dir ? g : b) & 0xFF;
+        g = (dir ? b : r) & 0xFF;
+        b = (dir ? r : g) & 0xFF;
+        data[i] = (a << 24) + (r << 16) + (g << 8) + (b);
     }
     return imageData;
 }
@@ -438,7 +477,7 @@ function greenShift(imageData) {
     var width = imageData.width,
     height = imageData.height,
     data = imageData.data,
-    factor = Math.floor((Math.random() * 128)/2);
+    factor = randFloor(64);
     for (var i = 0, size = width * height * 4; i < size; i += 4) {
         data[i] -= factor;
         data[i + 1] += 1;
@@ -451,7 +490,7 @@ function redShift(imageData) {
     var width = imageData.width,
     height = imageData.height,
     data = imageData.data,
-    factor = Math.floor((Math.random() * 128)/2);
+    factor = randFloor(64);
     for (var i = 0, size = width * height * 4; i < size; i += 4) {
         data[i] += 1;
         data[i + 1] -= factor;
@@ -464,7 +503,7 @@ function blueShift(imageData) {
     var width = imageData.width,
     height = imageData.height,
     data = imageData.data,
-    factor = Math.floor((Math.random() * 128)/2);
+    factor = randFloor(64);
     for (var i = 0, size = width * height * 4; i < size; i += 4) {
         data[i] -= factor;
         data[i + 1] -= factor;
@@ -474,64 +513,9 @@ function blueShift(imageData) {
 }
 
 function superShift(imageData) {
-    for (var i = 0, l = (Math.random() * 10) + 1; i < l; i++) {
+    for (var i = 0, l = randRange(1, 10); i < l; i++) {
         imageData = colorShift(imageData);
     }
-    return imageData;
-}
-
-
-function ditherBitshift(imageData) {
-    var width = imageData.width,
-    height = imageData.height,
-    data = imageData.data,
-    masks = [0xc0, 0xe0, 0xf0],
-    M = masks[Math.floor(Math.random() * 3)];
-    // 0xc0; 2 bits
-    // 0xe0  3 bits
-    // 0xf0  4 bits
-    for (var i = 0, size = width * height * 4; i < size; i += 4) {
-        data[i] &= M;
-        data[i + 1] &= M;
-        data[i + 2] &= M;
-    }
-    return imageData;
-}
-
-
-
-function XYtemplate(imageData) {
-    var data = new Uint32Array(imageData.data.buffer),
-        width = imageData.width, height = imageData.height;
-    for(var y = 0; y < height; ++y){
-        for (var x = 0; x < width; ++x) {
-            /* do stuff to a 32bit pixel */
-            data[y * width + x] = ~ data[y * width + x] | 0xFF000000;
-        }
-    }
-    imageData.data.set(data);
-    return imageData;
-}
-function RowTemplate(imageData) {
-    var data = new Uint32Array(imageData.data.buffer),
-        width = imageData.width, height = imageData.height;
-    for(var i = 0, row; i < data.length; i += width) {
-        if( i % 3 ){ /* artificial limit, to make it stripey */
-		row = Array.apply([], data.subarray(i,i+width));
-		/* do stuff to an array of 32bit pixels */
-		for(var j = 0, l = row.length; j < l; j++){
-			row[j] = ~ row[j] | 0xFF000000;
-		}
-		data.set(row,i);
-	}
-    }
-    imageData.data.set(data);
-    return imageData;
-}
-function templateTest(imageData) {
-    var xy = XYtemplate(imageData),
-        row = RowTemplate(imageData);
-    imageData = Math.random() > 0.5 ? xy : row;
     return imageData;
 }
 
@@ -562,10 +546,10 @@ function slice(imageData) {
     var width = imageData.width,
     height = imageData.height,
     data = imageData.data,
-    cutend = Math.floor((Math.random() * (width * height * 4))),
+    cutend = randFloor(width * height * 4),
     cutstart = Math.floor(cutend / 1.7),
     cut = data.subarray(cutstart, cutend);
-    data.set(cut, Math.floor(Math.random() * ((width * height * 4)-cut.length)));
+    data.set(cut, randFloor((width * height * 4) - cut.length));
     imageData.data.set(data);
     return imageData;
 }
@@ -574,12 +558,13 @@ function slice2(imageData) {
     var width = imageData.width,
     height = imageData.height,
     data = imageData.data;
-    for (var i = 0, l = (Math.random() * 11); i < l; i++) {
-        var cutend = Math.random() < 0.75 ? Math.floor(Math.random() * (width * height * 4)) : (width * height * 4),
+    for (var i = 0, l = randRound(11); i < l; i++) {
+        var cutend = Math.random() < 0.75 ? randFloor(width * height * 4) :
+                                            (width * height * 4),
         cutstart = Math.floor(cutend / 1.7),
         cut = data.subarray(cutstart, cutend);
-        //data.set(cut, Math.floor(Math.random() * (width * height * 2)));
-        data.set(cut, Math.floor(Math.random() * ((width * height * 4)-cut.length)));
+        //data.set(cut, randFloor(width * height * 2));
+        data.set(cut, randFloor((width * height * 4) - cut.length));
     }
     imageData.data.set(data);
     return imageData;
@@ -589,69 +574,29 @@ function slice3(imageData) {
     var width = imageData.width,
     height = imageData.height,
     data = imageData.data;
-    for (var i = 0, l = (Math.random() * 20); i < l; i++) {
-        var cutend = Math.floor(Math.random() * (width * height * 4)),
-        cutstart = cutend - Math.floor((Math.random() * 5101) + 1000),
+    for (var i = 0, l = randRound(20); i < l; i++) {
+        var cutend = randFloor(width * height * 4),
+        cutstart = cutend - randRange(1000, 5100),
         cut = data.subarray(cutstart, cutend);
-        data.set(cut, Math.floor(Math.random() * ((width * height * 4)-cut.length)));
-        //data.set(cut, Math.floor(Math.random() * (width * height * 2)));
+        data.set(cut, randFloor((width * height * 4) - cut.length));
+        //data.set(cut, randFloor(width * height * 2));
     }
     imageData.data.set(data);
     return imageData;
 }
 
-function sliceB(imageData) {
-    var width = imageData.width,
-    height = imageData.height,
-    data = imageData.data,
-    mm = slice_range(width,height,8),
-    cutend = mm[1],
-    cutstart = mm[0];
-    cut = data.subarray(cutstart, cutend);
-    data.set(cut, Math.floor(Math.random() * ((width * height * 4)-cut.length)));
-    return imageData;
-}
-
-function sliceB2(imageData) {
-    var width = imageData.width,
-    height = imageData.height,
-    data = imageData.data;
-    for (var i = 0, l = (Math.random() * 11); i < l; i++) {
-        var mm = slice_range(width,height,8),
-        cutend = mm[1],
-        cutstart = mm[0];
-        cut = data.subarray(cutstart, cutend);
-        data.set(cut, Math.floor(Math.random() * ((width * height * 4)-cut.length)));
-    }
-    return imageData;
-}
-
-function sliceB3(imageData) {
-    var width = imageData.width,
-    height = imageData.height,
-    data = imageData.data;
-    for (var i = 0, l = (Math.random() * 20); i < l; i++) {
-        var mm = slice_range(width,height,8),
-        cutend = mm[1],
-        cutstart = mm[0],
-        cut = data.subarray(cutstart, cutend);
-        data.set(cut, Math.floor(Math.random() * ((width * height * 4)-cut.length)));
-        //data.set(cut, Math.floor(Math.random() * (width * height * 2)));
-    }
-    return imageData;
-}
 
 function superSlice2(imageData) {
     var functs = [slice, slice2, slice3];
-    for (var i = 0, l = (Math.random() * functs.length + 1); i < l; i++) {
-        var fun = Math.floor(Math.random() * functs.length);
+    for (var i = 0, l = randRound(functs.length); i < l; i++) {
+        var fun = randFloor(functs.length);
         imageData = functs[fun](imageData);
     }
     return imageData;
 }
 
 function superSlice(imageData) {
-    for (var i = 0, l = (Math.random() * 10) + 1; i < l; i++) {
+    for (var i = 0, l = randRange(1, 10); i < l; i++) {
         imageData = slice(slice2(slice3(imageData)));
     }
     return imageData;
@@ -659,9 +604,9 @@ function superSlice(imageData) {
 
 function fractalGhosts(imageData) {
     var data = imageData.data;
-    for (var i=0; i < data.length; i++){
-        if (parseInt(data[i*2%data.length],10) < parseInt(data[i],10)){
-            data[i] = data[i*2%data.length];
+    for (var i = 0; i < data.length; i++) {
+        if (parseInt(data[i * 2 % data.length], 10) < parseInt(data[i], 10)) {
+            data[i] = data[i * 2 % data.length];
         }
     }
     imageData.data = data;
@@ -669,10 +614,10 @@ function fractalGhosts(imageData) {
 }
 function fractalGhosts2(imageData) {
     var data = imageData.data,
-    rand = 1 + Math.floor(Math.random() * 11);
-    for (var i=0; i < data.length; i++){
+        rand = randRange(1, 10);
+    for (var i = 0; i < data.length; i++) {
         var tmp = (i * rand) % data.length;
-        if (parseInt(data[tmp],10) < parseInt(data[i],10)){
+        if (parseInt(data[tmp], 10) < parseInt(data[i], 10)) {
             data[i] = data[tmp];
         }
     }
@@ -682,11 +627,14 @@ function fractalGhosts2(imageData) {
 
 function fractalGhosts3(imageData) {
     var data = imageData.data,
-    rand = 1 + Math.floor(Math.random() * 11);
-    for (var i=0; i < data.length; i++){
-        if ((i%4)===0) continue;
+        rand = randRange(1, 10);
+    for (var i = 0; i < data.length; i++) {
+        if ((i % 4) === 0) {
+          data[i] = 0xFF;
+          continue;
+        }
         var tmp = (i * rand) % data.length;
-        if (parseInt(data[tmp],10) < parseInt(data[i],10)){
+        if (parseInt(data[tmp], 10) < parseInt(data[i], 10)) {
             data[i] = data[tmp];
         }
     }
@@ -694,27 +642,52 @@ function fractalGhosts3(imageData) {
     return imageData;
 }
 
+function fractalGhosts4(imageData) {
+    var data = imageData.data;
+    for (var i = 0; i < data.length; i++) {
+        if ((i % 4) === 0) {
+          data[i] = 0xFF;
+          continue;
+        }
+        if (parseInt(data[i * 2 % data.length], 10) < parseInt(data[i], 10)) {
+            data[i] = data[i * 2 % data.length];
+        }
+    }
+    imageData.data = data;
+    return imageData;
+}
+function shortsort(imageData) {
+    var data = new Uint32Array(imageData.data.buffer),
+    mm = randMinMax(0, imageData.height * imageData.width), cut;
+    mm = randMinMax(mm[0], mm[1]);
+    cut = data.subarray(mm[0], mm[1]);
+    Array.prototype.sort.call(cut, numericSort);
+    imageData.data.set(data.buffer);
+    return imageData;
+}
 function shortbettersort(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
-    mm = slice_range(imageData.width,imageData.height, 32),
-    da = Array.apply([], data.subarray(mm[0],mm[1]));
+    mm = randRange(0, imageData.width * imageData.height), da;
+    mm = randMinMax(mm[0], mm[1]);
+    da = Array.apply([], data.subarray(mm[0], mm[1]));
     da.sort(numericSort);
-    imageData.data.set(da,mm[0]);
+    imageData.data.set(da);
     return imageData;
 }
 function shortdumbsort(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
-    mm = slice_range(imageData.width,imageData.height, 32),
-    da = Array.apply([], data.subarray(mm[0],mm[1]));
+    mm = randRange(0, imageData.width * imageData.height), da;
+    mm = randMinMax(mm[0], mm[1]);
+    da = Array.apply([], data.subarray(mm[0], mm[1]));
     da.sort();
-    imageData.data.set(da,mm[0]);
+    imageData.data.set(da, mm[0]);
     return imageData;
 }
-function AnyShortSort(imageData){
-    var opt = Math.floor(Math.random() * 1001) % 3;
-    if(opt==1){
+function AnyShortSort(imageData) {
+    var opt = randFloor(1001) % 3;
+    if (opt == 1) {
         return shortdumbsort(imageData);
-    } else if(opt==2){
+    } else if (opt == 2) {
         return shortbettersort(imageData);
     } else {
         return shortsort(imageData);
@@ -723,66 +696,98 @@ function AnyShortSort(imageData){
 
 function sort(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
-    mm = randminmax(0,data.length),
-    da = Array.apply([], data.subarray(mm[0],mm[1]));
-    da.sort(function(a,b){return (a-b)/4 - (a-b)/2;});
-    imageData.data.set(da,mm[0]);
+    mm = randMinMax(0, data.length - 1),
+    da = data.subarray(mm[0], mm[1]);
+    console.log(data.length, mm);
+    Array.prototype.sort.call(da, numericSort);
+    imageData.data.set(da, mm[0]);
     return imageData;
 }
-function bettersort(imageData) {
+function protosort(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
-    mm = randminmax(0,data.length),
-    cut = data.subarray(mm[0],mm[1]);
+    mm = randMinMax(0, data.length - 1),
+    cut = data.subarray(mm[0], mm[1]);
     Array.prototype.sort.call(cut, numericSort);
     imageData.data.set(data.buffer);
     return imageData;
 }
-function AnySort(imageData){
-    var opt = Math.floor(Math.random() * 1001) % 3;
-    if(opt==1){
-        return bettersort(imageData);
+function AnySort(imageData) {
+    if (coinToss()) {
+        return protosort(imageData);
     } else {
         return sort(imageData);
     }
-}
-function shortsort(imageData) {
-    var data = new Uint32Array(imageData.data.buffer),
-    mm = slice_range(imageData.width,imageData.height, 32),
-    cut = data.subarray(mm[0],mm[1]);
-    Array.prototype.sort.call(cut, numericSort);
-    imageData.data.set(data.buffer);
-    return imageData;
 }
 function slicesort(imageData) {
     var width = imageData.width,
         height = imageData.height,
         data = new Uint32Array(imageData.data.buffer),
-        mm = slice_range(width,height,32);
-        var cut = data.subarray(mm[0], mm[1]),
-	offset = Math.floor((Math.random() * (width * height))-cut.length);
+        mm = randRange(0, width * height);
+    mm = randRange(mm[0], mm[1]);
+    var cut = data.subarray(mm[0], mm[1]),
+        offset = Math.floor(randRound(width * height) - cut.length);
     Array.prototype.sort.call(cut, numericSort);
-    imageData.data.set(data);
+    imageData.data.set(data.buffer);
     return imageData;
 }
 
 function sortRows(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
-    width = imageData.width, height = imageData.height;
-    for (var i = 0, size = data.length+1; i < size; i += width) {
-        var da = Array.apply([], data.subarray(i,i+width));
-        da.sort(numericSort);
+        width = imageData.width, height = imageData.height;
+    for (var i = 0, size = data.length + 1; i < size; i += width) {
+        var da = data.subarray(i, i + width);
+        Array.prototype.sort.call(da, numericSort);
         data.set(da, i);
     }
     imageData.data.set(data.buffer);
     return imageData;
 }
 
+
+function dumbSortRows(imageData) {
+    var data = new Uint32Array(imageData.data.buffer),
+    width = imageData.width, height = imageData.height;
+    for (var i = 0, size = data.length; i < size; i += width) {
+        // var mm = randMinMax(i, i + width);
+        // var da = data.subarray(mm[0], mm[1]);
+        var da = data.subarray(i, i + width);
+        Array.prototype.sort.call(da);
+        data.set(da, i);
+        /*
+    for (var i = 0, size = data.length; i < size; i += width) {
+        var da = Array.apply([], data.subarray(i, i + width));
+        da.sort(coinToss);
+        data.set(da, i);
+        */
+    }
+    imageData.data.set(data.buffer);
+    return imageData;
+}
 function randomSortRows(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
     width = imageData.width, height = imageData.height;
     for (var i = 0, size = data.length; i < size; i += width) {
-        var da = Array.apply([], data.subarray(i,i+width));
-        da.sort(randomSort);
+        // var mm = randMinMax(i, i + width);
+        // var da = data.subarray(mm[0], mm[1]);
+        var da = data.subarray(i, i + width);
+        Array.prototype.sort.call(da, coinToss);
+        data.set(da, i);
+        /*
+    for (var i = 0, size = data.length; i < size; i += width) {
+        var da = Array.apply([], data.subarray(i, i + width));
+        da.sort(coinToss);
+        data.set(da, i);
+        */
+    }
+    imageData.data.set(data.buffer);
+    return imageData;
+}
+function xorSortRows(imageData) {
+    var data = new Uint32Array(imageData.data.buffer),
+    width = imageData.width, height = imageData.height;
+    for (var i = 0, size = data.length; i < size; i += width) {
+        var da = data.subarray(i, i + width);
+        Array.prototype.sort.call(da, xorSort);
         data.set(da, i);
     }
     imageData.data.set(data.buffer);
@@ -792,8 +797,8 @@ function orSortRows(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
     width = imageData.width, height = imageData.height;
     for (var i = 0, size = data.length; i < size; i += width) {
-        var da = Array.apply([], data.subarray(i,i+width));
-        da.sort(orSort);
+        var da = data.subarray(i, i + width);
+        Array.prototype.sort.call(da, orSort);
         data.set(da, i);
     }
     imageData.data.set(data.buffer);
@@ -803,38 +808,18 @@ function andSortRows(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
     width = imageData.width, height = imageData.height;
     for (var i = 0, size = data.length; i < size; i += width) {
-        var da = Array.apply([], data.subarray(i,i+width));
-        da.sort(andSort);
+        var da = data.subarray(i, i + width);
+        Array.prototype.sort.call(da, andSort);
         data.set(da, i);
     }
     imageData.data.set(data.buffer);
     return imageData;
 }
 
-function pixelSort(imageData) {
-    var data = new Uint32Array(imageData.data.buffer),
-        width = imageData.width,
-	height = imageData.height;
-    for(var i = 0, da = null, mm = [0,0], size = data.length ; i < size; i += width) {
-        mm = randminmax(i,i+width);
-        da = Array.apply([], data.subarray(mm[0],mm[1]));
-        da.sort(numericSort);
-        try{
-	    for(var x = mm[0], j = 0; x < mm[1]; x ++){
-                data.set(x,da[j]);
-		j++;
-	    }
-        }catch(e){
-           console.log(e,mm[0], da.length, data.length);
-        }
-    }
-    imageData.data.set(data);
-    return imageData;
-}
 
 function invert(imageData) {
     var data = new Uint32Array(imageData.data.buffer);
-    for(var i=0;i<data.length;i++){
+    for (var i = 0; i < data.length; i++) {
             data[i] = ~ data[i] | 0xFF000000;
     }
     imageData.data.set(data.buffer);
@@ -844,21 +829,21 @@ function rgb_glitch(imageData) {
     var data = imageData.data,
     width = imageData.width,
     height = imageData.height,
-    mm = randminmax(10,width-10),
+    mm = randMinMax(10, width - 10),
     opt = mm[1] % 3,
-    dir = Math.random() > 0.5 ? true : false;
-    for (var y=0; y<height; y++) {
-        for (var x=0; x<width; x++) {
+    dir = coinToss();
+    for (var y = 0; y < height; y++) {
+        for (var x = 0; x < width; x++) {
             var index = ((width * y) + x) * 4,
             red = data[index],
             green = data[index + 1],
             blue = data[index + 2];
-            if(dir){
-                if (opt===0){
+            if (dir) {
+                if (opt === 0) {
                     data[index + mm[0]] = red;
                     data[index + mm[0] + 1] = green;
                     data[index] = blue;
-                }else if(opt===1){
+                }else if (opt === 1) {
                     data[index] = red;
                     data[index + mm[0] + 1] = green;
                     data[index + mm[0]] = blue;
@@ -867,12 +852,12 @@ function rgb_glitch(imageData) {
                     data[index + 1] = green;
                     data[index + mm[0]] = blue;
                 }
-            }else{
-                if (opt===0){
+            } else {
+                if (opt === 0) {
                     data[index - mm[0] + 1] = red;
                     data[index - mm[0]] = green;
                     data[index] = blue;
-                }else if(opt===1){
+                }else if (opt === 1) {
                     data[index + 1] = red;
                     data[index - mm[0]] = green;
                     data[index - mm[0]] = blue;
@@ -888,10 +873,11 @@ function rgb_glitch(imageData) {
     return imageData;
 }
 function DrumrollVerticalWave(imageData) {
-    /* borrowed from https://github.com/ninoseki/glitched-canvas & modified w/ cosine */
+    /* borrowed from https://github.com/ninoseki/glitched-canvas & modified w/
+     * cosine */
     var data = imageData.data,
-    width = imageData.width, 
-    height = imageData.height, 
+    width = imageData.width,
+    height = imageData.height,
     roll = 0;
     for (var x = 0; x < width; x++) {
         if (Math.random() > 0.95) roll = Math.floor(Math.cos(x) * (height * 2));
@@ -914,10 +900,11 @@ function DrumrollVerticalWave(imageData) {
     return imageData;
 }
 function DrumrollHorizontalWave(imageData) {
-    /* borrowed from https://github.com/ninoseki/glitched-canvas & modified  with cosine */
+    /* borrowed from https://github.com/ninoseki/glitched-canvas & modified
+     * with cosine */
     var data = imageData.data,
-    width = imageData.width, 
-    height = imageData.height, 
+    width = imageData.width,
+    height = imageData.height,
     roll = 0;
     for (var x = 0; x < width; x++) {
         if (Math.random() > 0.95) roll = Math.floor(Math.cos(x) * (height * 2));
@@ -942,11 +929,11 @@ function DrumrollHorizontalWave(imageData) {
 function DrumrollVertical(imageData) {
     /* borrowed from https://github.com/ninoseki/glitched-canvas */
     var data = imageData.data,
-    width = imageData.width, 
-    height = imageData.height, 
+    width = imageData.width,
+    height = imageData.height,
     roll = 0;
     for (var x = 0; x < width; x++) {
-        if (Math.random() > 0.95) roll = Math.floor(Math.random() * height);
+        if (Math.random() > 0.95) roll = randFloor(height);
         if (Math.random() > 0.95) roll = 0;
 
         for (var y = 0; y < height; y++) {
@@ -968,12 +955,12 @@ function DrumrollVertical(imageData) {
 function DrumrollHorizontal(imageData) {
     /* borrowed from https://github.com/ninoseki/glitched-canvas */
     var data = imageData.data,
-    width = imageData.width, 
-    height = imageData.height, 
+    width = imageData.width,
+    height = imageData.height,
     roll = 0;
     for (var x = 0; x < width; x++) {
-        if (Math.random() > 0.95) roll = Math.floor(Math.random() * height);
-        if (Math.random() > 0.95) roll = 0;
+        if (Math.random() < 0.05) roll = randFloor(height);
+        if (Math.random() < 0.05) roll = 0;
 
         for (var y = 0; y < height; y++) {
             var idx = (x + y * width) * 4;
@@ -992,128 +979,240 @@ function DrumrollHorizontal(imageData) {
     return imageData;
 }
 
+function scanlines(imageData) {
+  // future options:
+  // type, xor/or ammount, stripe width
+    var data = new Uint32Array(imageData.data.buffer),
+        width = imageData.width, height = imageData.height,
+       type = randRange(0, 2),
+       xorNum = randChoice([0x005555555, 0x00FF00FF00, 0x00F0F0F0, 0x00333333]),
+       orNum = randChoice([0xFF5555555, 0xFFFF00FF00, 0xFFF0F0F0, 0xFF333333]);
+    console.log('scanlines',
+                type,
+                (type < 2 && type == 0 ? xorNum : orNum).toString(16));
+    for (var i = 0, size = data.length; i < size; i += width) {
+        var row = Array.apply([], data.subarray(i, i + width));
+        /* transform `row`, which contains a row of the image */
+        if (i % 5 == 0) { // make stripes ~5px apart
+          for (var p in row) {
+            if (type === 0) {
+              row[p] = row[p] ^ xorNum;
+            } else if (type === 1) {
+              row[p] = row[p] | orNum;
+            } else {
+              // invert
+              row[p] = ~ row[p] | 0xFF000000;
+            }
+          }
+        }
+        data.set(row, i);
+    }
+    imageData.data.set(data.buffer);
+    return imageData;
+}
+
+function pixelSort(imageData) {
+    var data = new Uint32Array(imageData.data.buffer),
+        width = imageData.width, height = imageData.height;
+    var upper = 0xFFAAAAAA, lower = 0xFF333333;
+    for (var i = 0, size = data.length; i < size; i += width) {
+        var row = Array.apply([], data.subarray(i, i + width));
+        var low = 0, high = 0;
+        for (var j in row) {
+          if (!high && !low && row[j] >= low) {
+            low = j;
+          }
+          if (low && !high && row[j] >= high) {
+            high = j;
+          }
+        }
+        if (low) {
+          var da = row.slice(low, high);
+          Array.prototype.sort.call(da, numericSort);
+          data.set(da, (i + low) % (height * width));
+        }
+    }
+    imageData.data.set(data.buffer);
+    return imageData;
+}
+
+
+
+// templates for making new glitches
+function XYtemplate(imageData) {
+    var data = new Uint32Array(imageData.data.buffer),
+        width = imageData.width, height = imageData.height;
+    for (var y = 0; y < height; ++y) {
+        for (var x = 0; x < width; ++x) {
+            // do stuff to a 32bit pixel
+            // ex: invert pixel colors
+            // data[y * width + x] = ~ data[y * width + x] | 0xFF000000;
+        }
+    }
+    imageData.data.set(data.buffer);
+    return imageData;
+}
+function RowTemplate(imageData) {
+    var data = new Uint32Array(imageData.data.buffer),
+        width = imageData.width, height = imageData.height;
+    for (var i = 0, size = data.length; i < size; i += width) {
+        var row = Array.apply([], data.subarray(i, i + width));
+        // transform `row`, which contains a row of 32bit pixels
+        // ex: make a black stripe 5px apart
+        // if (i % 5 == 0) {
+        //   for (var p in row) {
+        //     row[p] = 0xFF000000;
+        //   }
+        // }
+        data.set(row, i);
+    }
+    imageData.data.set(data.buffer);
+    return imageData;
+}
+
 /* global arrays of functions */
-var exp = [AnySort,AnyShortSort,shortsort,shortbettersort,shortdumbsort,sort,bettersort,fractalGhosts3,DrumrollHorizontalWave,DrumrollVerticalWave,slicesort,sortRows,randomSortRows,orSortRows,andSortRows,pixelSort,templateTest],
-    orig = [focusImage, rgb_glitch,invert, slice, slice2, slice3,sliceB, sliceB2, sliceB3, fractalGhosts, fractalGhosts2, DrumrollHorizontal, DrumrollVertical, ditherBitshift, colorShift, ditherRandom, ditherRandom2, ditherBayer, ditherBayer3, redShift, greenShift, blueShift, superShift, superSlice, superSlice2, ditherAtkinsons, ditherFloydSteinberg, ditherHalftone, dither8Bit];
+var exp = [AnySort, AnyShortSort, shortsort, shortbettersort, shortdumbsort,
+           sort, protosort, slicesort, sortRows, randomSortRows, orSortRows,
+           andSortRows, dumbSortRows, pixelSort, randomGlitch, preset1, preset2],
+    orig = [focusImage, rgb_glitch, invert, slice, slice2, slice3, scanlines,
+      fractalGhosts, fractalGhosts2, fractalGhosts3, fractalGhosts4,
+      DrumrollHorizontal, DrumrollVertical, DrumrollHorizontalWave,
+      DrumrollVerticalWave, ditherBitmask, colorShift, colorShift2, ditherRandom,
+      ditherRandom2, ditherBayer, ditherBayer3, redShift, greenShift, blueShift,
+      superShift, superSlice, superSlice2, ditherAtkinsons,
+      ditherFloydSteinberg, ditherHalftone, dither8Bit];
 
 /* these run random set of functions */
 
 function theWorks(imageData) {
-    var functions = document.getElementById("experimental").checked ? orig.concat(exp) : orig.slice(0),
+    var functions = document.getElementById('experimental').checked ?
+      orig.concat(exp) : orig.slice(0),
     sortCounter = 0;
-    functions.sort(function() {
-        return 0.5 - Math.random();
-    });
+    functions.sort(coinToss);
     for (var i = 0, l = functions.length, s = 0; i < l; i++) {
-        s = functions[i].name.indexOf("ort");
-        if(!(s >= 0) && sortCounter >= 1){imageData = functions[i](imageData);continue;}
-        if(s){sortCounter++;}
+        s = functions[i].name.indexOf('ort');
+        if (!(s >= 0) && sortCounter >= 1) {imageData =
+          functions[i](imageData);continue;}
+        if (s) {sortCounter++;}
     }
     return imageData;
 }
 
 function randomGlitch(imageData) {
-    var functions = document.getElementById("experimental").checked ? orig.concat(exp) : orig.slice(0),
-    history = [],
-    sortCounter = 0;
-    for (var i = 0, s = 0, fun = 0, l = Math.floor(Math.random() * functions.length - 10)+1; i < l; i++) {
-        s = functions[i].name.indexOf("ort");
-        if(!(s >= 0) && sortCounter >= 1){
-            fun = Math.floor(Math.random() * functions.length);
-            imageData = functions[fun](imageData);
+    var functions = document.getElementById('experimental').checked ?
+      orig.concat(exp) : orig.slice(0),
+    history = [];
+    for (var i = 0, l = randRange(3, 8); i < l; i++) {
+            var fun = randFloor(functions.length);
+            functions[fun](imageData);
             history.push(functions[fun].name);
-            continue;
-        }
-        if(s){sortCounter++;}
     }
-    if(history.length===0){
+    if (history.length === 0) {
         return randomGlitch(imageData);
     }
-    console.log("randomGlitch history:",history);
+    console.log('randomGlitch history:', history);
     return imageData;
 }
 
 function glitch(imageData) {
     var hist = [];
-    for (var i = 0, l = Math.floor(Math.random() * 5) + 5; i < l; i++) {
-        switch (Math.floor(Math.random() * 13)) {
+    for (var i = 0, l = randFloor(5) + 5; i < l; i++) {
+        switch (randFloor(13)) {
             case 0:
                 imageData = focusImage(imageData);
-            hist.push("focusImage");
+            hist.push('focusImage');
             break;
             case 1:
                 imageData = ditherBitshift(imageData);
-            hist.push("ditherBitshift");
+            hist.push('ditherBitshift');
             break;
             case 2:
-                imageData = (Math.random() > 0.5) ? superSlice(imageData) : superSlice2(imageData);
-            hist.push("superSlice/2");
+                imageData = (Math.random() > 0.5) ? superSlice(imageData) :
+                superSlice2(imageData);
+            hist.push('superSlice/2');
             break;
             case 3:
                 imageData = colorShift(imageData);
-            hist.push("colorShift");
+            hist.push('colorShift');
             break;
             case 4:
                 imageData = ditherRandom2(imageData);
-            hist.push("ditherRandom2");
+            hist.push('ditherRandom2');
             break;
             case 5:
                 imageData = ditherBayer3(imageData);
-            hist.push("ditherBayer3");
+            hist.push('ditherBayer3');
             break;
             case 6:
                 imageData = ditherAtkinsons(imageData);
-            hist.push("ditherAtkinsons");
+            hist.push('ditherAtkinsons');
             break;
             case 7:
                 imageData = ditherFloydSteinberg(imageData);
-            hist.push("ditherFloydSteinberg");
+            hist.push('ditherFloydSteinberg');
             break;
             case 8:
                 imageData = ditherHalftone(imageData);
-            hist.push("ditherHalftone");
+            hist.push('ditherHalftone');
             break;
             case 9:
                 imageData = dither8Bit(imageData);
-            hist.push("dither8bit");
+            hist.push('dither8bit');
             break;
             case 10:
-                if (Math.random() > 0.5) {
-                var picker = Math.floor(Math.random() * 3);
+                if (coinToss()) {
+                var picker = randFloor(3);
                 if (picker == 1) {
                     imageData = redShift(imageData);
-                    hist.push("redShift");
+                    hist.push('redShift');
                 } else if (picker == 2) {
                     imageData = greenShift(imageData);
-                    hist.push("greenShift");
+                    hist.push('greenShift');
                 } else {
                     imageData = blueShift(imageData);
-                    hist.push("blueShift");
+                    hist.push('blueShift');
                 }
             }
             break;
             /*
                case 11:
-               imageData = (Math.random()>0.5) ? fractalGhosts(imageData) : fractalGhosts2(imageData);
-               hist.push("fractalGhosts/2");
+               imageData = (Math.random()>0.5) ? fractalGhosts(imageData) :
+               fractalGhosts2(imageData);
+               hist.push('fractalGhosts/2');
                break;
                */
             default:
             imageData = invert(imageData);
-            hist.push("invert");
+            hist.push('invert');
             break;
         }
     }
-    console.log("glitch history",hist);
+    console.log('glitch history', hist);
     return imageData;
 }
 var seqCounter = 0;
 function seqGlitch(imageData) {
-    var functions = document.getElementById("experimental").checked ? orig.concat(exp) : orig.slice(0),
-        i = seqCounter%functions.length;
+    var fun = document.getElementById('experimental').checked ?
+                                               orig.concat(exp) : orig.slice(0),
+        i = seqCounter % fun.length;
     seqCounter++;
-    console.log("seqGlitch", functions[i].name,seqCounter);
-    return functions[i](imageData);
+    console.log('seqGlitch', fun[i].name, seqCounter);
+    return fun[i](imageData);
+}
+
+function preset1(imageData) {
+  var ops = [ditherRandom2, blueShift, shortdumbsort, slice, superShift, invert, AnySort, protosort, ditherRandom2, DrumrollVerticalWave, ditherBayer3, dumbSortRows, slicesort, DrumrollVertical];
+  for (var i in ops) {
+    ops[i](imageData);
+  }
+  return imageData;
+}
+function preset2(imageData) {
+  var ops = [protosort, slice2, fractalGhosts4, sort, andSortRows, fractalGhosts2, greenShift];
+  for (var i in ops) {
+    ops[i](imageData);
+  }
+  return imageData;
 }
 /*
    function testImage(imageData){
