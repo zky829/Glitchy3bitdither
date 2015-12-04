@@ -418,7 +418,6 @@ function ditherBitmask(imageData) {
     height = imageData.height,
     data = imageData.data,
     M = randRange(1, 125);
-    console.log('ditherBitshift', M);
     // 0xc0; 2 bits
     // 0xe0  3 bits
     // 0xf0  4 bits
@@ -462,9 +461,6 @@ function colorShift2(imageData) {
             r = data[i] >> 16 & 0xFF,
             g = data[i] >> 8 & 0xFF,
             b = data[i] & 0xFF;
-        if (randFloor(10) < 2) {
-          console.log(a, r, g, b);
-        }
         r = (dir ? g : b) & 0xFF;
         g = (dir ? b : r) & 0xFF;
         b = (dir ? r : g) & 0xFF;
@@ -665,30 +661,18 @@ function shortsort(imageData) {
     imageData.data.set(data.buffer);
     return imageData;
 }
-function shortbettersort(imageData) {
-    var data = new Uint32Array(imageData.data.buffer),
-    mm = randRange(0, imageData.width * imageData.height), da;
-    mm = randMinMax(mm[0], mm[1]);
-    da = Array.apply([], data.subarray(mm[0], mm[1]));
-    da.sort(numericSort);
-    imageData.data.set(da);
-    return imageData;
-}
 function shortdumbsort(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
     mm = randRange(0, imageData.width * imageData.height), da;
     mm = randMinMax(mm[0], mm[1]);
-    da = Array.apply([], data.subarray(mm[0], mm[1]));
-    da.sort();
+    da = data.subarray(mm[0], mm[1]);
+    Array.prototype.sort.call(da);
     imageData.data.set(da, mm[0]);
     return imageData;
 }
 function AnyShortSort(imageData) {
-    var opt = randFloor(1001) % 3;
-    if (opt == 1) {
+    if (coinToss()) {
         return shortdumbsort(imageData);
-    } else if (opt == 2) {
-        return shortbettersort(imageData);
     } else {
         return shortsort(imageData);
     }
@@ -698,7 +682,6 @@ function sort(imageData) {
     var data = new Uint32Array(imageData.data.buffer),
     mm = randMinMax(0, data.length - 1),
     da = data.subarray(mm[0], mm[1]);
-    console.log(data.length, mm);
     Array.prototype.sort.call(da, numericSort);
     imageData.data.set(da, mm[0]);
     return imageData;
@@ -987,9 +970,6 @@ function scanlines(imageData) {
        type = randRange(0, 2),
        xorNum = randChoice([0x005555555, 0x00FF00FF00, 0x00F0F0F0, 0x00333333]),
        orNum = randChoice([0xFF5555555, 0xFFFF00FF00, 0xFFF0F0F0, 0xFF333333]);
-    console.log('scanlines',
-                type,
-                (type < 2 && type == 0 ? xorNum : orNum).toString(16));
     for (var i = 0, size = data.length; i < size; i += width) {
         var row = Array.apply([], data.subarray(i, i + width));
         /* transform `row`, which contains a row of the image */
@@ -1071,16 +1051,17 @@ function RowTemplate(imageData) {
 }
 
 /* global arrays of functions */
-var exp = [AnySort, AnyShortSort, shortsort, shortbettersort, shortdumbsort,
+var exp = [AnySort, AnyShortSort, shortsort, shortdumbsort,
            sort, protosort, slicesort, sortRows, randomSortRows, orSortRows,
-           andSortRows, dumbSortRows, pixelSort, randomGlitch, preset1, preset2],
+           andSortRows, dumbSortRows, pixelSort, randomGlitch, glitch,
+           preset1, preset2, preset3, preset4],
     orig = [focusImage, rgb_glitch, invert, slice, slice2, slice3, scanlines,
       fractalGhosts, fractalGhosts2, fractalGhosts3, fractalGhosts4,
       DrumrollHorizontal, DrumrollVertical, DrumrollHorizontalWave,
-      DrumrollVerticalWave, ditherBitmask, colorShift, colorShift2, ditherRandom,
-      ditherRandom2, ditherBayer, ditherBayer3, redShift, greenShift, blueShift,
-      superShift, superSlice, superSlice2, ditherAtkinsons,
-      ditherFloydSteinberg, ditherHalftone, dither8Bit];
+      DrumrollVerticalWave, ditherBitmask, colorShift, colorShift2,
+      ditherRandom, ditherRandom2, ditherBayer, ditherBayer3, redShift,
+      greenShift, blueShift, superShift, superSlice, superSlice2,
+      ditherAtkinsons, ditherFloydSteinberg, ditherHalftone, dither8Bit];
 
 /* these run random set of functions */
 
@@ -1123,8 +1104,8 @@ function glitch(imageData) {
             hist.push('focusImage');
             break;
             case 1:
-                imageData = ditherBitshift(imageData);
-            hist.push('ditherBitshift');
+                imageData = ditherBitmask(imageData);
+            hist.push('ditherBitmask');
             break;
             case 2:
                 imageData = (Math.random() > 0.5) ? superSlice(imageData) :
@@ -1201,14 +1182,31 @@ function seqGlitch(imageData) {
 }
 
 function preset1(imageData) {
-  var ops = [ditherRandom2, blueShift, shortdumbsort, slice, superShift, invert, AnySort, protosort, ditherRandom2, DrumrollVerticalWave, ditherBayer3, dumbSortRows, slicesort, DrumrollVertical];
+  var ops = [ditherRandom2, shortdumbsort, slice,
+             invert, AnySort, protosort, ditherRandom2, DrumrollVerticalWave,
+             ditherBayer3, dumbSortRows, slicesort, DrumrollVertical];
   for (var i in ops) {
     ops[i](imageData);
   }
   return imageData;
 }
 function preset2(imageData) {
-  var ops = [protosort, slice2, fractalGhosts4, sort, andSortRows, fractalGhosts2, greenShift];
+  var ops = [protosort, slice2, fractalGhosts4, sort, andSortRows,
+             fractalGhosts2, greenShift];
+  for (var i in ops) {
+    ops[i](imageData);
+  }
+  return imageData;
+}
+function preset3(imageData) {
+  var ops = [ditherRandom2, focusImage, scanlines];
+  for (var i in ops) {
+    ops[i](imageData);
+  }
+  return imageData;
+}
+function preset4(imageData) {
+  var ops = [ditherAtkinsons, focusImage, ditherRandom2, focusImage];
   for (var i in ops) {
     ops[i](imageData);
   }
