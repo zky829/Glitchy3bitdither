@@ -1185,7 +1185,7 @@ function randomGlitch(imageData) {
     var functions = document.getElementById('experimental').checked ?
       orig.concat(exp) : orig.slice(0),
     history = [];
-    for (var i = 0, l = randRange(3, 8); i < l; i++) {
+    for (var i = 0, l = randRange(3, 6); i < l; i++) {
             var fun = randFloor(functions.length);
             functions[fun](imageData);
             history.push(functions[fun].name);
@@ -1199,7 +1199,7 @@ function randomGlitch(imageData) {
 
 function glitch(imageData) {
     var hist = [];
-    for (var i = 0, l = randFloor(5) + 5; i < l; i++) {
+    for (var i = 0, l = randRange(5, 10); i < l; i++) {
         switch (randFloor(13)) {
             case 0:
                 imageData = focusImage(imageData);
@@ -1285,8 +1285,7 @@ function seqGlitch(imageData) {
 
 function preset1(imageData) {
   var ops = [ditherRandom3, shortdumbsort, slice, invert,
-    sortRows, sort, ditherRandom3,
-             DrumrollVerticalWave,
+             shortsort, shortsort, ditherRandom3, DrumrollVerticalWave,
              ditherBayer3, dumbSortRows, slicesort, DrumrollVertical];
   for (var i in ops) {
     ops[i](imageData);
@@ -1294,8 +1293,8 @@ function preset1(imageData) {
   return imageData;
 }
 function preset2(imageData) {
-  var ops = [ditherFloydSteinberg, ditherHalftone, ditherBayer3, ditherHalftone,
-    ditherAtkinsons];
+  var ops = [shortsort, slice2, fractalGhosts4, sort, fractalGhosts2,
+             colorShift];
   for (var i in ops) {
     ops[i](imageData);
   }
