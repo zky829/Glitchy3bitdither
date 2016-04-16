@@ -1,7 +1,7 @@
 Glitchy 3 Bit Dither
 ==============
 
-Check out the increasingly insane <a href="http://jkirchartz.com/Glitchy3bitdither" title="Demo">Demo</a>.
+Mutilate images online with <a href="http://jkirchartz.com/Glitchy3bitdither/GlitchCruiser.html" title="Glitch Cruiser">Glitch Cruiser</a>.
 
 <p>This is a utility to mutilate images in unpredictable ways. It can randomly choose between algorithms, and many algorithms randomly mutate themselves.
     You can choose different encodings, effects, and emulate several glitch techniques, resulting in aleatoric new images and hidden configurations.</p>
