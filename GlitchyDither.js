@@ -3,34 +3,6 @@
  * Helper Functions
  ***************************************************/
 
-function drawDitherResult2(canvas, ditherer, text) {
-    var ctx = canvas.getContext('2d');
-    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    var result = ditherer(imageData);
-    ctx.putImageData(result, 0, 0);
-    var img = document.createElement('img');
-    img.src = canvas.toDataURL('image/png');
-    img.alt = text;
-    var output = document.getElementById('output');
-    output.insertBefore(img, output.childNodes[0]);
-}
-
-function drawDitherResult(canvas, ditherer, text) {
-    var ctx = canvas.getContext('2d');
-    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    ctx.putImageData(ditherer(imageData), 0, 0);
-    var img = document.createElement('img');
-    img.src = canvas.toDataURL('image/png');
-    img.alt = text;
-    //    img.onclick = testImage(this);
-    var h2 = document.createElement('h2');
-    h2.innerHTML = text;
-    var output = document.getElementById('output');
-    output.appendChild(h2);
-    output.appendChild(img);
-}
-
-
 function original(imageData) {
     return imageData;
 }
@@ -743,7 +715,6 @@ function fractalGhosts3(imageData) {
     var data = imageData.data,
         rand = randRange(1, 10),
         color = randRange(0, 4);
-    console.log(rand, color);
     for (var i = 0; i < data.length; i++) {
         if ((i % 4) === color) {
           data[i] = 0xFF;
@@ -810,7 +781,6 @@ function shortdumbsort(imageData) {
     mm = randMinMax(0, imageData.width * imageData.height), da;
     mm = randMinMax2(mm[0], mm[1]);
     da = data.subarray(mm[0], mm[1]);
-    console.log(mm[0], mm[1]);
     Array.prototype.sort.call(da);
     imageData.data.set(da, mm[0]);
     return imageData;
@@ -855,7 +825,6 @@ function sortStripe(imageData) {
         width = imageData.width,
         mm = randMinMax(0, width);
     mm = randMinMax2(mm[0], mm[1]);
-    console.log(mm, length);
     for (var i = 0, size = data.length + 1; i < size; i += width) {
         var da = data.subarray(i + mm[0], i + mm[1]);
         Array.prototype.sort.call(da, leftSort);
