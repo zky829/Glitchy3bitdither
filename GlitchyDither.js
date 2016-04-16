@@ -3,32 +3,6 @@
  * Helper Functions
  ***************************************************/
 
-function drawDitherResult2(canvas, ditherer, text) {
-    var ctx = canvas.getContext('2d');
-    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    var result = ditherer(imageData);
-    ctx.putImageData(result, 0, 0);
-    var img = document.createElement('img');
-    img.src = canvas.toDataURL('image/png');
-    img.alt = text;
-    var output = document.getElementById('output');
-    output.insertBefore(img, output.childNodes[0]);
-}
-
-function drawDitherResult(canvas, ditherer, text) {
-    var ctx = canvas.getContext('2d');
-    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    ctx.putImageData(ditherer(imageData), 0, 0);
-    var img = document.createElement('img');
-    img.src = canvas.toDataURL('image/png');
-    img.alt = text;
-    //    img.onclick = testImage(this);
-    var h2 = document.createElement('h2');
-    h2.innerHTML = text;
-    var output = document.getElementById('output');
-    output.appendChild(h2);
-    output.appendChild(img);
-}
 
 
 function original(imageData) {
