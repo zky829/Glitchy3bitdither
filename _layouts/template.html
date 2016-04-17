@@ -38,7 +38,9 @@
         function drawDitherResult2(canvas, ditherer, text) {
             var ctx = canvas.getContext('2d');
             var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            var result = ditherer(imageData);
+            var glitcher = new Gleech(imageData);
+            console.log(ditherer);
+            var result = glitcher[ditherer]();
             ctx.putImageData(result, 0, 0);
             var img = document.createElement('img');
             img.src = canvas.toDataURL('image/png');
@@ -50,7 +52,10 @@
         function drawDitherResult(canvas, ditherer, text) {
             var ctx = canvas.getContext('2d');
             var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            ctx.putImageData(ditherer(imageData), 0, 0);
+            var glitcher = new Gleech(imageData);
+            console.log(ditherer);
+            var glitch = glitcher[ditherer]().imageData;
+            ctx.putImageData(glitch, 0, 0);
             var img = document.createElement('img');
             img.src = canvas.toDataURL('image/png');
             img.alt = text;
