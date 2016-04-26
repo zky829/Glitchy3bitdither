@@ -10,6 +10,8 @@ layout: template
 </div>
 <div id="output"></div>
 <script>
+  var exp = ['pixelFunk', 'superPixelFunk', 'shortsort', 'shortdumbsort', 'sort', 'slicesort', 'sortStripe', 'sortRows', 'randomSortRows', 'dumbSortRows', 'pixelSort', 'randomGlitch', 'glitch', 'preset1', 'preset2', 'preset3', 'preset4'];
+  var orig = ['original', 'focusImage', 'rgb_glitch', 'invert', 'slice', 'slice2', 'slice3', 'scanlines', 'fractalGhosts', 'fractalGhosts2', 'fractalGhosts3', 'fractalGhosts4', 'fractal', 'fractal2', 'DrumrollHorizontal', 'DrumrollVertical', 'DrumrollHorizontalWave', 'DrumrollVerticalWave', 'ditherBitmask', 'colorShift', 'colorShift2', 'ditherRandom', 'ditherRandom3', 'ditherBayer', 'ditherBayer3', 'redShift', 'greenShift', 'blueShift', 'superShift', 'superSlice', 'superSlice2', 'ditherAtkinsons', 'ditherFloydSteinberg', 'ditherHalftone', 'dither8Bit'];
     function handleFileSelect(e) {
         var file = e.target.files[0];
         // Only process image files.
@@ -29,13 +31,11 @@ layout: template
                 var ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0);
                 // drawDitherResult(canvas, 'original', 'original');
-                var exp = ['pixelFunk', 'superPixelFunk', 'shortsort', 'shortdumbsort', 'sort', 'slicesort', 'sortStripe', 'sortRows', 'randomSortRows', 'dumbSortRows', 'pixelSort', 'randomGlitch', 'glitch', 'preset1', 'preset2', 'preset3', 'preset4'];
-                var orig = ['original', 'focusImage', 'rgb_glitch', 'invert', 'slice', 'slice2', 'slice3', 'scanlines', 'fractalGhosts', 'fractalGhosts2', 'fractalGhosts3', 'fractalGhosts4', 'fractal', 'fractal2', 'DrumrollHorizontal', 'DrumrollVertical', 'DrumrollHorizontalWave', 'DrumrollVerticalWave', 'ditherBitmask', 'colorShift', 'colorShift2', 'ditherRandom', 'ditherRandom3', 'ditherBayer', 'ditherBayer3', 'redShift', 'greenShift', 'blueShift', 'superShift', 'superSlice', 'superSlice2', 'ditherAtkinsons', 'ditherFloydSteinberg', 'ditherHalftone', 'dither8Bit'];
                 var functions = document.getElementById("experimental").checked ? orig.concat(exp) : orig;
                 for(var i = 0;i<functions.length;i++){
                   setTimeout((function(functions, i, ctx, canvas) {
                     ctx.drawImage(img, 0, 0);
-                    drawDitherResult(canvas,functions[i],functions[i]);
+                    drawDitherResult(canvas,functions[i],true);
                   })(functions, i, ctx, canvas), 0);
                 }
             };

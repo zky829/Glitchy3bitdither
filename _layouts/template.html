@@ -35,21 +35,8 @@
     {{ content }}
     </main>
     <script>
-        function drawDitherResult2(canvas, ditherer, text) {
-            var ctx = canvas.getContext('2d');
-            var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            var glitcher = new Gleech(imageData);
-            console.log(ditherer);
-            var result = glitcher[ditherer]();
-            ctx.putImageData(result, 0, 0);
-            var img = document.createElement('img');
-            img.src = canvas.toDataURL('image/png');
-            img.alt = text;
-            var output = document.getElementById('output');
-            output.insertBefore(img, output.childNodes[0]);
-        }
-
-        function drawDitherResult(canvas, ditherer, text) {
+        function drawDitherResult(canvas, ditherer, heading) {
+            heading = heading || false;
             var ctx = canvas.getContext('2d');
             var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             var glitcher = new Gleech(imageData);
@@ -58,12 +45,14 @@
             ctx.putImageData(glitch, 0, 0);
             var img = document.createElement('img');
             img.src = canvas.toDataURL('image/png');
-            img.alt = text;
+            img.alt = ditherer;
             //    img.onclick = testImage(this);
-            var h2 = document.createElement('h2');
-            h2.innerHTML = text;
             var output = document.getElementById('output');
-            output.appendChild(h2);
+            if (heading) {
+              var h2 = document.createElement('h2');
+              h2.innerHTML = ditherer;
+              output.appendChild(h2);
+            }
             output.appendChild(img);
         }
         window.onload = function(){

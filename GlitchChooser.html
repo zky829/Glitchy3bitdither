@@ -11,29 +11,40 @@ layout: template
 </div>
 <div id="output"></div>
 <script>
+    var exp = ['pixelFunk', 'superPixelFunk', 'shortsort', 'shortdumbsort', 'sort', 'slicesort', 'sortStripe', 'sortRows', 'randomSortRows', 'dumbSortRows', 'pixelSort', 'randomGlitch', 'glitch', 'preset1', 'preset2', 'preset3', 'preset4'];
+    var orig = ['focusImage', 'rgb_glitch', 'invert', 'slice', 'slice2', 'slice3', 'scanlines', 'fractalGhosts', 'fractalGhosts2', 'fractalGhosts3', 'fractalGhosts4', 'fractal', 'fractal2', 'DrumrollHorizontal', 'DrumrollVertical', 'DrumrollHorizontalWave', 'DrumrollVerticalWave', 'ditherBitmask', 'colorShift', 'colorShift2', 'ditherRandom', 'ditherRandom3', 'ditherBayer', 'ditherBayer3', 'redShift', 'greenShift', 'blueShift', 'superShift', 'superSlice', 'superSlice2', 'ditherAtkinsons', 'ditherFloydSteinberg', 'ditherHalftone', 'dither8Bit'];
     var picker = document.createElement("select"),
     form = document.getElementById("form"),
-    functions = orig.concat(exp.concat([original,theWorks,glitch,randomGlitch])),
-    functions = functions.sort(),
-    img, orig_img;
+    functions = orig.concat(exp.concat(['theWorks','glitch','randomGlitch'])),
+    functions = functions.sort(function(a, b) {
+        if (a.toLowerCase() < b.toLowerCase()) return -1;
+        if (a.toLowerCase() > b.toLowerCase()) return 1;
+        return 0;
+      }),
+    img, glitcher, ctx;
+    var canvas = document.createElement('canvas');
 
+    functions.unshift('original');
     /* populate picker */
     for(var i=0, l = functions.length;i<l;i++){
         var opt = document.createElement("option");
-        opt.value = functions[i].name;
-        opt.innerHTML = functions[i].name;
+        opt.value = functions[i];
+        opt.innerHTML = functions[i];
         picker.appendChild(opt);
     }
     form.appendChild(picker);
     function place(replace){
         var tmp = document.getElementsByTagName("img");
-        if(replace){document.getElementById("output").removeChild(tmp[0]);}
-        generate(tmp[0],picker.value);
+        console.log("before: ", tmp.length, tmp);
+        if(replace){ document.getElementById("output").removeChild(tmp[0]); }
+        console.log("during: ", tmp.length, tmp);
+        generate(picker.value);
+        console.log("after: ", tmp.length, tmp);
     }
     var apply = document.getElementById('apply');
     var replace = document.getElementById('replace');
-    apply.onclick = function(){place(false);};
-    replace.onclick = function(){place(true);};
+    apply.addEventListener('click', function(){place(false);});
+    replace.addEventListener('click', function(){place(true);});
     replace.disabled = true;
 
     function handleFileSelect(e) {
@@ -47,8 +58,13 @@ layout: template
         reader.onload = function(e) {
             img = document.createElement("img");
             img.onload = function() {
-                orig_img = img;
-                generate(img,"original");
+              canvas.width = img.width;
+              canvas.height = img.height;
+              ctx = canvas.getContext('2d');
+              ctx.drawImage(img,0,0);
+              var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+              glitcher = new Gleech(imageData);
+              generate("original");
             };
             img.src = e.target.result;
         };
@@ -56,33 +72,21 @@ layout: template
         document.getElementById("output").innerHTML = "";
     }
 
-    function getfunbyname(name){
-        var funs = functions;
-        for(var i = 0, l = funs.length;i<l;i++){
-            if(funs[i].name === name){
-                return funs[i];
-            }
-        }
-    }
-    function generate(img,chosen){
+    function generate(chosen){
         /* setup */
         if (document.getElementsByTagName('img').length >= 1) {
           replace.disabled = false;
         }
-        var width = img.width;
-        var height = img.height;
-        var canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        var ctx = canvas.getContext('2d');
-        /* execute */
-        if(chosen == "original"){
-            ctx.drawImage(orig_img,0,0);
-        }else{
-            ctx.drawImage(img,0,0);
-        }
-
-        drawDitherResult2(canvas,getfunbyname(chosen),chosen);
+        console.log(chosen);
+        var glitch = glitcher[chosen]().imageData;
+        ctx.putImageData(glitch, 0, 0);
+        var newImg = document.createElement('img');
+        newImg.src = canvas.toDataURL('image/png');
+        newImg.alt = chosen;
+        var output = document.getElementById('output');
+        console.log(output);
+        output.insertBefore(newImg, output.firstChild);
+        console.log(output);
     }
 
     document.getElementById('uploader').addEventListener('change', handleFileSelect, false);

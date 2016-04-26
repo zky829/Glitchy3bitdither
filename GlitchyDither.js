@@ -1,11 +1,18 @@
-function Gleech(imageData) {
-  this.origImageData = this.imageData = imageData;
-  this.imageWidth = imageData.width;
-  this.imageHeight = imageData.height;
+function Gleech(imgData) {
+  this.imageData = imgData;
+  this.origImageData = imgData;
+  this.imageWidth = imgData.width;
+  this.imageHeight = imgData.height;
+
+  this.reset = function() {
+    this.imageData = this.origImageData.data;
+    return this;
+  };
 
   /* global arrays of functions */
   this.exp = ['pixelFunk', 'superPixelFunk', 'shortsort', 'shortdumbsort', 'sort', 'slicesort', 'sortStripe', 'sortRows', 'randomSortRows', 'dumbSortRows', 'pixelSort', 'randomGlitch', 'glitch', 'preset1', 'preset2', 'preset3', 'preset4'];
   this.orig = ['focusImage', 'rgb_glitch', 'invert', 'slice', 'slice2', 'slice3', 'scanlines', 'fractalGhosts', 'fractalGhosts2', 'fractalGhosts3', 'fractalGhosts4', 'fractal', 'fractal2', 'DrumrollHorizontal', 'DrumrollVertical', 'DrumrollHorizontalWave', 'DrumrollVerticalWave', 'ditherBitmask', 'colorShift', 'colorShift2', 'ditherRandom', 'ditherRandom3', 'ditherBayer', 'ditherBayer3', 'redShift', 'greenShift', 'blueShift', 'superShift', 'superSlice', 'superSlice2', 'ditherAtkinsons', 'ditherFloydSteinberg', 'ditherHalftone', 'dither8Bit'];
+
   /***************************************************
    * Helper Functions
    ***************************************************/
@@ -96,23 +103,20 @@ function Gleech(imageData) {
     return ((aa + ar + ag + ab) / 4) - ((ba + br + bg + bb) / 4);
   };
   this.randSort = function randSort(a, b) {
-    var sort = this.randChoice([this.coinToss, this.leftSort, this.rightSort, this.redSort, this.greenSort,
-                               this.blueSort, this.avgSort]);
+    var sort = this.randChoice([this.coinToss, this.leftSort, this.rightSort, this.redSort, this.greenSort, this.blueSort, this.avgSort]);
     return sort(a, b);
   };
 
-  /*
-     function avg(o){
-     var l = o.length;
-     for(var s = 0, i = l; i; s += o[--i]){};
-     return s/l;
-     }
-     */
+  return this;
 
 }
 
-Gleech.prototype.getOrig = function() { return orig; };
-Gleech.prototype.getExp = function() { return exp; };
+Gleech.prototype.getFunctions = function() {
+    for (var p in this.prototype) {
+      console.log(p);
+    }
+};
+
 
 Gleech.prototype.original = function original() {
   this.imageData = this.origImageData;
@@ -157,7 +161,7 @@ Gleech.prototype.dither8Bit = function dither8Bit() {
 };
 
 Gleech.prototype.ditherHalftone = function ditherHalftone() {
-  var data = this.imageData;
+  var data = this.imageData.data;
   for (var y = 0; y <= this.imageHeight - 2; y += 3) {
     for (var x = 0; x <= this.imageWidth - 2; x += 3) {
       var sum_r = 0, sum_g = 0, sum_b = 0;
@@ -231,7 +235,7 @@ Gleech.prototype.ditherHalftone = function ditherHalftone() {
 };
 
 Gleech.prototype.ditherAtkinsons = function ditherAtkinsons() {
-  var data = this.imageData;
+  var data = this.imageData.data;
   for (var y = 0; y < this.imageHeight; y++) {
     for (var x = 0; x < this.imageWidth; x++) {
       var i = 4 * (y * this.imageWidth + x);
@@ -289,7 +293,7 @@ Gleech.prototype.ditherAtkinsons = function ditherAtkinsons() {
 };
 
 Gleech.prototype.ditherFloydSteinberg = function ditherFloydSteinberg() {
-  var data = this.imageData;
+  var data = this.imageData.data;
   for (var y = 0; y < this.imageHeight; y++) {
     for (var x = 0; x < this.imageWidth; x++) {
       var i = 4 * (y * this.imageWidth + x);
@@ -339,7 +343,7 @@ Gleech.prototype.ditherFloydSteinberg = function ditherFloydSteinberg() {
 
 Gleech.prototype.ditherBayer = function ditherBayer() {
   /* added more threshold maps and the randomizer, the rest is stock */
-  var data = this.imageData,
+  var data = this.imageData.data,
       threshold_maps = [
         [
           [3, 7, 4],
@@ -380,42 +384,39 @@ Gleech.prototype.ditherBayer = function ditherBayer() {
 
 Gleech.prototype.ditherBayer3 = function ditherBayer3() {
   /* adding in more threshold maps, and the randomizer */
-  var data = this.imageData,
-      threshold_maps = [
-        [
-          [3, 7, 4],
+  var data = this.imageData.data,
+    threshold_maps = [
+    [
+      [3, 7, 4],
       [6, 1, 9],
-        [2, 8, 5]
-        ],
-        [
-          [1, 9, 3, 11],
-        [13, 5, 15, 7],
-          [4, 12, 2, 10],
-            [16, 8, 14, 6]
-        ],
-        [
-          [1, 49, 13, 61, 4, 52, 16, 64],
-        [33, 17, 45, 29, 36, 20, 48, 32],
-          [9, 57, 5, 53, 12, 60, 8, 56],
-            [41, 25, 37, 21, 44, 28, 40, 24],
-              [3, 51, 15, 63, 2, 50, 14, 62],
-                [35, 19, 47, 31, 34, 18, 46, 30],
-                  [11, 59, 7, 55, 10, 58, 6, 54],
-                    [43, 27, 39, 23, 42, 26, 38, 22]
-        ]
-        ],
-        threshold_map = threshold_maps[this.randFloor(threshold_maps.length)],
-        size = threshold_map.length;
-        for (var y = 0; y < this.imageHeight; y++) {
-          for (var x = 0; x < this.imageWidth; x++) {
-            var i = 4 * (y * this.imageWidth + x);
-            /* apply the tranformation to each color */
-  data[i] = ((data[i] * 17) / 255) < threshold_map[x % size][y %
-    size] ? 0 : 0xff;
-    data[i + 1] = ((data[i + 1] * 17) / 255) < threshold_map[x %
-      size][y % size] ? 0 : 0xff;
-      data[i + 2] = ((data[i + 2] * 17) / 255) < threshold_map[x %
-        size][y % size] ? 0 : 0xff;
+      [2, 8, 5]
+    ],
+    [
+      [1, 9, 3, 11],
+      [13, 5, 15, 7],
+      [4, 12, 2, 10],
+      [16, 8, 14, 6]
+    ],
+    [
+      [1, 49, 13, 61, 4, 52, 16, 64],
+      [33, 17, 45, 29, 36, 20, 48, 32],
+      [9, 57, 5, 53, 12, 60, 8, 56],
+      [41, 25, 37, 21, 44, 28, 40, 24],
+      [3, 51, 15, 63, 2, 50, 14, 62],
+      [35, 19, 47, 31, 34, 18, 46, 30],
+      [11, 59, 7, 55, 10, 58, 6, 54],
+      [43, 27, 39, 23, 42, 26, 38, 22]
+    ]
+  ],
+  threshold_map = threshold_maps[this.randFloor(threshold_maps.length)],
+    size = threshold_map.length;
+  for (var y = 0; y < this.imageHeight; y++) {
+    for (var x = 0; x < this.imageWidth; x++) {
+      var i = 4 * (y * this.imageWidth + x);
+      /* apply the tranformation to each color */
+      data[i] = ((data[i] * 17) / 255) < threshold_map[x % size][y % size] ? 0 : 0xff;
+      data[i + 1] = ((data[i + 1] * 17) / 255) < threshold_map[x % size][y % size] ? 0 : 0xff;
+      data[i + 2] = ((data[i + 2] * 17) / 255) < threshold_map[x % size][y % size] ? 0 : 0xff;
     }
   }
   this.imageData.data.set(data);
@@ -423,7 +424,7 @@ Gleech.prototype.ditherBayer3 = function ditherBayer3() {
 };
 
 Gleech.prototype.ditherRandom = function ditherRandom() {
-  var data = this.imageData;
+  var data = this.imageData.data
   for (var i = 0, val, scaled, size = this.imageWidth * this.imageHeight * 4; i < size; i += 4) {
     scaled = ((data[i] + data[i + 1] + data[i + 2]) / 3) % 255;
     val = scaled < this.randRound(128) ? 0 : 0xff;
@@ -434,7 +435,7 @@ Gleech.prototype.ditherRandom = function ditherRandom() {
 };
 
 Gleech.prototype.ditherRandom3 = function ditherRandom3() {
-  var data = this.imageData;
+  var data = this.imageData.data
   for (var i = 0, size = this.imageWidth * this.imageHeight * 4; i < size; i += 4) {
     data[i] = data[i] < this.randRound(128) ? 0 : 0xff;
     data[i + 1] = data[i + 1] < this.randRound(128) ? 0 : 0xff;
@@ -445,7 +446,7 @@ Gleech.prototype.ditherRandom3 = function ditherRandom3() {
 };
 
 Gleech.prototype.ditherBitmask = function ditherBitmask() {
-  var data = this.imageData,
+  var data = this.imageData.data,
     M = this.randRange(1, 125);
   // 0xc0; 2 bits
   // 0xe0  3 bits
@@ -467,7 +468,7 @@ Gleech.prototype.ditherBitmask = function ditherBitmask() {
  * Glitch
  ***************************************************/
 Gleech.prototype.colorShift = function colorShift() {
-  var data = this.imageData,
+  var data = this.imageData.data,
       dir = this.coinToss();
   for (var i = 0, size = this.imageWidth * this.imageHeight * 4; i < size; i += 4) {
     var r = data[i],
@@ -477,6 +478,7 @@ Gleech.prototype.colorShift = function colorShift() {
     data[i + 1] = dir ? b : r;
     data[i + 2] = dir ? r : g;
   }
+  this.imageData.data.set(data);
   return this;
 };
 Gleech.prototype.colorShift2 = function colorShift2() {
@@ -492,6 +494,7 @@ Gleech.prototype.colorShift2 = function colorShift2() {
     b = (dir ? r : g) & 0xFF;
     data[i] = (a << 24) + (r << 16) + (g << 8) + (b);
   }
+  this.imageData.data.set(data);
   return this;
 };
 
@@ -504,11 +507,12 @@ Gleech.prototype.greenShift = function greenShift() {
     data[i + 1] = (shift) > 255 ? 255 : shift;
     data[i + 2] -= factor;
   }
+  this.imageData.data.set(data);
   return this;
 };
 
 Gleech.prototype.redShift = function redShift() {
-  var data = this.imageData,
+  var data = this.imageData.data,
       factor = this.randFloor(64);
   for (var i = 0, size = this.imageWidth * this.imageHeight * 4; i < size; i += 4) {
     var shift = data[i] + factor;
@@ -516,11 +520,12 @@ Gleech.prototype.redShift = function redShift() {
     data[i + 1] -= factor;
     data[i + 2] -= factor;
   }
+  this.imageData.data.set(data);
   return this;
 };
 
 Gleech.prototype.blueShift = function blueShift() {
-  var data = this.imageData,
+  var data = this.imageData.data,
       factor = this.randFloor(64);
   for (var i = 0, size = this.imageWidth * this.imageHeight * 4; i < size; i += 4) {
     var shift = data[i + 2] + factor;
@@ -528,13 +533,13 @@ Gleech.prototype.blueShift = function blueShift() {
     data[i + 1] -= factor;
     data[i + 2] = (shift) > 255 ? 255 : shift;
   }
+  this.imageData.data.set(data);
   return this;
 };
 
 Gleech.prototype.superShift = function superShift() {
-  var data = this.imageData;
   for (var i = 0, l = this.randRange(1, 10); i < l; i++) {
-    data = this.colorShift();
+    this.colorShift();
   }
   return this;
 };
@@ -651,23 +656,6 @@ Gleech.prototype.slice3 = function slice3() {
 };
 
 
-Gleech.prototype.superSlice2 = function superSlice2() {
-  var functs = ['slice', 'slice2', 'slice3'];
-  var data = this.imageData;
-  for (var i = 0, l = this.randRound(functs.length); i < l; i++) {
-    var fun = this.randFloor(functs.length);
-    data = this[functs[fun]](data);
-  }
-  return this;
-};
-
-Gleech.prototype.superSlice = function superSlice() {
-  var data = this.imageData;
-  for (var i = 0, l = this.randRange(1, 10); i < l; i++) {
-    data = this.slice(this.slice2(this.slice3(data)));
-  }
-  return this;
-};
 
 Gleech.prototype.fractalGhosts = function fractalGhosts() {
   var data = this.imageData.data;
@@ -1087,35 +1075,45 @@ Gleech.prototype.sortStripe = function sortStripe() {
   };
 
 
-  /* these run random set of functions */
+  /******************************
+   * Presets
+   */
+
+Gleech.prototype.superSlice2 = function superSlice2() {
+  var functs = ['slice', 'slice2', 'slice3'];
+  for (var i = 0, l = this.randRound(functs.length); i < l; i++) {
+    var fun = this.randFloor(functs.length);
+    this[functs[fun]]();
+  }
+  return this;
+};
+
+Gleech.prototype.superSlice = function superSlice() {
+  for (var i = 0, l = this.randRange(1, 10); i < l; i++) {
+    this.slice().slice2().slice3();
+  }
+  return this;
+};
 
   Gleech.prototype.theWorks = function theWorks() {
-    var functions = document.getElementById('experimental').checked ?
-      orig.concat(exp) : orig.slice(0),
-    data = this.imageData,
-      sortCounter = 0;
+    var functions = document.getElementById('experimental').checked ?  this.orig : this.exp;
     functions.sort(this.coinToss);
     for (var i = 0, l = functions.length, s = 0; i < l; i++) {
-      s = functions[i].name.indexOf('ort');
-      if (s < 0 && sortCounter >= 1) {data =
-        this[functions[i]](data);continue;}
-      if (s) {sortCounter++;}
+      this[functions[i]]();
     }
     return this;
   };
 
   Gleech.prototype.randomGlitch = function randomGlitch() {
-    var functions = document.getElementById('experimental').checked ?
-      orig.concat(exp) : orig.slice(0),
-    data = this.imageData,
-      history = [];
+    var functions = document.getElementById('experimental').checked ?  this.orig : this.exp,
+        history = [];
     for (var i = 0, l = this.randRange(3, 6); i < l; i++) {
       var fun = this.randFloor(functions.length);
-      this[functions[fun]](data);
-      history.push(functions[fun].name);
+      this[functions[fun]]();
+      history.push(functions[fun]);
     }
     if (history.length === 0) {
-      return this.randomGlitch(data);
+      return this.randomGlitch();
     }
     console.log('randomGlitch history:', history);
     return this;
@@ -1123,74 +1121,77 @@ Gleech.prototype.sortStripe = function sortStripe() {
 
   Gleech.prototype.glitch = function glitch() {
     var hist = [];
-    var data = this.imageData;
     for (var i = 0, l = this.randRange(5, 10); i < l; i++) {
       switch (this.randFloor(13)) {
         case 0:
-          data = focusImage(data);
+          this.focusImage();
         hist.push('focusImage');
         break;
         case 1:
-          data = ditherBitmask(data);
+          this.ditherBitmask();
         hist.push('ditherBitmask');
         break;
         case 2:
-          data = (Math.random() > 0.5) ? superSlice(data) :
-          superSlice2(data);
-        hist.push('superSlice/2');
+          if (Math.random() > 0.5) {
+            this.superSlice();
+        hist.push('superSlice');
+          } else {
+            this.superSlice2();
+        hist.push('superSlice2');
+          }
         break;
         case 3:
-          data = colorShift(data);
+          this.colorShift();
         hist.push('colorShift');
         break;
         case 4:
-          data = ditherRandom3(data);
+          this.ditherRandom3();
         hist.push('ditherRandom3');
         break;
         case 5:
-          data = ditherBayer3(data);
+          this.ditherBayer3();
         hist.push('ditherBayer3');
         break;
         case 6:
-          data = ditherAtkinsons(data);
+          this.ditherAtkinsons();
         hist.push('ditherAtkinsons');
         break;
         case 7:
-          data = ditherFloydSteinberg(data);
+          this.ditherFloydSteinberg();
         hist.push('ditherFloydSteinberg');
         break;
         case 8:
-          data = ditherHalftone(data);
+          this.ditherHalftone();
         hist.push('ditherHalftone');
         break;
         case 9:
-          data = dither8Bit(data);
+          this.dither8Bit();
         hist.push('dither8bit');
         break;
         case 10:
           if (this.coinToss()) {
           var picker = this.randFloor(3);
           if (picker == 1) {
-            data = redShift(data);
+            this.redShift();
             hist.push('redShift');
           } else if (picker == 2) {
-            data = greenShift(data);
+            this.greenShift();
             hist.push('greenShift');
           } else {
-            data = blueShift(data);
+            this.blueShift();
             hist.push('blueShift');
           }
         }
         break;
         /*
            case 11:
-           data = (Math.random()>0.5) ? fractalGhosts(data) :
-           fractalGhosts2(data);
+           data = (Math.random()>0.5) ? fractalGhosts() :
+           fractalGhosts2();
            hist.push('fractalGhosts/2');
            break;
            */
         default:
-          data = invert(data);
+          this.invert();
         hist.push('invert');
         break;
       }
@@ -1198,50 +1199,43 @@ Gleech.prototype.sortStripe = function sortStripe() {
     console.log('glitch history', hist);
     return this;
   };
+
   var seqCounter = 0;
   Gleech.prototype.seqGlitch = function seqGlitch() {
-    var fun = document.getElementById('experimental').checked ?
-      orig.concat(exp) : orig.slice(0),
-    i = seqCounter % fun.length;
+    var functions = document.getElementById('experimental').checked ?  this.orig : this.exp,
+    i = seqCounter % functions.length;
     seqCounter++;
-    console.log('seqGlitch', fun[i].name, seqCounter);
-    return fun[i]();
+    console.log('seqGlitch', functions[i], seqCounter);
+    this[functions[i]]();
+    return this;
   };
 
   Gleech.prototype.preset1 = function preset1() {
-    var ops = [Gleech.ditherRandom3, Gleech.shortdumbsort, Gleech.slice, Gleech.invert,
-      Gleech.shortsort, Gleech.shortsort, Gleech.ditherRandom3, Gleech.DrumrollVerticalWave,
-    Gleech.ditherBayer3, Gleech.dumbSortRows, Gleech.slicesort, Gleech.DrumrollVertical];
+    var ops = ['ditherRandom3', 'shortdumbsort', 'slice', 'invert', 'shortsort', 'shortsort', 'ditherRandom3', 'DrumrollVerticalWave', 'ditherBayer3', 'dumbSortRows', 'slicesort', 'DrumrollVertical'];
     for (var i in ops) {
-      ops[i]();
+      this[ops[i]]();
     }
     return this;
   };
   Gleech.prototype.preset2 = function preset2() {
-    var ops = [Gleech.shortsort, Gleech.slice2, Gleech.fractalGhosts4, Gleech.sort, Gleech.fractalGhosts2,
-      Gleech.colorShift];
+    var ops = ['shortsort', 'slice2', 'fractalGhosts4', 'sort', 'fractalGhosts2',
+      'colorShift'];
     for (var i in ops) {
-      ops[i]();
+      this[ops[i]]();
     }
     return this;
   };
   Gleech.prototype.preset3 = function preset3() {
-    var ops = [Gleech.ditherRandom3, Gleech.focusImage, Gleech.scanlines];
+    var ops = ['ditherRandom3', 'focusImage', 'scanlines'];
     for (var i in ops) {
-      ops[i]();
+      this[ops[i]]();
     }
     return this;
   };
   Gleech.prototype.preset4 = function preset4() {
-    var ops = [Gleech.ditherAtkinsons, Gleech.focusImage, Gleech.ditherRandom3, Gleech.focusImage];
+    var ops = ['ditherAtkinsons', 'focusImage', 'ditherRandom3', 'focusImage'];
     for (var i in ops) {
-      ops[i]();
+      this[ops[i]]();
     }
     return this;
   };
-  /*
-     Gleech.testImage = function testImage(){
-     var data = Gleech.imageData.data;
-     alert(avg(data));
-     }
-     */
