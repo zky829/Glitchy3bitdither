@@ -71,7 +71,7 @@ function generate(img,chosen){
     ctx.drawImage(img,0,0);
   }
 
-  drawDitherResult2(canvas,chosen,chosen);
+  drawDitherResult(canvas,chosen,false,false);
 }
 
 document.getElementById('uploader').addEventListener('change', handleFileSelect, false);

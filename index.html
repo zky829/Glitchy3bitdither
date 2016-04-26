@@ -28,13 +28,13 @@ layout: template
                 canvas.height = height;
                 var ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0);
-                drawDitherResult(canvas, 'original', 'original');
+                drawDitherResult(canvas, 'original', true,true);
                 var functions = document.getElementById("experimental").checked ? gleech.orig.concat(gleech.exp) : gleech.orig;
                 for(var i = 0;i<functions.length;i++){
                   setTimeout((function(functions, i, ctx, canvas) {
                     ctx.drawImage(img, 0, 0);
                     console.log(functions[i]);
-                    drawDitherResult(canvas,functions[i],functions[i]);
+                    drawDitherResult(canvas,functions[i],true,true);
                     return;
                   })(functions, i, ctx, canvas), 0);
                 }

@@ -35,11 +35,11 @@ function generate(img){
   for (var i = 1; i < 10;i++){
     if(i==5 && typeof img == "object"){
       ctx.drawImage(orig,0,0);
-      drawDitherResult2(canvas,"original","original");
+      drawDitherResult(canvas,"original",false,false);
       /* Original Image */
     }else{
       ctx.drawImage(img, 0, 0);
-      drawDitherResult2(canvas,'seqGlitch',"seqGlitch");
+      drawDitherResult(canvas,'seqGlitch',false,false);
       /* generated from Original */
     }
   }
