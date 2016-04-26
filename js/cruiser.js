@@ -5,6 +5,46 @@
  * Distributed under terms of the NPL (Necessary Public License) license.
  */
 
+// count iterations of sequencer
+var seqCounter = 0;
+
+// extend gleech with sequencer
+(function(gleech) {
+  gleech.seqGlitch = function seqGlitch(imageData) {
+    var fun = document.getElementById('experimental').checked ?  gleech.orig.concat(gleech.exp) : gleech.orig.slice(0),
+      i = seqCounter % fun.length;
+    seqCounter++;
+    console.log('seqGlitch', fun[i], seqCounter);
+    return gleech[fun[i]](imageData);
+  };
+}(gleech || {}));
+
+function generate(img){
+  /* cleanup */
+  document.getElementById("output").innerHTML = "";
+  /* setup */
+  var orig = img;
+  var width = img.width;
+  var height = img.height;
+  var canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  var ctx = canvas.getContext('2d');
+  ctx.drawImage(img, 0, 0);
+  /* execute */
+  for (var i = 1; i < 10;i++){
+    if(i==5 && typeof img == "object"){
+      ctx.drawImage(orig,0,0);
+      drawDitherResult2(canvas,"original","original");
+      /* Original Image */
+    }else{
+      ctx.drawImage(img, 0, 0);
+      drawDitherResult2(canvas,'seqGlitch',"seqGlitch");
+      /* generated from Original */
+    }
+  }
+}
+
 function handleFileSelect(e) {
   var file = e.target.files[0];
   // Only process image files.
@@ -24,36 +64,12 @@ function handleFileSelect(e) {
   document.getElementById("output").innerHTML = "";
 }
 
-function generate(img){
-  /* cleanup */
-  document.getElementById("output").innerHTML = "";
-  /* setup */
-  var orig = img;
-  var width = img.width;
-  var height = img.height;
-  var canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
-  var ctx = canvas.getContext('2d');
-  ctx.drawImage(img, 0, 0);
-  /* execute */
-  for (var i = 1; i < 10;i++){
-    if(i==5 && typeof img == "object"){
-      ctx.drawImage(orig,0,0);
-      drawDitherResult2(canvas,gleech.original,"original");
-      /* Original Image */
-    }else{
-      ctx.drawImage(img, 0, 0);
-      drawDitherResult2(canvas,gleech.seqGlitch,"seqGlitch");
-      /* generated from Original */
-    }
-  }
-}
 document.getElementById('output').onclick = function(e){
   if (e.target.tagName.toLowerCase() == 'img'){
     generate(e.target);
     e.preventDefault();
   }
 };
+
 document.getElementById('uploader').addEventListener('change', handleFileSelect, false);
 

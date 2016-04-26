@@ -4,7 +4,7 @@ var gleech = (function(gleech) {
   /* global arrays of functions */
   gleech.exp = ['pixelFunk', 'superPixelFunk', 'shortsort', 'shortdumbsort',
     'sort', 'slicesort', 'sortStripe', 'sortRows', 'randomSortRows', 'dumbSortRows',
-  'pixelSort', 'randomGlitch', 'glitch', 'preset1', 'preset2', 'preset3', 'preset4'],
+  'pixelSort', 'randomGlitch', 'glitch', 'preset1', 'preset2', 'preset3', 'preset4'];
   gleech.orig = ['focusImage', 'rgb_glitch', 'invert', 'slice', 'slice2', 'slice3', 'scanlines',
     'fractalGhosts', 'fractalGhosts2', 'fractalGhosts3', 'fractalGhosts4', 'fractal',
   'fractal2', 'DrumrollHorizontal', 'DrumrollVertical', 'DrumrollHorizontalWave',
@@ -1142,33 +1142,30 @@ var gleech = (function(gleech) {
 
 
   gleech.preset1 = function preset1(imageData) {
-    var ops = [ditherRandom3, shortdumbsort, slice, invert,
-        shortsort, shortsort, ditherRandom3, DrumrollVerticalWave,
-        ditherBayer3, dumbSortRows, slicesort, DrumrollVertical];
+    var ops = ['ditherRandom3', 'shortdumbsort', 'slice', 'invert', 'shortsort', 'shortsort', 'ditherRandom3', 'DrumrollVerticalWave', 'ditherBayer3', 'dumbSortRows', 'slicesort', 'DrumrollVertical'];
     for (var i in ops) {
-      ops[i](imageData);
+      gleech[ops[i]](imageData);
     }
     return imageData;
   };
   gleech.preset2 = function preset2(imageData) {
-    var ops = [shortsort, slice2, fractalGhosts4, sort, fractalGhosts2,
-        colorShift];
+    var ops = ['shortsort', 'slice2', 'fractalGhosts4', 'sort', 'fractalGhosts2', 'colorShift'];
     for (var i in ops) {
-      ops[i](imageData);
+      gleech[ops[i]](imageData);
     }
     return imageData;
   };
   gleech.preset3 = function preset3(imageData) {
-    var ops = [ditherRandom3, focusImage, scanlines];
+    var ops = ['ditherRandom3', 'focusImage', 'scanlines'];
     for (var i in ops) {
-      ops[i](imageData);
+      gleech[ops[i]](imageData);
     }
     return imageData;
   };
   gleech.preset4 = function preset4(imageData) {
-    var ops = [ditherAtkinsons, focusImage, ditherRandom3, focusImage];
+    var ops = ['ditherAtkinsons', 'focusImage', 'ditherRandom3', 'focusImage'];
     for (var i in ops) {
-      ops[i](imageData);
+      gleech[ops[i]](imageData);
     }
     return imageData;
   };
@@ -1178,28 +1175,27 @@ var gleech = (function(gleech) {
 
   gleech.theWorks = function theWorks(imageData) {
     var functions = document.getElementById('experimental').checked ?
-      orig.concat(exp) : orig.slice(0),
+      gleech.orig.concat(gleech.exp) : gleech.orig.slice(0),
     sortCounter = 0;
     functions.sort(coinToss);
+    // filter out sorts, because stacked sorts are boring
+    functions.filter(function(item) { return item.indexOf(/sort/gi); });
     for (var i = 0, l = functions.length, s = 0; i < l; i++) {
-      s = functions[i].name.indexOf('ort');
-      if ((s < -1) && sortCounter >= 1) {imageData = functions[i](imageData);continue;}
-      if (s) {sortCounter++;}
+      gleech[functions[i]](imageData);
     }
     return imageData;
   };
 
   gleech.randomGlitch = function randomGlitch(imageData) {
-    var functions = document.getElementById('experimental').checked ?
-      orig.concat(exp) : orig.slice(0),
+    var functions = document.getElementById('experimental').checked ?  gleech.orig.concat(gleech.exp) : gleech.orig.slice(0),
     history = [];
     for (var i = 0, l = randRange(3, 6); i < l; i++) {
       var fun = randFloor(functions.length);
-      functions[fun](imageData);
-      history.push(functions[fun].name);
+      gleech[functions[fun]](imageData);
+      history.push(functions[fun]);
     }
     if (history.length === 0) {
-      return randomGlitch(imageData);
+      return gleech.randomGlitch(imageData);
     }
     console.log('randomGlitch history:', history);
     return imageData;
@@ -1210,57 +1206,57 @@ var gleech = (function(gleech) {
     for (var i = 0, l = randRange(5, 10); i < l; i++) {
       switch (randFloor(13)) {
         case 0:
-          imageData = focusImage(imageData);
+          imageData = gleech.focusImage(imageData);
         hist.push('focusImage');
         break;
         case 1:
-          imageData = ditherBitmask(imageData);
+          imageData = gleech.ditherBitmask(imageData);
         hist.push('ditherBitmask');
         break;
         case 2:
-          imageData = (Math.random() > 0.5) ? superSlice(imageData) :
-          superSlice2(imageData);
+          imageData = (Math.random() > 0.5) ? gleech.superSlice(imageData) :
+          gleech.superSlice2(imageData);
         hist.push('superSlice/2');
         break;
         case 3:
-          imageData = colorShift(imageData);
+          imageData = gleech.colorShift(imageData);
         hist.push('colorShift');
         break;
         case 4:
-          imageData = ditherRandom3(imageData);
+          imageData = gleech.ditherRandom3(imageData);
         hist.push('ditherRandom3');
         break;
         case 5:
-          imageData = ditherBayer3(imageData);
+          imageData = gleech.ditherBayer3(imageData);
         hist.push('ditherBayer3');
         break;
         case 6:
-          imageData = ditherAtkinsons(imageData);
+          imageData = gleech.ditherAtkinsons(imageData);
         hist.push('ditherAtkinsons');
         break;
         case 7:
-          imageData = ditherFloydSteinberg(imageData);
+          imageData = gleech.ditherFloydSteinberg(imageData);
         hist.push('ditherFloydSteinberg');
         break;
         case 8:
-          imageData = ditherHalftone(imageData);
+          imageData = gleech.ditherHalftone(imageData);
         hist.push('ditherHalftone');
         break;
         case 9:
-          imageData = dither8Bit(imageData);
+          imageData = gleech.dither8Bit(imageData);
         hist.push('dither8bit');
         break;
         case 10:
           if (coinToss()) {
           var picker = randFloor(3);
           if (picker == 1) {
-            imageData = redShift(imageData);
+            imageData = gleech.redShift(imageData);
             hist.push('redShift');
           } else if (picker == 2) {
-            imageData = greenShift(imageData);
+            imageData = gleech.greenShift(imageData);
             hist.push('greenShift');
           } else {
-            imageData = blueShift(imageData);
+            imageData = gleech.blueShift(imageData);
             hist.push('blueShift');
           }
         }
@@ -1273,7 +1269,7 @@ var gleech = (function(gleech) {
            break;
            */
         default:
-        imageData = invert(imageData);
+        imageData = gleech.invert(imageData);
         hist.push('invert');
         break;
       }
@@ -1281,15 +1277,5 @@ var gleech = (function(gleech) {
     console.log('glitch history', hist);
     return imageData;
   };
-  var seqCounter = 0;
-  gleech.seqGlitch = function seqGlitch(imageData) {
-    var fun = document.getElementById('experimental').checked ?
-      gleech.orig.concat(exp) : gleech.orig.slice(0),
-      i = seqCounter % fun.length;
-    seqCounter++;
-    console.log('seqGlitch', fun[i], seqCounter);
-    return gleech[fun[i]](imageData);
-  };
-  console.log(gleech, gleech.length);
   return gleech;
 }(gleech || {}));

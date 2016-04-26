@@ -28,14 +28,14 @@ layout: template
                 canvas.height = height;
                 var ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
-                drawDitherResult(canvas, original, 'original');
+                drawDitherResult(canvas, 'original', 'original');
                 for(var i=0;i<5;i++){
                     ctx.drawImage(img, 0, 0, width, height);
-                    drawDitherResult2(canvas, theWorks, 'The Works');
+                    drawDitherResult2(canvas, 'theWorks', 'The Works');
                     ctx.drawImage(img, 0, 0, width, height);
-                    drawDitherResult2(canvas, randomGlitch, 'randomGlitch');
+                    drawDitherResult2(canvas, 'randomGlitch', 'randomGlitch');
                     ctx.drawImage(img, 0, 0, width, height);
-                    drawDitherResult2(canvas, glitch, 'Glitch');
+                    drawDitherResult2(canvas, 'glitch', 'Glitch');
                 }
             };
             img.src = e.target.result;

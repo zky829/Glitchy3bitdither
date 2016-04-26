@@ -38,19 +38,22 @@
         function drawDitherResult2(canvas, ditherer, text) {
             var ctx = canvas.getContext('2d');
             var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            var result = ditherer(imageData);
+            console.log(ditherer);
+            var result = gleech[ditherer](imageData);
             ctx.putImageData(result, 0, 0);
             var img = document.createElement('img');
             img.src = canvas.toDataURL('image/png');
             img.alt = text;
             var output = document.getElementById('output');
             output.insertBefore(img, output.childNodes[0]);
+            return document;
         }
 
         function drawDitherResult(canvas, ditherer, text) {
             var ctx = canvas.getContext('2d');
             var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            ctx.putImageData(ditherer(imageData), 0, 0);
+            console.log(ditherer);
+            ctx.putImageData(gleech[ditherer](imageData), 0, 0);
             var img = document.createElement('img');
             img.src = canvas.toDataURL('image/png');
             img.alt = text;
@@ -60,6 +63,7 @@
             var output = document.getElementById('output');
             output.appendChild(h2);
             output.appendChild(img);
+            return document;
         }
         window.onload = function(){
             // handle the modal window (the rest is just CSS, woot!)
