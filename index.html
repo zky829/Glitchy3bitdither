@@ -35,7 +35,6 @@ layout: template
                     ctx.drawImage(img, 0, 0);
                     console.log(functions[i]);
                     drawDitherResult(canvas,functions[i],true,true);
-                    return;
                   })(functions, i, ctx, canvas), 0);
                 }
             };
