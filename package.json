@@ -1,0 +1,29 @@
+{
+  "name": "gleech",
+  "version": "0.0.1",
+  "description": "Image glitching & dithering in NodeJS",
+  "main": "gleech.js",
+  "dependencies": {
+    "jimp": "^0.2.27"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/jkirchartz/Glitchy3bitDither.git"
+  },
+  "keywords": [
+    "glitch",
+    "images",
+    "image processing",
+    "aesthetic"
+  ],
+  "author": "JKirchartz",
+  "license": "SEE LICENSE IN NPL.md",
+  "bugs": {
+    "url": "https://github.com/jkirchartz/Glitchy3bitDither/issues"
+  },
+  "homepage": "https://github.com/jkirchartz/Glitchy3bitDither#readme"
+}
