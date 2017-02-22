@@ -8,7 +8,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jhint gleech.js",
+    "deploy": "git subtree push --prefix site origin gh-pages"
   },
   "repository": {
     "type": "git",

@@ -383,3 +383,4 @@ Jimp.prototype.ditherBitmask = function ditherBitmask() {
         else return this;
 };
 
+module.exports = Jimp;
